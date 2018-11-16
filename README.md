@@ -2,7 +2,7 @@
 This is a repository for making the Web excellently embrace the spatial navigation's features so that the Web technology can be propagated into several industries such as TV, IVI, game console, and upcoming smart devices as well as PC and mobile for a11y.
 
 ## Details
-* Read the [Explainer](https://github.com/w3c/csswg-drafts/blob/master/css-nav-1/explainer.md)
+* Read the [Explainer](https://drafts.csswg.org/css-nav-1/explainer)
 * Read the [Spec](https://drafts.csswg.org/css-nav-1/)
 * See the [Implementation Status](implStatus.md)
 * Play with the [Polyfill](polyfill/README.md)
@@ -22,7 +22,7 @@ In spatial navigation mode, the default behavior of arrow keys is changed from s
 2. Overriding methods on top of the heuristic algorithm (DOM method/attribute/event)
 3. The relevant API for efficiently supporting the spatial navigation (Setting the spatial navigation container, etc.)
 
-See the [explainer](https://github.com/w3c/csswg-drafts/blob/master/css-nav-1/explainer.md) for the details of W3C standardization for #1, #2 and #3 above.
+See the [explainer](https://drafts.csswg.org/css-nav-1/explainer) for the details of W3C standardization for #1, #2 and #3 above.
  
 See the [implStatus](implStatus.md) for the details of the implementation in Web engines for #2 above.
 
