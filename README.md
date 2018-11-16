@@ -2,12 +2,12 @@
 This is a repository for making the Web excellently embrace the spatial navigation's features so that the Web technology can be propagated into several industries such as TV, IVI, game console, and upcoming smart devices as well as PC and mobile for a11y.
 
 ## Details
-* Read the [Explainer](explainer.md)
-* Read the [Spec](https://wicg.github.io/spatial-navigation/)
+* Read the [Explainer](https://github.com/w3c/csswg-drafts/blob/master/css-nav-1/explainer.md)
+* Read the [Spec](https://drafts.csswg.org/css-nav-1/)
 * See the [Implementation Status](implStatus.md)
 * Play with the [Polyfill](polyfill/README.md)
 * Try the [Demo](https://wicg.github.io/spatial-navigation/demo/)
-* Give feedback on [issues](https://github.com/WICG/spatial-navigation/issues) or via [email](mailto://lgewst@gmail.com)
+* Give feedback on [issues](https://github.com/w3c/csswg-drafts/labels/css-nav-1) or via [email](mailto://lgewst@gmail.com)
 
 ## Overview
 **Spatial navigation** is the ability to navigate between focusable elements based on their position within a structured document. Spatial navigation is often called 'directional navigation' which enables four(4) directional navigation. Users are usually familiar with the 2-way navigation using tab key for the forward direction and shift+tab key for the backward direction, but not familiar with the 4-way navigation using arrow keys.
@@ -22,7 +22,7 @@ In spatial navigation mode, the default behavior of arrow keys is changed from s
 2. Overriding methods on top of the heuristic algorithm (DOM method/attribute/event)
 3. The relevant API for efficiently supporting the spatial navigation (Setting the spatial navigation container, etc.)
 
-See the [explainer](explainer.md) for the details of W3C standardization for #1, #2 and #3 above.
+See the [explainer](https://github.com/w3c/csswg-drafts/blob/master/css-nav-1/explainer.md) for the details of W3C standardization for #1, #2 and #3 above.
  
 See the [implStatus](implStatus.md) for the details of the implementation in Web engines for #2 above.
 
@@ -45,7 +45,7 @@ See the [implStatus](implStatus.md) for the details of the implementation in Web
 
 - In the future, the input mechanism for smart devices will change to something like voice command, hand gesture, and gaze direction, but the key-based interface will never disappear, even though it'll be used as a secondary method. The key-based interface used to be evaluated as one of the most intuitive ways with a strong sense feedback of finger after pushing a key, while we couldn't imagine a touch-based keyboard without any physical keys.
 
-**Q. Put any question on [issues](https://github.com/WICG/spatial-navigation/issues) of this repository :D**
+**Q. Put any question on [issues](https://github.com/w3c/csswg-drafts/labels/css-nav-1) of this repository :D**
 - Everything for the spatial navigation is welcome!
 
 ## Reference
