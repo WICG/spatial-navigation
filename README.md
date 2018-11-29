@@ -52,6 +52,7 @@ See the [implStatus](implStatus.md) for the details of the implementation in Web
 - JavaScript Spatial Navigation (Mozilla)
   - https://github.com/luke-chang/js-spatial-navigation
 - Spotlight library for spatial navigation (LG Electronics)
+  - https://github.com/enactjs/enact/tree/master/packages/spotlight
   - https://github.com/enyojs/spotlight (deprecated)
 - Pass the Remote: User Input on TV Devices (Netflix Tech Blog)
   - https://medium.com/netflix-techblog/pass-the-remote-user-input-on-tv-devices-923f6920c9a8
