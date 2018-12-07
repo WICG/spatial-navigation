@@ -38,20 +38,21 @@
   }
 
   .grid-item {
-    height: 120px;
+    height: 60px;
     float: left;
     background: #D26;
     border: 2px solid #333;
     border-color: hsla(0, 0%, 0%, 0.5);
     border-radius: 5px;
+    text-align: center;
   }
 
   .grid-item--width2 { width:  40%; }
   .grid-item--width3 { width:  60%; }
 
-  .grid-item--height2 { height: 200px; }
-  .grid-item--height3 { height: 260px; }
-  .grid-item--height4 { height: 360px; }
+  .grid-item--height2 { height: 100px; }
+  .grid-item--height3 { height: 130px; }
+  .grid-item--height4 { height: 180px; }
 
 </style>
 </head>
@@ -65,14 +66,18 @@
     <div class="grid-item grid-item--width3" tabindex="0"></div>
     <div class="grid-item" tabindex="0"></div>
     <div class="grid-item" tabindex="0"></div>
-    <div class="grid-item grid-item--height2" style="background-color: aquamarine;" tabindex="0"></div>
+    <div class="grid-item grid-item--height2" tabindex="0"></div>
     <div class="grid-item grid-item--width2 grid-item--height3" tabindex="0"></div>
     <div class="grid-item" tabindex="0"></div>
-    <div class="grid-item grid-item--height2" id="initial_focus" style="background-color:cornflowerblue;" tabindex="0"></div>
+    <div class="grid-item grid-item--height2" id="initial_focus" style="background-color:cornflowerblue;" tabindex="0">
+      <p>Initial focused element</p>
+    </div>
     <div class="grid-item" tabindex="0"></div>
-    <div class="grid-item grid-item--width2 grid-item--height2" style="background-color: aquamarine;" tabindex="0"></div>
+    <div class="grid-item grid-item--width2 grid-item--height2" tabindex="0"></div>
     <div class="grid-item grid-item--width2" tabindex="0"></div>
-    <div class="grid-item" id="down_focus" style="background-color:darkorchid;" tabindex="0"></div>
+    <div class="grid-item" id="down_focus" style="background-color:darkorchid;" tabindex="0">
+      <p>Expected</p>
+    </div>
   </div> 
 </body>
 

@@ -48,7 +48,7 @@
     background: #F08080;
   }
 </style>
-
+<body>
 <div class="container">
   <div id="grid">
     <div tabindex="0" class="box" id="item1"><strong>1</strong></div>
@@ -62,7 +62,7 @@
     <div tabindex="0" class="box" id="item9"><strong>9</strong></div>
   </div>
 </div>
-
+</body>
 <script>
 test(function() {
   document.getElementById("initial_focus").focus();
@@ -70,3 +70,4 @@ test(function() {
   assert_equals(document.activeElement.id, "item4");
 }, "Move focus left from the staring point")
 </script>
+</html>
