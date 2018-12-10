@@ -1,0 +1,5 @@
+The specification has been moved to https://drafts.csswg.org/css-nav-1/
+If you want to report issues about the specification, please report them at:
+https://github.com/w3c/csswg-drafts/labels/css-nav-1
+
+Issues about the polyfill, or tests, or demos can be posted here.

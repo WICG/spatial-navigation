@@ -1,5 +1,6 @@
 # Spatial Navigation
-This is a repository for making the Web excellently embrace the spatial navigation's features so that the Web technology can be propagated into several industries such as TV, IVI, game console, and upcoming smart devices as well as PC and mobile for a11y.
+This is a repository for maintaining the polyfill and explaining documents about the spatial navigation.
+- Note: The Spec of the spatial navigation had been moved to CSS WG.
 
 ## Details
 * Read the [Explainer](https://drafts.csswg.org/css-nav-1/explainer)
