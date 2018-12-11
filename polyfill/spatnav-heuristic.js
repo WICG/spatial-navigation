@@ -1002,7 +1002,6 @@
     // Set orthogonal direction
     switch (dir) {
     case 'left':
-      /* falls through */
     case 'right':
       if (isBelow(rect1, rect2)) {
         points.exitPoint[1] = rect1.top;
@@ -1021,7 +1020,6 @@
       break;
 
     case 'up':
-    /* falls through */
     case 'down':
       if (isRightSide(rect1, rect2)) {
         points.exitPoint[0] = rect1.left;
@@ -1039,6 +1037,7 @@
       }
       break;
     }
+    
     return points;
   }
 
