@@ -1,0 +1,91 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Spatnav sanity check</title>
+<link rel="author" title="Jihye Hong" href="jh.hong@lge.com">
+<meta name=flags content="">
+<link rel=help href="https://wicg.github.io/spatial-navigation/#high-level-api">
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<!--load polyfill. To be removed before submitting to WPT-->
+<script src="../../polyfill/spatnav-heuristic.js"></script>
+<style>
+  :focus {
+  outline: 3px #3582ff solid;
+  }
+  * { box-sizing: border-box; }
+
+  body { font-family: sans-serif; }
+
+  /* ---- grid ---- */
+  .grid {
+    background: #EEE;
+    max-width: 600px;
+  }
+
+  /* clearfix */
+  .grid:after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+
+  /* ---- grid-item ---- */
+  .grid-sizer,
+  .grid-item {
+    width: 20%;
+  }
+
+  .grid-item {
+    height: 60px;
+    float: left;
+    background: #D26;
+    border: 2px solid #333;
+    border-color: hsla(0, 0%, 0%, 0.5);
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .grid-item--width2 { width:  40%; }
+  .grid-item--width3 { width:  60%; }
+
+  .grid-item--height2 { height: 100px; }
+  .grid-item--height3 { height: 130px; }
+  .grid-item--height4 { height: 180px; }
+
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="grid-sizer"></div>
+    <div class="grid-item" tabindex="0"></div>
+    <div class="grid-item grid-item--width2 grid-item--height2" tabindex="0"></div>
+    <div class="grid-item grid-item--height3" tabindex="0"></div>
+    <div class="grid-item grid-item--height2" tabindex="0"></div>
+    <div class="grid-item grid-item--width3" tabindex="0"></div>
+    <div class="grid-item" tabindex="0"></div>
+    <div class="grid-item" tabindex="0"></div>
+    <div class="grid-item grid-item--height2" tabindex="0"></div>
+    <div class="grid-item grid-item--width2 grid-item--height3" tabindex="0"></div>
+    <div class="grid-item" tabindex="0"></div>
+    <div class="grid-item grid-item--height2" id="initial_focus" style="background-color:cornflowerblue;" tabindex="0">
+      <p>Initial focused element</p>
+    </div>
+    <div class="grid-item" tabindex="0"></div>
+    <div class="grid-item grid-item--width2 grid-item--height2" tabindex="0"></div>
+    <div class="grid-item grid-item--width2" tabindex="0"></div>
+    <div class="grid-item" id="down_focus" style="background-color:darkorchid;" tabindex="0">
+      <p>Expected</p>
+    </div>
+  </div> 
+</body>
+
+<script>
+  test(function() {
+    document.getElementById("initial_focus").focus();
+    window.navigate("down");
+    assert_equals(document.activeElement.id, "down_focus");
+  }, "Move focus right from the staring point")
+  </script>
+</html>
