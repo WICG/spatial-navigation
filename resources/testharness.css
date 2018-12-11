@@ -9,8 +9,7 @@ body { font-family: sans-serif; }
   margin: 10px;
 }
 
-.pointSelect {
-  margin: 10px 20px -15px 20px;
+.select {
   width: 730px;
   padding: 10px;
   color: white;
