@@ -1,0 +1,25 @@
+
+body { font-family: sans-serif; }
+
+:focus {
+  outline: 4px #3582ff solid;
+}
+
+.container {
+  margin: 10px;
+}
+
+.pointSelect {
+  margin: 10px 20px -15px 20px;
+  width: 730px;
+  padding: 10px;
+  color: white;
+  border-radius: 10px 10px 0 0;
+  background: gray;
+  height: 20px;
+  line-height : 20px;
+}
+
+#initial_focus {
+  background: #F08080;
+}
