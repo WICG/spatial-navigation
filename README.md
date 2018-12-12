@@ -1,14 +1,20 @@
 # Spatial Navigation
-This is a repository for maintaining the polyfill and explaining documents about the spatial navigation.
-- Note: The Spec of the spatial navigation had been moved to CSS WG.
+
+**Written**: 2017-10-17, **Updated**: 2018-12-12
+
+**Spatial Navigation** provides a processing model and standards APIs for directional(top/left/bottom/right) focus navigation using arrow keys, jog shuttle, and gesture on several devices. (e.g. TV, feature phone, game console, IVI system)
+
+This repository is for supportive tools such as polyfill, demo, and relevant documents. The spatial navigation [spec](https://drafts.csswg.org/css-nav-1/) has been migrated from WICG to CSS Working Group as an official draft on Nov 2018.
+
+You can raise an spec issue in [CSS WG](https://github.com/w3c/csswg-drafts/labels/css-nav-1), but raise others(polyfill, demo, ideas) [here](https://github.com/WICG/spatial-navigation/issues) as well.
 
 ## Details
 * Read the [Explainer](https://drafts.csswg.org/css-nav-1/explainer)
 * Read the [Spec](https://drafts.csswg.org/css-nav-1/)
-* See the [Implementation Status](implStatus.md)
 * Play with the [Polyfill](polyfill/README.md)
 * Try the [Demo](https://wicg.github.io/spatial-navigation/demo/)
-* Give feedback on [issues](https://github.com/w3c/csswg-drafts/labels/css-nav-1) or via [email](mailto://lgewst@gmail.com)
+* See the [Implementation Status](implStatus.md)
+* Give feedback on [issues for spec](https://github.com/w3c/csswg-drafts/labels/css-nav-1) in CSS WG or [issues for others](https://github.com/WICG/spatial-navigation/issues) in WICG
 
 ## Overview
 **Spatial navigation** is the ability to navigate between focusable elements based on their position within a structured document. Spatial navigation is often called 'directional navigation' which enables four(4) directional navigation. Users are usually familiar with the 2-way navigation using tab key for the forward direction and shift+tab key for the backward direction, but not familiar with the 4-way navigation using arrow keys.
