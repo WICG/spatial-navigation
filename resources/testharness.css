@@ -5,7 +5,7 @@ body { font-family: sans-serif; }
   outline: 4px #3582ff solid;
 }
 
-.container {
+.container, #container{
   margin: 10px;
 }
 
@@ -21,4 +21,8 @@ body { font-family: sans-serif; }
 
 #initial_focus {
   background: #F08080;
+}
+
+.test_btn {
+  font-weight: bold;
 }
