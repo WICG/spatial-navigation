@@ -9,8 +9,8 @@ This repository is for supportive tools such as polyfill, demo, and relevant doc
 You can raise an spec issue in [CSS WG](https://github.com/w3c/csswg-drafts/labels/css-nav-1), but also raise others(polyfill, demo, ideas) in [WICG](https://github.com/WICG/spatial-navigation/issues) here.
 
 ## Details
-* Read the [Explainer](https://drafts.csswg.org/css-nav-1/explainer)
 * Read the [Spec](https://drafts.csswg.org/css-nav-1/)
+* Read the [Explainer](https://drafts.csswg.org/css-nav-1/explainer)
 * Play with the [Polyfill](polyfill/README.md)
 * Try the [Demo](https://wicg.github.io/spatial-navigation/demo/)
 * See the [Implementation Status](implStatus.md)
@@ -21,8 +21,8 @@ You can raise an spec issue in [CSS WG](https://github.com/w3c/csswg-drafts/labe
 
 Regarding TV remote control, game console pad, IVI jog dial with 4-way keys, and Web accessibility, the spatial navigation has been a rising important input mechanism in several industries. If the web can embrace the spatial navigation and efficiently support the functionalities in web engines and W3C standard APIs, it will be more promising technology for existing products as mentioned above and various upcoming smart devices.
 
-## Mission
-Prior to the mission explanation, we need to understand how the arrow keys currently work on the web. If you're watching this page in a normal HD monitor and desktop, not mobile, please push a down-arrow key on your keyboard. What happens? Basically, scrolling downward would be triggered. That's the default behavior of arrow keys in the web, only when the page is scrollable in the direction.
+## Requirement
+Prior to the requirement explanation, we need to first understand how the arrow keys currently work on the web. If you're watching this page in a normal HD monitor and desktop, not mobile, please push a down-arrow key on your keyboard. What happens? Basically, scrolling downward would be triggered. That's the default behavior of arrow keys in the web, only when the page is scrollable in the direction.
 
 In spatial navigation mode, the default behavior of arrow keys is changed from scrolling behavior to focus moving so that users can use the arrow keys to navigate between focusable elements based on their position. To support the functionalities of the spatial navigation, we should consider the following three steps:
 1. A heuristic algorithm for the spatial navigation supported in web engines by default (e.g. next best focusable element decision)
@@ -52,17 +52,18 @@ See the [implStatus](implStatus.md) for the details of the implementation in web
 
 - In the future, the input mechanism for smart devices will change to something like voice command, hand gesture, and gaze direction, but the key-based interface will never disappear, even though it'll be used as a secondary method. The key-based interface used to be evaluated as one of the most intuitive ways with a strong sense feedback of finger after pushing a key, as if it's inconvenient a touch-based keyboard without any physical keys.
 
-**Q. Please put any question in the following links:**
-  - [Issues](https://github.com/w3c/csswg-drafts/labels/css-nav-1) in CSS WG for spec issues
-  - [Issues](https://github.com/WICG/spatial-navigation/issues) in WICG WG for any other issues
-  - Everything for the spatial navigation is welcome! :D
+**Q. I would like to raise an issue or idea about spatial navigation.**
+- Please put any question via the following two links:
+- [Issues](https://github.com/w3c/csswg-drafts/labels/css-nav-1) in CSS WG for spec issues
+- [Issues](https://github.com/WICG/spatial-navigation/issues) in WICG WG for any other issues
+- Everything for the spatial navigation is welcome! :D
 
 ## Reference
 - WICD Core 1.0 Working Group Note (W3C)
   - https://www.w3.org/TR/WICD/#focus-handling
-- JavaScript library targeting to Firefox OS (Mozilla)
+- A JavaScript library targeting to Firefox OS (Mozilla)
   - https://github.com/luke-chang/js-spatial-navigation
-- JavaScript library targeting to LG webOS platform (LG Electronics)
+- A JavaScript library targeting to LG webOS platform (LG Electronics)
   - https://github.com/enactjs/enact/tree/master/packages/spotlight
   - https://github.com/enyojs/spotlight (deprecated a few years ago)
 - Pass the Remote: User Input on TV Devices (Netflix Tech Blog)
