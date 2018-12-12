@@ -25,9 +25,9 @@ Regarding TV remote control, game console pad, IVI jog dial with 4-way keys, and
 Prior to the requirement explanation, we need to first understand how the arrow keys currently work on the web. If you're watching this page in a normal HD monitor and desktop, not mobile, please push a down-arrow key on your keyboard. What happens? Basically, scrolling downward would be triggered. That's the default behavior of arrow keys in the web, only when the page is scrollable in the direction.
 
 In spatial navigation mode, the default behavior of arrow keys is changed from scrolling behavior to focus moving so that users can use the arrow keys to navigate between focusable elements based on their position. To support the functionalities of the spatial navigation, we should consider the following three steps:
-1. A heuristic algorithm for the spatial navigation supported in web engines by default (e.g. next best focusable element decision)
+1. A heuristic algorithm to be supported in web engines by default (e.g. how to judge a next best focusable element)
 2. Overriding methods on top of the heuristic algorithm (DOM method/attribute/event as standard APIs)
-3. The relevant API for efficiently supporting the spatial navigation (e.g. setting an element as a container via a CSS property)
+3. Some relevant APIs for efficiently supporting the spatial navigation (e.g. setting an element as a container)
 
 See the [explainer](https://drafts.csswg.org/css-nav-1/explainer) for the details of W3C standardization for #1, #2 and #3 above.
 
