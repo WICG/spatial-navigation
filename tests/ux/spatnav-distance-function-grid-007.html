@@ -1,0 +1,122 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Spatnav sanity check</title>
+<link rel="author" title="Jihye Hong" href="jh.hong@lge.com">
+<meta name=flags content="">
+<link rel=help href="https://wicg.github.io/spatial-navigation/#high-level-api">
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel="stylesheet" href="../../resources/testharness.css"></link>
+
+<!--load polyfill. To be removed before submitting to WPT-->
+<script src="../../polyfill/spatnav-heuristic.js"></script>
+<style>
+#containerbox {
+  background-color: #eee;
+  width: 825px;
+  height: 600px;
+  margin: 0 auto;
+  border: 1px solid black;
+}
+
+.leftbox {
+  float: left;
+}
+
+.rightbox {
+  float: right;
+}
+
+.bottombox {
+  font-size: 0px;
+}
+
+.leftbox .navigable, .bottombox .navigable, .nonfocusable {
+  background-color: #e8bbe5;
+  width: 200px;
+  height: 114px;
+  margin: 5px;
+
+  color: white;
+  text-align: center;
+  line-height: 114px;
+  vertical-align: top;
+  font-size: 1rem;
+}
+
+.nonfocusable {
+  background-color: #bbb;
+  color: black;
+}
+
+.nonfocusable::before {
+  content: 'Non-focusable Element';
+}
+
+.bottombox .navigable {
+  display: inline-block;
+  margin-left: 0px;
+  margin-bottom: 0px;
+}
+
+#main {
+  background-color: #8db0e8;
+  width: 610px;
+  height: 352px;
+  margin: 5px 0 0 0;
+}
+
+.navigable {
+  outline: 0;
+}
+
+.navigable:focus {
+  opacity: 1;
+  background-color:red !important;
+}
+
+#sidebox {
+  width: 825px;
+  margin: 2em auto 0 auto;
+}
+
+</style>
+</head>
+<body>    
+  <div id="containerbox">
+    <div class="leftbox">
+      <div class="navigable" tabindex="0"></div>
+      <div class="navigable" tabindex="0"></div>
+      <div class="navigable" tabindex="0"></div>
+      <div class="navigable" tabindex="0"></div>
+      <div class="nonfocusable"></div>
+    </div>
+    <div class="rightbox">
+      <div id="main" class="navigable" tabindex="0"></div>
+      <div class="bottombox">
+        <div class="navigable" tabindex="0"></div>
+        <div class="navigable" tabindex="0"></div>
+        <div class="navigable" tabindex="0"></div><br>
+        <div class="navigable" tabindex="0"></div>
+        <div class="navigable" tabindex="0"></div>
+        <div class="navigable" tabindex="0"></div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+  test(function() {
+    document.getElementById("orangeBox").focus();
+    window.navigate("up");
+    assert_equals(document.activeElement.id, "name");
+  }, "Move focus up from the staring point")
+
+  test(function() {
+    document.getElementById("symbol").focus();
+    window.navigate("down");
+    assert_equals(document.activeElement.id, "yellowBox");
+  }, "Move focus down from the staring point")
+  </script>
+</html>
