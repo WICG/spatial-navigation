@@ -6,11 +6,13 @@ body { font-family: sans-serif; }
 }
 
 .container, #container{
+  width: 720px;
   margin: 10px;
+  border: black solid 1px;
 }
 
 .select {
-  width: 730px;
+  width: 720px;
   padding: 10px;
   color: white;
   border-radius: 10px 10px 0 0;
