@@ -5,6 +5,39 @@
 * Release Version 1.0
 *
 */
+class SpatialNavigationTest {
+  constructor (targetId, dir, expectedId) {
+    this.targetId = targetId;
+    this.expectedId = expectedId;
+    this.actualId = null;
+    this.test_dir = dir;
+    this.test_result = null;
+  }
+
+  runTest() {
+    document.getElementById(this.targetId).focus();   
+    window.navigate(this.test_dir);    
+    this.actualId = document.activeElement.id;
+    this.test_result = (this.actualId === this.expectedId) ? true : false;
+
+    console.log(this.test_result);
+  }
+
+  getTestResult() {
+    return this.test_result;
+  }
+
+  getTestMsg() {
+    if (this.test_result === true)
+      return `Move focus ${this.test_dir} 
+                from ${this.targetId} 
+                to ${this.actualId} `;
+    else if (this.test_result === false)
+      return `Expected ${this.expectedId}, but got ${this.actualId}
+              when moving focus ${this.test_dir} from ${this.targetId}`;
+  }
+}
+
 
 (function () {
 
