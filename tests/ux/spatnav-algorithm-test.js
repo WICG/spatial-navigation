@@ -130,7 +130,11 @@ function getDistance(rect1, rect2, dir, options) {
   let orthogonal_bias = 0;
   let points = null;
 
-  if (options.point === 'closest_vertex') {
+  if (options.point === 'closest_point') {
+    // calculate the distance function with closest points
+    points = getPointsFromClosestPointsOnEdges(dir, rect1, rect2);
+    console.log(`point option : closest points ='Exit: ${points.exitPoint}, Entry: ${points.entryPoint}'`);
+  } else if (options.point === 'closest_vertex') {
     // calculate the distance function with closest vertex
     points = getPointsFromVertices(dir, rect1, rect2);
     console.log(`point option : closest vertices ='Exit: ${points.exitPoint}, Entry: ${points.entryPoint}'`);
@@ -196,33 +200,37 @@ function getDistance(rect1, rect2, dir, options) {
 }
 
 function getPointsFromClosestPointsOnEdges(dir = 'down', rect1, rect2) {
-  
-}
-
-function getPointsFromVertices(dir = 'down', rect1, rect2) {
   const points = {entryPoint:[0,0], exitPoint:[0,0]};
 
   // Set direction
   switch (dir) {
   case 'left':
     points.exitPoint[0] = rect1.left;
-    if (rect2.right < rect1.left) points.entryPoint[0] = rect2.right;
-    else points.entryPoint[0] = rect1.left;
+    if (rect2.right < rect1.left)
+      points.entryPoint[0] = rect2.right;
+    else 
+      points.entryPoint[0] = rect1.left;
     break;
   case 'up':
     points.exitPoint[1] = rect1.top;
-    if (rect2.bottom < rect1.top) points.entryPoint[1] = rect2.bottom;
-    else points.entryPoint[1] = rect1.top;
+    if (rect2.bottom < rect1.top)
+      points.entryPoint[1] = rect2.bottom;
+    else
+      points.entryPoint[1] = rect1.top;
     break;
   case 'right':
     points.exitPoint[0] = rect1.right;
-    if (rect2.left > rect1.right) points.entryPoint[0] = rect2.left;
-    else points.entryPoint[0] = rect1.right;
+    if (rect2.left > rect1.right)
+      points.entryPoint[0] = rect2.left;
+    else 
+      points.entryPoint[0] = rect1.right;
     break;
   case 'down':
     points.exitPoint[1] = rect1.bottom;
-    if (rect2.top > rect1.bottom) points.entryPoint[1] = rect2.top;
-    else points.entryPoint[1] = rect1.bottom;
+    if (rect2.top > rect1.bottom)
+      points.entryPoint[1] = rect2.top;
+    else
+      points.entryPoint[1] = rect1.bottom;
     break;
   }
 
@@ -232,13 +240,17 @@ function getPointsFromVertices(dir = 'down', rect1, rect2) {
   case 'right':
     if (isBelow(rect1, rect2)) {
       points.exitPoint[1] = rect1.top;
-      if (rect2.bottom < rect1.top) points.entryPoint[1] = rect2.bottom;
-      else points.entryPoint[1] = rect1.top;
+      if (rect2.bottom < rect1.top)
+        points.entryPoint[1] = rect2.bottom;
+      else
+        points.entryPoint[1] = rect1.top;
     }
     else if (isBelow(rect2, rect1)) {
       points.exitPoint[1] = rect1.bottom;
-      if (rect2.top > rect1.bottom) points.entryPoint[1] = rect2.top;
-      else points.entryPoint[1] = rect1.bottom;
+      if (rect2.top > rect1.bottom)
+        points.entryPoint[1] = rect2.top;
+      else
+        points.entryPoint[1] = rect1.bottom;
     }
     else {
       points.exitPoint[1] = Math.max(rect1.top, rect2.top);
@@ -250,13 +262,17 @@ function getPointsFromVertices(dir = 'down', rect1, rect2) {
   case 'down':
     if (isRightSide(rect1, rect2)) {
       points.exitPoint[0] = rect1.left;
-      if (rect2.right < rect1.left) points.entryPoint[0] = rect2.right;
-      else points.entryPoint[0] = rect1.left;
+      if (rect2.right < rect1.left)
+        points.entryPoint[0] = rect2.right;
+      else
+        points.entryPoint[0] = rect1.left;
     }
     else if (isRightSide(rect2, rect1)) {
       points.exitPoint[0] = rect1.right;
-      if (rect2.left > rect1.right) points.entryPoint[0] = rect2.left;
-      else points.entryPoint[0] = rect1.right;
+      if (rect2.left > rect1.right)
+        points.entryPoint[0] = rect2.left;
+      else
+        points.entryPoint[0] = rect1.right;
     }
     else {
       points.exitPoint[0] = Math.max(rect1.left, rect2.left);
@@ -268,23 +284,103 @@ function getPointsFromVertices(dir = 'down', rect1, rect2) {
   return points;
 }
 
+function getPointsFromVertices(dir = 'down', rect1, rect2) {
+  const points = {entryPoint:[0,0], exitPoint:[0,0]};
+
+  // Set direction
+  switch (dir) {
+    case 'left':
+      points.exitPoint[0] = rect1.left;
+      if (rect2.x < rect1.left)
+        points.entryPoint[0] = rect2.left;
+      else
+        points.entryPoint[0] = rect2.right; 
+      break;
+    case 'up':
+      points.exitPoint[1] = rect1.top;
+      if (rect2.y < rect1.top)
+        points.entryPoint[1] = rect2.top;
+      else
+        points.entryPoint[1] = rect2.bottom;
+      break;
+    case 'right':
+      points.exitPoint[0] = rect1.right;
+      if (rect2.x > rect1.right)
+        points.entryPoint[0] = rect2.right;
+      else
+        points.entryPoint[0] = rect2.left;
+      break;
+    case 'down':
+      points.exitPoint[1] = rect1.bottom;
+      if (rect2.y > rect1.bottom)
+        points.entryPoint[1] = rect2.bottom;
+      else
+        points.entryPoint[1] = rect2.top;
+      break;
+    }
+  
+  // Set orthogonal direction
+  switch (dir) {
+    case 'left':
+    case 'right':
+      if (rect2.y < rect1.top) {
+        points.exitPoint[1] = rect1.top;
+        points.entryPoint[1] = rect2.bottom;
+      }
+      else if ((rect1.top <= rect2.y) && (rect2.y < rect1.y)) {
+        points.exitPoint[1] = rect1.top;
+        points.entryPoint[1] = rect2.top;
+      }
+      else if ((rect1.y <= rect2.y) && (rect2.y < rect1.bottom)) {
+        points.exitPoint[1] = rect1.bottom;
+        points.entryPoint[1] = rect2.bottom;
+      }
+      else {
+        points.exitPoint[1] = rect1.bottom;
+        points.entryPoint[1] = rect2.top;
+      }
+      break;
+  
+    case 'up':
+    case 'down':
+      if (rect2.x < rect1.left) {
+        points.exitPoint[0] = rect1.left;
+        points.entryPoint[0] = rect2.right;
+      }
+      else if ((rect1.left <= rect2.x) && (rect2.x < rect1.x)) {
+        points.exitPoint[0] = rect1.left;
+        points.entryPoint[0] = rect2.left;
+      }
+      else if ((rect1.x <= rect2.x) && (rect2.x < rect1.right)) {
+        points.exitPoint[0] = rect1.right;
+        points.entryPoint[0] = rect2.right;
+      }
+      else {
+        points.exitPoint[0] = rect1.right;
+        points.entryPoint[0] = rect2.left;
+      }
+      break;
+  }
+  return points;
+}
+
 function getPointsFromCenterPoints(dir = 'down', rect1, rect2) {
   const points = {entryPoint:[0,0], exitPoint:[0,0]};
 
   // exit point comes from the rect 1
-  points.exitPoint[0] = (rect1.left + rect1.right) / 2;
-  points.exitPoint[1] = (rect1.top + rect1.bottom) / 2;
+  points.exitPoint[0] = rect1.x;
+  points.exitPoint[1] = rect1.y;
 
   // entry point comes from the rect 2
-  points.entryPoint[0] = (rect2.left + rect2.right) / 2;
-  points.entryPoint[1] = (rect2.top + rect2.bottom) / 2;
+  points.entryPoint[0] = rect2.x;
+  points.entryPoint[1] = rect2.y;
   
   return points;
 }
 
 function getPointsFromCenterPointsOnEdges(dir = 'down', rect1, rect2) {
   const points = {entryPoint:[0,0], exitPoint:[0,0]};
-  
+
   // Set direction
   switch (dir) {
   case 'left':
