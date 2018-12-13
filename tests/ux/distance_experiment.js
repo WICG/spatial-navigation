@@ -19,8 +19,6 @@ class SpatialNavigationTest {
     window.navigate(this.test_dir);    
     this.actualId = document.activeElement.id;
     this.test_result = (this.actualId === this.expectedId) ? true : false;
-
-    console.log(this.test_result);
   }
 
   getTestResult() {
@@ -49,6 +47,23 @@ function clearResult(element) {
   while (element.firstChild) {
     element.removeChild(element.firstChild);
   }
+}
+
+function writeTestSummary(element, Array) {
+  let successCnt = 0;
+
+  writeResult(element, "===== Test Result =====");
+  for (let i = 0; i < Array.length; i++) {
+    Array[i].runTest();
+    if (Array[i].getTestResult() === true)
+      successCnt++;
+
+    writeResult(element, 
+      `Result: ${Array[i].getTestResult()}   ,   Detail: ${Array[i].getTestMsg()}`);
+  }
+
+  writeResult(element, 
+    `Total: ${Array.length}   ,   Success: ${successCnt},   Fail: ${Array.length - successCnt}`);
 }
 
 (function () {
