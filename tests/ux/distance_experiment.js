@@ -38,6 +38,18 @@ class SpatialNavigationTest {
   }
 }
 
+function writeResult(element, text) {
+  let x = document.createElement('P');
+  x.appendChild(document.createTextNode(text));
+  element.appendChild(x);
+}
+
+function clearResult(element) {
+  // If the console element has any child nodes, remove its child nodes
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
+}
 
 (function () {
 
