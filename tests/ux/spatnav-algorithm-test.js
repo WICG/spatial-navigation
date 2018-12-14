@@ -368,12 +368,12 @@ function getPointsFromCenterPoints(dir = 'down', rect1, rect2) {
   const points = {entryPoint:[0,0], exitPoint:[0,0]};
 
   // exit point comes from the rect 1
-  points.exitPoint[0] = rect1.x;
-  points.exitPoint[1] = rect1.y;
+  points.exitPoint[0] = (rect1.left + rect1.right) / 2;
+  points.exitPoint[1] = (rect1.top + rect1.bottom) / 2;
 
   // entry point comes from the rect 2
-  points.entryPoint[0] = rect2.x;
-  points.entryPoint[1] = rect2.y;
+  points.entryPoint[0] = (rect2.left + rect2.right) / 2;
+  points.entryPoint[1] = (rect2.top + rect2.bottom) / 2;
   
   return points;
 }
