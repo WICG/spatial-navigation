@@ -12,121 +12,118 @@
 <script src="spatnav-algorithm-test.js"></script>
 
 <style>
-  
-  * { box-sizing: border-box; }
-  #container {
-    margin: 10px;
-    position: relative;
-    border: 1px solid black;
-    height: 300px;
-  }
+.button, .button-group, .grid, .element-item { box-sizing: border-box; }
+#container {
+  margin: 10px;
+  border: 1px solid black;
+  height: 300px;
+}
 
-  /* ---- button ---- */
+/* ---- button ---- */
+.button {
+  display: inline-block;
+  padding: 0.5em 1.0em;
+  background: #EEE;
+  border: none;
+  border-radius: 7px;
+  background-image: linear-gradient( to bottom, hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 0.2) );
+  color: #222;
+  font-family: sans-serif;
+  font-size: 16px;
+  text-shadow: 0 1px white;
+  cursor: pointer;
+}
 
-    .button {
-      display: inline-block;
-      padding: 0.5em 1.0em;
-      background: #EEE;
-      border: none;
-      border-radius: 7px;
-      background-image: linear-gradient( to bottom, hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 0.2) );
-      color: #222;
-      font-family: sans-serif;
-      font-size: 16px;
-      text-shadow: 0 1px white;
-      cursor: pointer;
-    }
+/* ---- button-group ---- */
 
-    /* ---- button-group ---- */
+.button-group {
+  margin-bottom: 20px;
+}
 
-    .button-group {
-      margin-bottom: 20px;
-    }
+.button-group:after {
+  content: '';
+  display: block;
+  clear: both;
+}
 
-    .button-group:after {
-      content: '';
-      display: block;
-      clear: both;
-    }
+.button-group .button {
+  float: left;
+  border-radius: 0;
+  margin-left: 0;
+  margin-right: 1px;
+}
 
-    .button-group .button {
-      float: left;
-      border-radius: 0;
-      margin-left: 0;
-      margin-right: 1px;
-    }
+.button-group .button:first-child { border-radius: 0.5em 0 0 0.5em; }
+.button-group .button:last-child { border-radius: 0 0.5em 0.5em 0; }
 
-    .button-group .button:first-child { border-radius: 0.5em 0 0 0.5em; }
-    .button-group .button:last-child { border-radius: 0 0.5em 0.5em 0; }
+/* ---- isotope ---- */
 
-    /* ---- isotope ---- */
+.grid {
+  border: 1px solid #333;
+}
 
-    .grid {
-      border: 1px solid #333;
-    }
+/* clear fix */
+.grid:after {
+  content: '';
+  display: block;
+  clear: both;
+}
 
-    /* clear fix */
-    .grid:after {
-      content: '';
-      display: block;
-      clear: both;
-    }
+/* ---- .element-item ---- */
 
-    /* ---- .element-item ---- */
+.element-item {
+  position: relative;
+  float: left;
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+  padding: 10px;
+  background: #888;
+  color: #262524;
+}
 
-    .element-item {
-      position: relative;
-      float: left;
-      width: 100px;
-      height: 100px;
-      margin: 5px;
-      padding: 10px;
-      background: #888;
-      color: #262524;
-    }
+.element-item > * {
+  margin: 0;
+  padding: 0;
+}
 
-    .element-item > * {
-      margin: 0;
-      padding: 0;
-    }
+.element-item #name {
+  position: absolute;
 
-    .element-item #name {
-      position: absolute;
+  left: 10px;
+  top: 60px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+  font-weight: normal;
+}
 
-      left: 10px;
-      top: 60px;
-      text-transform: none;
-      letter-spacing: 0;
-      font-size: 12px;
-      font-weight: normal;
-    }
+.element-item #symbol {
+  position: absolute;
+  left: 10px;
+  top: 0px;
+  font-size: 42px;
+  font-weight: bold;
+  color: white;
+}
 
-    .element-item #symbol {
-      position: absolute;
-      left: 10px;
-      top: 0px;
-      font-size: 42px;
-      font-weight: bold;
-      color: white;
-    }
+.element-item #number {
+  position: absolute;
+  right: 8px;
+  top: 5px;
+}
 
-    .element-item #number {
-      position: absolute;
-      right: 8px;
-      top: 5px;
-    }
+.element-item #weight {
+  position: absolute;
+  left: 10px;
+  top: 76px;
+  font-size: 12px;
+}
 
-    .element-item #weight {
-      position: absolute;
-      left: 10px;
-      top: 76px;
-      font-size: 12px;
-    }
-
-    #redBox { background: red; }
-    #orangeBox { background: orange; }
-    #yellowBox { background:yellow; }
-    #greenBox { background:forestgreen; }
+#redBox { background: red; }
+#orangeBox { background: orange; }
+#yellowBox { background:yellow; }
+#greenBox { background:forestgreen; }
 </style>
 </head>
 <body onload="init()">

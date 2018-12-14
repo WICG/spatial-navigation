@@ -12,15 +12,15 @@
 <script src="spatnav-algorithm-test.js"></script>
 
 <style>
-  * { box-sizing: border-box; }
+ .grid-item { box-sizing: border-box; }
   /* ---- grid ---- */
-  #grid {
+  #container {
     max-width: 600px;
     margin-top: 20px;
   }
 
   /* clearfix */
-  .grid:after {
+  #container:after {
     content: '';
     display: block;
     clear: both;
@@ -69,7 +69,8 @@
   
     <button id="get_result" style="margin:0 20px">Get Test Results</button>
   </div>
-  <div id="grid">
+  
+  <div id="container">
     <div class="grid-sizer"></div>
     <div class="grid-item" tabindex="0"></div>
     <div class="grid-item grid-item--width2 grid-item--height2" tabindex="0"></div>
@@ -91,6 +92,7 @@
       <p>Expected</p>
     </div>
   </div>
+  
   <div id="resultSection">
     <br>
   </div>
@@ -99,7 +101,7 @@
 <script type="text/javascript">
 const getResultBtn = document.getElementById('get_result');
 const resultSection = document.getElementById('resultSection');
-const container = document.getElementById('grid');
+const container = document.getElementById('container');
 
 getResultBtn.addEventListener('click', function (e) {
   
@@ -120,7 +122,7 @@ getResultBtn.addEventListener('click', function (e) {
 <script type="text/javascript">
 function init() {
   console.log('========Init=======');
-  const container = document.getElementById('grid');
+  const container = document.getElementById('container');
 
   container.addEventListener('keydown', function(e) {
     e.preventDefault();
