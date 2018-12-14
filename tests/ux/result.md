@@ -18,8 +18,8 @@
 
 ## Test Result
 <table style="font-family: 'Roboto';">
-  <thead style="background-color:purple; font-weight: bold; color: white;">
-  <tr>
+  <thead>
+  <tr style="background-color:purple; font-weight: bold; color: white;">
     <td align="center" rowspan="2">Method</td>
     <td align="center" rowspan="2">Expected</td>
     <td align="center" rowspan="2">Blink</td>
