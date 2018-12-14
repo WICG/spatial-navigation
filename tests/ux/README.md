@@ -8,3 +8,5 @@ of the problem space improves.
 
 It is expected that this will be used to influence the specification,
 but not necessarily that there will be a perfect match.
+
+See the test results in [here](testResult.md)
