@@ -5,12 +5,12 @@
 <meta name=flags content="">
 <link rel=help href="https://wicg.github.io/spatial-navigation/#high-level-api">
 
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
 <link rel="stylesheet" href="../../resources/testharness.css"></link>
 
 <!--load polyfill. To be removed before submitting to WPT-->
 <script src="../../polyfill/spatnav-heuristic.js"></script>
+<script src="spatnav-algorithm-test.js"></script>
+
 <style>
 #containerbox {
   background-color: #eee;
@@ -83,10 +83,27 @@
 
 </style>
 </head>
-<body>    
+<body onload="init()">
+  <div class="select">
+    Points :
+    <select id="point_option" style="margin:0 20px">
+      <option value="closest_point" selected>Closest points on edges</option>
+      <option value="closest_vertex">Closest points among vertices </option>
+      <option value="center_point">Center points</option>
+      <option value="center_edge">Center points on edges</option>
+    </select>
+  
+    Function :
+    <select id="function_option" style="margin:0 20px">
+      <option value="original" selected>A + B + C - D</option>
+      <option value="sameDirOriented">A + C - D</option>
+    </select>
+  
+    <button id="get_result" style="margin:0 20px">Get Test Results</button>
+  </div>  
   <div id="containerbox">
     <div class="leftbox">
-      <div class="navigable" tabindex="0"></div>
+      <div class="navigable" id="box1" tabindex="0"></div>
       <div class="navigable" tabindex="0"></div>
       <div class="navigable" tabindex="0"></div>
       <div class="navigable" tabindex="0"></div>
@@ -104,19 +121,46 @@
       </div>
     </div>
   </div>
+  <div id="resultSection">
+    <br>
+  </div>
 </body>
-
-<script>
-  test(function() {
-    document.getElementById("orangeBox").focus();
-    window.navigate("up");
-    assert_equals(document.activeElement.id, "name");
-  }, "Move focus up from the staring point")
-
-  test(function() {
-    document.getElementById("symbol").focus();
-    window.navigate("down");
-    assert_equals(document.activeElement.id, "yellowBox");
-  }, "Move focus down from the staring point")
+<script type="text/javascript">
+  const getResultBtn = document.getElementById('get_result');
+  const resultSection = document.getElementById('resultSection');
+  const container = document.getElementById('containerbox');
+  
+  getResultBtn.addEventListener('click', function (e) {
+    
+    const options = {point: document.getElementById('point_option').value, 
+                      function: document.getElementById('function_option').value};
+  
+    clearResult(resultSection);
+    let testArray = new Array();
+  
+    // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
+    testArray.push(new SpatialNavigationTest(container, "box1", "right", "main", options));
+  
+    console.log(testArray);
+    
+    writeTestSummary(resultSection, testArray);
+  });
   </script>
-</html>
+  <script type="text/javascript">
+  function init() {
+    console.log('========Init=======');
+    const container = document.getElementById('containerbox');
+  
+    container.addEventListener('keydown', function(e) {
+      e.preventDefault();
+      const dir = ARROW_KEY_CODE[e.keyCode];
+      const target = e.target;
+      const options = {point: document.getElementById('point_option').value, 
+                      function: document.getElementById('function_option').value};
+  
+      navigateByOption(container, target, dir, options);   
+      
+    });
+  }
+  </script>
+  </html>

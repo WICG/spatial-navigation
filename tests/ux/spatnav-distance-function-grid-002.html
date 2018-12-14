@@ -5,20 +5,17 @@
 <meta name=flags content="">
 <link rel=help href="https://wicg.github.io/spatial-navigation/#high-level-api">
 
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
 <link rel="stylesheet" href="../../resources/testharness.css"></link>
 
 <!--load polyfill. To be removed before submitting to WPT-->
 <script src="../../polyfill/spatnav-heuristic.js"></script>
+<script src="spatnav-algorithm-test.js"></script>
 
 <style>
-  
-  .container {
+  #container {
     margin: 10px;
     position: relative;
     border: 1px solid black;
-    width: 500px;
     height: 300px;
   }
 
@@ -32,8 +29,25 @@
   }
 </style>
 
-<body>
-<div class="container">
+<body onload="init()">
+<div class="select">
+  Points :
+  <select id="point_option" style="margin:0 20px">
+    <option value="closest_point" selected>Closest points on edges</option>
+    <option value="closest_vertex">Closest points among vertices </option>
+    <option value="center_point">Center points</option>
+    <option value="center_edge">Center points on edges</option>
+  </select>
+
+  Function :
+  <select id="function_option" style="margin:0 20px">
+    <option value="original" selected>A + B + C - D</option>
+    <option value="sameDirOriented">A + C - D</option>
+  </select>
+
+  <button id="get_result" style="margin:0 20px">Get Test Results</button>
+</div>
+<div id="container">
   <div tabindex="0" class="box" style="left: 220px; top: 40px;"></div>
   <div tabindex="0" class="box" style="left: 280px; top: 40px;"></div>
   <div tabindex="0" class="box" style="left: 340px; top: 40px;"></div>
@@ -41,11 +55,46 @@
   <div tabindex="0" class="box" id="right_focus" style="left: 340px; top: 120px;"></div>
   <div tabindex="0" class="box" id="initial_focus" style="width: 200px; left: 50px; top: 120px;"></div>
 </div>
+<div id="resultSection">
+  <br>
+</div>
 </body>
-<script>
-test(function() {
-  document.getElementById("initial_focus").focus();
-  window.navigate("right");
-  assert_equals(document.activeElement.id, "right_focus");
-}, "Move focus right from the staring point")
+<script type="text/javascript">
+const getResultBtn = document.getElementById('get_result');
+const resultSection = document.getElementById('resultSection');
+const container = document.getElementById('container');
+
+getResultBtn.addEventListener('click', function (e) {
+  
+  const options = {point: document.getElementById('point_option').value, 
+                    function: document.getElementById('function_option').value};
+
+  clearResult(resultSection);
+  let testArray = new Array();
+
+  // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
+  testArray.push(new SpatialNavigationTest(container, "initial_focus", "right", "right_focus", options));
+
+  console.log(testArray);
+  
+  writeTestSummary(resultSection, testArray);
+});
 </script>
+<script type="text/javascript">
+function init() {
+  console.log('========Init=======');
+  const container = document.getElementById('container');
+
+  container.addEventListener('keydown', function(e) {
+    e.preventDefault();
+    const dir = ARROW_KEY_CODE[e.keyCode];
+    const target = e.target;
+    const options = {point: document.getElementById('point_option').value, 
+                    function: document.getElementById('function_option').value};
+
+    navigateByOption(container, target, dir, options);   
+    
+  });
+}
+</script>
+</html>
