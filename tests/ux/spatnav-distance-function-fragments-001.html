@@ -11,22 +11,19 @@
 <script src="../../polyfill/spatnav-heuristic.js"></script>
 <script src="spatnav-algorithm-test.js"></script>
 
-<style>  
+<style>
 #container {
+  margin: 10px;
+  padding: 10px;
   position: relative;
   border: 1px solid black;
+  width: 510px;
   height: 300px;
-}
-
-.box {
-  position: absolute;
-  box-sizing: border-box;
-  width: 50px;
-  height: 50px;
-  border: 1px black solid;
-  background: #6ac;
+  font-size: 16px;
+  font-family: 'Times New Roman', Times, serif;
 }
 </style>
+
 <body onload="init()">
 <div class="select">
   Points :
@@ -44,15 +41,18 @@
   </select>
 
   <button id="get_result" style="margin:0 20px">Get Test Results</button>
-</div>
+</div>  
 <div id="container">
-  <div tabindex="0" class="box" id="initial_focus" style="width: 300px; left: 50px; top: 50px;"></div>
-  <div tabindex="0" class="box" style="left: 50px; top: 140px;"></div>
-  <div tabindex="0" class="box" id="down_focus" style="transform: rotateZ(-30deg); left: 200px; top: 140px;"></div>
+  This is a <a href="https://github.com/WICG/spatial-navigation" target="blank" id="repository">repository</a> for making the Web excellently embrace the
+  <a href="https://wicg.github.io/spatial-navigation/" target="blank" id="spatial-navigation">spatial navigation</a>'s features so that
+  the Web technology can be propagated into <a href="https://www.merriam-webster.com/dictionary/several" target="blank" id="several">several</a> industries such as TV, IVI, game console,
+  and upcoming smart devices as well as PC and mobile for <a href="https://a11yproject.com/" target="blank" id="ally">a11y</a>.
 </div>
 <div id="resultSection">
   <br>
 </div>
+</body>
+
 <script type="text/javascript">
   const getResultBtn = document.getElementById('get_result');
   const resultSection = document.getElementById('resultSection');
@@ -67,7 +67,9 @@
     let testArray = new Array();
   
     // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
-    testArray.push(new SpatialNavigationTest(container, "initial_focus", "down", "down_focus", options));
+    testArray.push(new SpatialNavigationTest(container, "repository", "right", "spatial-navigation", options));
+    testArray.push(new SpatialNavigationTest(container, "several", "up", "spatial-navigation", options));
+    testArray.push(new SpatialNavigationTest(container, "several", "left", "spatial-navigation", options));
   
     console.log(testArray);
     
@@ -86,8 +88,7 @@
       const options = {point: document.getElementById('point_option').value, 
                       function: document.getElementById('function_option').value};
   
-      navigateByOption(container, target, dir, options);   
-      
+      navigateByOption(container, target, dir, options);      
     });
   }
   </script>
