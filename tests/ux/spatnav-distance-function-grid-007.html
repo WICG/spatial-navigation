@@ -14,8 +14,8 @@
 <style>
 #containerbox {
   background-color: #eee;
-  width: 825px;
-  height: 600px;
+  width: 745px;
+  height: 530px;
   border: 1px solid black;
 }
 
@@ -33,24 +33,20 @@
 
 .leftbox .navigable, .bottombox .navigable, .nonfocusable {
   background-color: #e8bbe5;
-  width: 200px;
-  height: 114px;
+  width: 180px;
+  height: 100px;
   margin: 5px;
 
   color: white;
   text-align: center;
-  line-height: 114px;
+  line-height: 100px;
   vertical-align: top;
   font-size: 1rem;
 }
 
 .nonfocusable {
   background-color: #bbb;
-  color: black;
-}
-
-.nonfocusable::before {
-  content: 'Non-focusable Element';
+  color: white;
 }
 
 .bottombox .navigable {
@@ -61,9 +57,13 @@
 
 #main {
   background-color: #8db0e8;
-  width: 610px;
-  height: 352px;
+  text-align: center;
+  line-height: 310px;
+  vertical-align:middle;
+  width: 550px;
+  height: 310px;
   margin: 5px 0 0 0;
+  color: white;
 }
 
 .navigable {
@@ -102,21 +102,22 @@
   </div>  
   <div id="containerbox">
     <div class="leftbox">
-      <div class="navigable" id="box1" tabindex="0"></div>
-      <div class="navigable" tabindex="0"></div>
-      <div class="navigable" tabindex="0"></div>
-      <div class="navigable" tabindex="0"></div>
-      <div class="nonfocusable"></div>
+      <div class="navigable" id="box1" tabindex="0">box 1</div>
+      <div class="navigable" id="box2" tabindex="0">box 2</div>
+      <div class="navigable" id="box3" tabindex="0">box 3</div>
+      <div class="navigable" id="box4" tabindex="0">box 4</div>
+      <div class="nonfocusable" id="box8">(non focusable) box 8</div>
     </div>
     <div class="rightbox">
-      <div id="main" class="navigable" tabindex="0"></div>
+      <div id="main" class="navigable" tabindex="0">main</div>
       <div class="bottombox">
-        <div class="navigable" tabindex="0"></div>
-        <div class="navigable" tabindex="0"></div>
-        <div class="navigable" tabindex="0"></div><br>
-        <div class="navigable" tabindex="0"></div>
-        <div class="navigable" tabindex="0"></div>
-        <div class="navigable" tabindex="0"></div>
+        <div class="navigable" id="box5" tabindex="0">box 5</div>
+        <div class="navigable" id="box6" tabindex="0">box 6</div>
+        <div class="navigable" id="box7" tabindex="0">box 7</div>
+        <br>
+        <div class="navigable" id="box9" tabindex="0">box 9</div>
+        <div class="navigable" id="box10" tabindex="0">box 10</div>
+        <div class="navigable" id="box11" tabindex="0">box 11</div>
       </div>
     </div>
   </div>
@@ -139,6 +140,10 @@
   
     // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
     testArray.push(new SpatialNavigationTest(container, "box1", "right", "main", options));
+    testArray.push(new SpatialNavigationTest(container, "main", "left", "box1", options));
+    testArray.push(new SpatialNavigationTest(container, "main", "down", "box5", options));
+    testArray.push(new SpatialNavigationTest(container, "box5", "up", "main", options));
+    testArray.push(new SpatialNavigationTest(container, "box4", "down", "box9", options));
   
     console.log(testArray);
     
