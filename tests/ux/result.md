@@ -29,7 +29,7 @@
     <td align="center" colspan="2">Center Points</td>
     <td align="center" colspan="2">Center Points on Edges</td>
   </tr>
-  <tr>
+  <tr style="background-color: plum;">
     <td align="center">A + B + C - D</td>
     <td align="center">A + C - D</td>
     <td align="center">A + B + C - D</td>
