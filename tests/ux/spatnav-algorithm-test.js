@@ -124,11 +124,19 @@ function selectBestCandidate(currentElm, candidates, dir, distanceFunction, opti
 
 function getDistance(rect1, rect2, dir, options) {
 
-  const kOrthogonalWeightForLeftRight = 30;
-  const kOrthogonalWeightForUpDown = 2;
+  let kOrthogonalWeightForLeftRight = 30;
+  let kOrthogonalWeightForUpDown = 2;
 
   let orthogonal_bias = 0;
   let points = null;
+
+  // get the orthogonal weight 
+  if (options.orth_weight_x)
+    kOrthogonalWeightForLeftRight = options.orth_weight_x;
+  if (options.orth_weight_y)
+    kOrthogonalWeightForUpDown = options.orth_weight_y;
+
+  console.log(`orthogonal weight : 'X-axis: ${kOrthogonalWeightForLeftRight}, Y-axis: ${kOrthogonalWeightForUpDown}'`);
 
   if (options.point === 'closest_point') {
     // calculate the distance function with closest points
