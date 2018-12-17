@@ -958,7 +958,7 @@
 
     // D: The square root of the area of intersection between the border boxes of candidate and starting point
     const intersection_rect = getIntersectionRect(rect1, rect2);
-    const D = (intersection_rect) ? intersection_rect.width * intersection_rect.height : 0;
+    const D = (intersection_rect) ? Math.sqrt(intersection_rect.width * intersection_rect.height) : 0;
 
     return (A + B + C - D);
   }
