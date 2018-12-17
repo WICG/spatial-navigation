@@ -1,0 +1,67 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Spatnav sanity check</title>
+<link rel="author" title="Jihye Hong" href="jh.hong@lge.com">
+<meta name=flags content="">
+<link rel=help href="https://wicg.github.io/spatial-navigation/#high-level-api">
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel="stylesheet" href="../../resources/testharness.css"></link>
+
+<!--load polyfill. To be removed before submitting to WPT-->
+<script src="../../polyfill/spatnav-heuristic.js"></script>
+
+<style>
+  
+  .container {
+    margin: 10px;
+    position: relative;
+    border: 1px solid black;
+    width: 300px;
+    height: 300px;
+  }
+
+  .box {
+    box-sizing: border-box;
+    width: 50px;
+    height: 50px;
+    border: 1px black solid;
+    background: #6ac;
+    text-align: center;
+  }
+
+  #grid {
+    display: grid;
+    writing-mode: vertical-lr;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-flow: row;
+    background-color: #fff;
+    color: #444;
+    width: 150px;
+    height: 150px;
+  }
+</style>
+<body>
+<div class="container">
+  <div id="grid">
+    <div tabindex="0" class="box" id="item1"><strong>1</strong></div>
+    <div tabindex="0" class="box" id="item2"><strong>2</strong></div>
+    <div tabindex="0" class="box" id="item3"><strong>3</strong></div>
+    <div tabindex="0" class="box" id="item4"><strong>4</strong></div>
+    <div tabindex="0" class="box" id="initial_focus"><strong>5</strong></div>
+    <div tabindex="0" class="box" id="item6"><strong>6</strong></div>
+    <div tabindex="0" class="box" id="item7"><strong>7</strong></div>
+    <div tabindex="0" class="box" id="item8"><strong>8</strong></div>
+    <div tabindex="0" class="box" id="item9"><strong>9</strong></div>
+  </div>
+</div>
+</body>
+<script>
+test(function() {
+  document.getElementById("initial_focus").focus();
+  window.navigate("left");
+  assert_equals(document.activeElement.id, "item4");
+}, "Move focus left from the staring point")
+</script>
+</html>

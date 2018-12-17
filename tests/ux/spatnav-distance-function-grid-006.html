@@ -1,0 +1,156 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Spatnav sanity check</title>
+<link rel="author" title="Jihye Hong" href="jh.hong@lge.com">
+<meta name=flags content="">
+<link rel=help href="https://wicg.github.io/spatial-navigation/#high-level-api">
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel="stylesheet" href="../../resources/testharness.css"></link>
+
+<!--load polyfill. To be removed before submitting to WPT-->
+<script src="../../polyfill/spatnav-heuristic.js"></script>
+<style>
+  
+  * { box-sizing: border-box; }
+
+  /* ---- button ---- */
+
+    .button {
+      display: inline-block;
+      padding: 0.5em 1.0em;
+      background: #EEE;
+      border: none;
+      border-radius: 7px;
+      background-image: linear-gradient( to bottom, hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 0.2) );
+      color: #222;
+      font-family: sans-serif;
+      font-size: 16px;
+      text-shadow: 0 1px white;
+      cursor: pointer;
+    }
+
+    /* ---- button-group ---- */
+
+    .button-group {
+      margin-bottom: 20px;
+    }
+
+    .button-group:after {
+      content: '';
+      display: block;
+      clear: both;
+    }
+
+    .button-group .button {
+      float: left;
+      border-radius: 0;
+      margin-left: 0;
+      margin-right: 1px;
+    }
+
+    .button-group .button:first-child { border-radius: 0.5em 0 0 0.5em; }
+    .button-group .button:last-child { border-radius: 0 0.5em 0.5em 0; }
+
+    /* ---- isotope ---- */
+
+    .grid {
+      border: 1px solid #333;
+    }
+
+    /* clear fix */
+    .grid:after {
+      content: '';
+      display: block;
+      clear: both;
+    }
+
+    /* ---- .element-item ---- */
+
+    .element-item {
+      position: relative;
+      float: left;
+      width: 100px;
+      height: 100px;
+      margin: 5px;
+      padding: 10px;
+      background: #888;
+      color: #262524;
+    }
+
+    .element-item > * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .element-item #name {
+      position: absolute;
+
+      left: 10px;
+      top: 60px;
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 12px;
+      font-weight: normal;
+    }
+
+    .element-item #symbol {
+      position: absolute;
+      left: 10px;
+      top: 0px;
+      font-size: 42px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .element-item #number {
+      position: absolute;
+      right: 8px;
+      top: 5px;
+    }
+
+    .element-item #weight {
+      position: absolute;
+      left: 10px;
+      top: 76px;
+      font-size: 12px;
+    }
+
+    #redBox { background: red; }
+    #orangeBox { background: orange; }
+    #yellowBox { background:yellow; }
+    #greenBox { background:forestgreen; }
+</style>
+</head>
+<body>    
+  <div id="sorts" class="button-group">
+    <button class="button" id="original-order">original order</button>
+    <button class="button" id="name">name</button>
+    <button class="button" id="symbol">symbol</button>
+    <button class="button" id="number">number</button>
+    <button class="button" id="weight">weight</button>
+  </div>
+  
+  <div class="grid">
+    <div class="element-item" id="redBox" tabindex="0"></div>
+    <div class="element-item" id="orangeBox" tabindex="0"></div>
+    <div class="element-item" id="yellowBox" tabindex="0"></div>
+    <div class="element-item" id="greenBox" tabindex="0"></div>
+  </div>
+</body>
+
+<script>
+  test(function() {
+    document.getElementById("orangeBox").focus();
+    window.navigate("up");
+    assert_equals(document.activeElement.id, "name");
+  }, "Move focus up from the staring point")
+
+  test(function() {
+    document.getElementById("symbol").focus();
+    window.navigate("down");
+    assert_equals(document.activeElement.id, "yellowBox");
+  }, "Move focus down from the staring point")
+  </script>
+</html>

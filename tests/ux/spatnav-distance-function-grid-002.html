@@ -7,15 +7,13 @@
 
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
+<link rel="stylesheet" href="../../resources/testharness.css"></link>
 
 <!--load polyfill. To be removed before submitting to WPT-->
 <script src="../../polyfill/spatnav-heuristic.js"></script>
 
 <style>
-  :focus {
-    outline: 4px #3582ff solid;
-  }
-
+  
   .container {
     margin: 10px;
     position: relative;
@@ -32,12 +30,9 @@
     border: 1px black solid;
     background: #6ac;
   }
-
-  #initial_focus {
-    background: #F08080;
-  }
 </style>
 
+<body>
 <div class="container">
   <div tabindex="0" class="box" style="left: 220px; top: 40px;"></div>
   <div tabindex="0" class="box" style="left: 280px; top: 40px;"></div>
@@ -46,7 +41,7 @@
   <div tabindex="0" class="box" id="right_focus" style="left: 340px; top: 120px;"></div>
   <div tabindex="0" class="box" id="initial_focus" style="width: 200px; left: 50px; top: 120px;"></div>
 </div>
-
+</body>
 <script>
 test(function() {
   document.getElementById("initial_focus").focus();

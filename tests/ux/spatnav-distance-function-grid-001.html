@@ -7,19 +7,13 @@
 
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
+<link rel="stylesheet" href="../../resources/testharness.css"></link>
 
 <!--load polyfill. To be removed before submitting to WPT-->
 <script src="../../polyfill/spatnav-heuristic.js"></script>
 
 <style>
-  :focus {
-    outline: 4px #3582ff solid;
-  }
-
-  .container {
-    margin: 10px;
-  }
-
+  
   .box {
     position: relative;
     box-sizing: border-box;
@@ -28,12 +22,18 @@
     border: 1px black solid;
     background: #6ac;
   }
-
-  #initial_focus {
-    background: #F08080;
-  }
 </style>
 
+<body>
+
+<div class="pointSelect">
+  Parameter :
+  <select id="option" onchange="onChangeSelect()" style="margin:0 20px">
+    <option value="dir" selected>{dir}</option>
+    <option value="candidates">{dir, candidates}</option>
+    <option value="container">{dir, candidates, container}</option>
+  </select>
+</div>
 <div class="container">
   <div tabindex="0" class="box"></div>
   <div tabindex="0" class="box" style="left: 50px; top: -50px;"></div>
@@ -45,7 +45,7 @@
   <div tabindex="0" class="box" style="left: 50px; top: calc(-50px * 5);"></div>
   <div tabindex="0" class="box" id="down_focus" style="left: calc(50px * 2); top: calc(-50px * 6);"></div>
 </div>
-
+</body>
 <script>
 test(function() {
   document.getElementById("initial_focus").focus();
