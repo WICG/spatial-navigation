@@ -188,7 +188,7 @@ function getDistance(rect1, rect2, dir, options) {
 
   // D: The square root of the area of intersection between the border boxes of candidate and starting point
   const intersection_rect = getIntersectionRect(rect1, rect2);
-  const D = (intersection_rect) ? intersection_rect.width * intersection_rect.height : 0;
+  const D = Math.sqrt((intersection_rect) ? intersection_rect.width * intersection_rect.height : 0);
 
   if (options.function === 'original') {
     console.log(`distance function : A + B + C - D ='${(A + B + C - D)}'`);
@@ -428,7 +428,7 @@ function getIntersectionRect(rect1, rect2) {
   const new_location = [Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)];
   const new_max_point = [Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom)];
 
-  if (!(new_location[0] >= new_max_point[0] || new_location[1] >= new_max_point[1])) {
+  if (new_location[0] < new_max_point[0] && new_location[1] < new_max_point[1]) {
     // intersecting-cases
     intersection_rect = {width: 0, height: 0};
     intersection_rect.width = Math.abs(new_location[0] - new_max_point[0]);
