@@ -235,17 +235,17 @@
     </tr>
     <tr style="background-color: thistle ">
       <td align="center">Total</td>
-      <td align="center">18/18</td>
-      <td align="center">11/18</td>
-      <td align="center">11/18</td>
-      <td align="center">11/18</td>
-      <td align="center">12/18</td>
-      <td align="center">8/18</td>
-      <td align="center">9/18</td>
-      <td align="center">12/18</td>
-      <td align="center">12/18</td>
-      <td align="center">12/18</td>
-      <td align="center">12/18</td>
+      <td align="center">21/21</td>
+      <td align="center">12/21</td>
+      <td align="center">12/21</td>
+      <td align="center">12/21</td>
+      <td align="center">13/21</td>
+      <td align="center">10/21</td>
+      <td align="center">11/21</td>
+      <td align="center">15/21</td>
+      <td align="center">15/21</td>
+      <td align="center">14/21</td>
+      <td align="center">14/21</td>
     </tr>
 
   </tbody>
