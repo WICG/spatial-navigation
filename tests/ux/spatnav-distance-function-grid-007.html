@@ -1,0 +1,198 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Spatnav sanity check</title>
+<link rel="author" title="Jihye Hong" href="jh.hong@lge.com">
+<meta name=flags content="">
+<link rel=help href="https://wicg.github.io/spatial-navigation/#high-level-api">
+
+<link rel="stylesheet" href="../../resources/testharness.css"></link>
+
+<!--load polyfill. To be removed before submitting to WPT-->
+<script src="../../polyfill/spatnav-heuristic.js"></script>
+<script src="spatnav-algorithm-test.js"></script>
+
+<style>
+#containerbox {
+  background-color: #eee;
+  width: 745px;
+  height: 530px;
+  border: 1px solid black;
+}
+
+.leftbox {
+  float: left;
+}
+
+.rightbox {
+  float: right;
+}
+
+.bottombox {
+  font-size: 0px;
+}
+
+.leftbox .navigable, .bottombox .navigable, .nonfocusable {
+  background-color: #e8bbe5;
+  width: 180px;
+  height: 100px;
+  margin: 5px;
+
+  color: white;
+  text-align: center;
+  line-height: 100px;
+  vertical-align: top;
+  font-size: 1rem;
+}
+
+.nonfocusable {
+  background-color: #bbb;
+  color: white;
+}
+
+.bottombox .navigable {
+  display: inline-block;
+  margin-left: 0px;
+  margin-bottom: 0px;
+}
+
+#main {
+  background-color: #8db0e8;
+  text-align: center;
+  line-height: 310px;
+  vertical-align:middle;
+  width: 550px;
+  height: 310px;
+  margin: 5px 0 0 0;
+  color: white;
+}
+
+.navigable {
+  outline: 0;
+}
+
+.navigable:focus {
+  opacity: 1;
+  background-color:red !important;
+}
+
+#sidebox {
+  width: 825px;
+  margin: 2em auto 0 auto;
+}
+
+</style>
+</head>
+<body onload="init()">
+  <div class="select">
+    <div class="options">
+      Points :
+      <select id="point_option" style="margin:0 20px">
+        <option value="closest_point" selected>Closest points on edges</option>
+        <option value="closest_vertex">Closest points among vertices </option>
+        <option value="center_point">Center points</option>
+        <option value="center_edge">Center points on edges</option>
+      </select>
+    </div> 
+  
+    <div class="options" style="margin:0 60px">
+      Function :
+      <select id="function_option" style="margin:0 20px">
+        <option value="original" selected>A + B + C - D</option>
+        <option value="sameDirOriented">A + C - D</option>
+      </select>
+    </div>  
+  
+    <div class="options">
+      Orthogonal Weight (X-axis) :
+      <select id="orth_wx_option" style="margin: 15px 20px">
+        <option value="40">40</option>
+        <option value="35">35</option>
+        <option value="30" selected>30</option>
+        <option value="25">25</option>
+        <option value="20">20</option>
+      </select>
+    
+      Orthogonal Weight (Y-axis) :
+      <select id="orth_wy_option" style="margin: 15px 20px">
+        <option value="1.5">1.5</option>
+        <option value="1.75">1.75</option>
+        <option value="2" selected>2</option>
+        <option value="2.25">2.25</option>
+        <option value="2.5">2.5</option>
+      </select>
+    </div>
+  
+    <button class="btn test" id="get_result">Get Test Results</button>
+  </div>  
+  <div id="containerbox">
+    <div class="leftbox">
+      <div class="navigable" id="box1" tabindex="0">box 1</div>
+      <div class="navigable" id="box2" tabindex="0">box 2</div>
+      <div class="navigable" id="box3" tabindex="0">box 3</div>
+      <div class="navigable" id="box4" tabindex="0">box 4</div>
+      <div class="nonfocusable" id="box8">(non focusable) box 8</div>
+    </div>
+    <div class="rightbox">
+      <div id="main" class="navigable" tabindex="0">main</div>
+      <div class="bottombox">
+        <div class="navigable" id="box5" tabindex="0">box 5</div>
+        <div class="navigable" id="box6" tabindex="0">box 6</div>
+        <div class="navigable" id="box7" tabindex="0">box 7</div>
+        <br>
+        <div class="navigable" id="box9" tabindex="0">box 9</div>
+        <div class="navigable" id="box10" tabindex="0">box 10</div>
+        <div class="navigable" id="box11" tabindex="0">box 11</div>
+      </div>
+    </div>
+  </div>
+  <div id="resultSection">
+    <br>
+  </div>
+</body>
+<script type="text/javascript">
+  const getResultBtn = document.getElementById('get_result');
+  const resultSection = document.getElementById('resultSection');
+  const container = document.getElementById('containerbox');
+  
+  getResultBtn.addEventListener('click', function (e) {
+    
+    const options = {
+                    point: document.getElementById('point_option').value, 
+                    function: document.getElementById('function_option').value,
+                    orth_weight_x: document.getElementById('orth_wx_option').value,
+                    orth_weight_y: document.getElementById('orth_wy_option').value 
+                  };
+  
+    clearResult(resultSection);
+    let testArray = new Array();
+  
+    // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
+    testArray.push(new SpatialNavigationTest(container, "box1", "right", "main", options));
+    testArray.push(new SpatialNavigationTest(container, "main", "left", "box1", options));
+    testArray.push(new SpatialNavigationTest(container, "main", "down", "box5", options));
+    testArray.push(new SpatialNavigationTest(container, "box5", "up", "main", options));
+    testArray.push(new SpatialNavigationTest(container, "box4", "down", "box9", options));
+  
+    console.log(testArray);
+    
+    writeTestSummary(resultSection, testArray);
+  });
+  </script>
+  <script type="text/javascript">
+  function init() {
+    console.log('========Init=======');
+    const container = document.getElementById('containerbox');
+  
+    container.addEventListener('keydown', function(e) {
+      e.preventDefault();
+      const dir = ARROW_KEY_CODE[e.keyCode];
+      const target = e.target;
+      const options = {point: document.getElementById('point_option').value, 
+                      function: document.getElementById('function_option').value};
+  
+      navigateByOption(container, target, dir, options);   
+      
+    });
+  }
+  </script>
+  </html>
