@@ -158,7 +158,7 @@
         <a href="spatnav-distance-function-grid-align-001.html" target="blank">Grid Align 1</a>
       </td>
       <td align="center">1/1</td>
-      <td align="center">-</td>
+      <td align="center">1/1</td>
       <td align="center">1/1</td>
       <td align="center">1/1</td>
       <td align="center">1/1</td>
@@ -174,7 +174,7 @@
         <a href="spatnav-distance-function-grid-align-002.html" target="blank">Grid Align 2</a>
       </td>
       <td align="center">1/1</td>
-      <td align="center">-</td>
+      <td align="center">0/1</td>
       <td align="center">0/1</td>
       <td align="center">0/1</td>
       <td align="center">0/1</td>
@@ -190,7 +190,7 @@
         <a href="spatnav-distance-function-grid-align-003.html" target="blank">Grid Align 3</a>
       </td>
       <td align="center">1/1</td>
-      <td align="center">-</td>
+      <td align="center">0/1</td>
       <td align="center">0/1</td>
       <td align="center">0/1</td>
       <td align="center">0/1</td>
