@@ -329,7 +329,7 @@
     // find the best candidate within startingPoint
     if (candidates && candidates.length > 0) {
       if ((isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
-        const targetElementInTarget  = targetElement.focusableAreas();
+        const targetElementInTarget = targetElement.focusableAreas();
         if (candidates.every(x => targetElementInTarget.includes(x))) {
           // if candidates are contained in the targetElement, then the focus moves inside the targetElement
           return selectBestCandidateFromEdge(targetElement, candidates, dir);
@@ -1106,7 +1106,8 @@
   }
 
   function getBoundingClientRect(element) {
-    let rect = mapOfBoundRect && mapOfBoundRect.get(element);   // memoization
+    // memoization
+    let rect = mapOfBoundRect && mapOfBoundRect.get(element);
     if (!rect) {
       const boundingClientRect = element.getBoundingClientRect();
       rect = {
