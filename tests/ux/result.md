@@ -16,7 +16,7 @@
         The square root of the area of intersection between the boundary boxes of candidate and starting point</li>
   </ul>
 
-## Test Result
+## Overall Test Result
 <table style="font-family: 'Roboto';">
   <thead>
   <tr style="background-color:purple; font-weight: bold; color: white;">
@@ -152,6 +152,54 @@
       <td align="center">3/5</td>
       <td align="center">3/5</td>
       <td align="center">3/5</td>
+    </tr>
+    <tr>
+      <td align="center">
+        <a href="spatnav-distance-function-grid-align-001.html" target="blank">Grid Align 1</a>
+      </td>
+      <td align="center">1/1</td>
+      <td align="center">-</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">0/1</td>
+      <td align="center">0/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+    </tr>
+    <tr>
+      <td align="center">
+        <a href="spatnav-distance-function-grid-align-002.html" target="blank">Grid Align 2</a>
+      </td>
+      <td align="center">1/1</td>
+      <td align="center">-</td>
+      <td align="center">0/1</td>
+      <td align="center">0/1</td>
+      <td align="center">0/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">0/1</td>
+      <td align="center">0/1</td>
+    </tr>
+    <tr>
+      <td align="center">
+        <a href="spatnav-distance-function-grid-align-003.html" target="blank">Grid Align 3</a>
+      </td>
+      <td align="center">1/1</td>
+      <td align="center">-</td>
+      <td align="center">0/1</td>
+      <td align="center">0/1</td>
+      <td align="center">0/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
     </tr>
     <tr>
       <td align="center">
