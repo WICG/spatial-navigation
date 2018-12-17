@@ -12,120 +12,22 @@
 <script src="spatnav-algorithm-test.js"></script>
 
 <style>
-.button, .button-group, .grid, .element-item { box-sizing: border-box; }
-#container {
-  margin: 10px;
-  border: 1px solid black;
-  height: 300px;
-}
+  #container {
+    margin: 10px;
+    position: relative;
+    border: 1px solid black;
+    height: 500px;
+  }
 
-/* ---- button ---- */
-.button {
-  display: inline-block;
-  padding: 0.5em 1.0em;
-  background: #EEE;
-  border: none;
-  border-radius: 7px;
-  background-image: linear-gradient( to bottom, hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 0.2) );
-  color: #222;
-  font-family: sans-serif;
-  font-size: 16px;
-  text-shadow: 0 1px white;
-  cursor: pointer;
-}
-
-/* ---- button-group ---- */
-
-.button-group {
-  margin-bottom: 20px;
-}
-
-.button-group:after {
-  content: '';
-  display: block;
-  clear: both;
-}
-
-.button-group .button {
-  float: left;
-  border-radius: 0;
-  margin-left: 0;
-  margin-right: 1px;
-}
-
-.button-group .button:first-child { border-radius: 0.5em 0 0 0.5em; }
-.button-group .button:last-child { border-radius: 0 0.5em 0.5em 0; }
-
-/* ---- isotope ---- */
-
-.grid {
-  border: 1px solid #333;
-}
-
-/* clear fix */
-.grid:after {
-  content: '';
-  display: block;
-  clear: both;
-}
-
-/* ---- .element-item ---- */
-
-.element-item {
-  position: relative;
-  float: left;
-  width: 100px;
-  height: 100px;
-  margin: 5px;
-  padding: 10px;
-  background: #888;
-  color: #262524;
-}
-
-.element-item > * {
-  margin: 0;
-  padding: 0;
-}
-
-.element-item #name {
-  position: absolute;
-
-  left: 10px;
-  top: 60px;
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: 12px;
-  font-weight: normal;
-}
-
-.element-item #symbol {
-  position: absolute;
-  left: 10px;
-  top: 0px;
-  font-size: 42px;
-  font-weight: bold;
-  color: white;
-}
-
-.element-item #number {
-  position: absolute;
-  right: 8px;
-  top: 5px;
-}
-
-.element-item #weight {
-  position: absolute;
-  left: 10px;
-  top: 76px;
-  font-size: 12px;
-}
-
-#redBox { background: red; }
-#orangeBox { background: orange; }
-#yellowBox { background:yellow; }
-#greenBox { background:forestgreen; }
+  .box {
+    position: absolute;
+    box-sizing: border-box;
+    border: 1px black solid;
+    background: #6ac;
+    text-align: center;
+  }
 </style>
-</head>
+
 <body onload="init()">
   <div class="select">
     <div class="options">
@@ -168,27 +70,15 @@
   
     <button class="btn test" id="get_result">Get Test Results</button>
   </div>
-  <div id="container">
-    <div id="sorts" class="button-group">
-      <button class="button" id="original-order">original order</button>
-      <button class="button" id="name">name</button>
-      <button class="button" id="symbol">symbol</button>
-      <button class="button" id="number">number</button>
-      <button class="button" id="weight">weight</button>
-    </div>
-    
-    <div class="grid">
-      <div class="element-item" id="redBox" tabindex="0"></div>
-      <div class="element-item" id="orangeBox" tabindex="0"></div>
-      <div class="element-item" id="yellowBox" tabindex="0"></div>
-      <div class="element-item" id="greenBox" tabindex="0"></div>
-    </div>
-  </div>
-  <div id="resultSection">
-    <br>
-  </div>
+<div id="container">
+  <div tabindex="0" class="box" id="initial_focus" style="left: 50px; top: 100px; width: 200px; height: 200px;"></div>
+  <div tabindex="0" class="box" id="box1" style="left: 300px; top: 0px; width: 100px; height: 200px;">Box 1</div>
+  <div tabindex="0" class="box" id="box2" style="left: 300px; top: 250px; width: 100px; height: 100px;">Box 2</div>
+</div>
+<div id="resultSection">
+  <br>
+</div>
 </body>
-
 <script type="text/javascript">
   const getResultBtn = document.getElementById('get_result');
   const resultSection = document.getElementById('resultSection');
@@ -203,9 +93,8 @@
     let testArray = new Array();
   
     // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
-    testArray.push(new SpatialNavigationTest(container, "orangeBox", "up", "name", options));
-    testArray.push(new SpatialNavigationTest(container, "symbol", "down", "yellowBox", options));
-  
+    testArray.push(new SpatialNavigationTest(container, "initial_focus", "right", "box1", options));
+
     console.log(testArray);
     
     writeTestSummary(resultSection, testArray);
@@ -232,4 +121,4 @@
     });
   }
   </script>
-  </html>
+</html>

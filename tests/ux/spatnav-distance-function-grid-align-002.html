@@ -16,16 +16,16 @@
     margin: 10px;
     position: relative;
     border: 1px solid black;
-    height: 300px;
+    height: 500px;
   }
 
   .box {
     position: absolute;
     box-sizing: border-box;
-    width: 50px;
-    height: 50px;
     border: 1px black solid;
     background: #6ac;
+    text-align: center;
+    margin: auto auto;
   }
 </style>
 
@@ -72,57 +72,55 @@
   <button class="btn test" id="get_result">Get Test Results</button>
 </div>
 <div id="container">
-  <div tabindex="0" class="box" style="left: 220px; top: 40px;"></div>
-  <div tabindex="0" class="box" style="left: 280px; top: 40px;"></div>
-  <div tabindex="0" class="box" style="left: 340px; top: 40px;"></div>
-  <div tabindex="0" class="box" style="left: 320px; top: 175px;"></div>
-  <div tabindex="0" class="box" id="right_focus" style="left: 340px; top: 120px;"></div>
-  <div tabindex="0" class="box" id="initial_focus" style="width: 200px; left: 50px; top: 120px;"></div>
+  <div tabindex="0" class="box" id="initial_focus" style="left: 50px; top: 75px; width: 200px; height: 200px;"></div>
+  <div tabindex="0" class="box" id="box1" style="left: 300px; top: 0px; width: 150px; height: 150px;">Box 1</div>
+  <div tabindex="0" class="box" id="box2" style="left: 300px; top: 200px; width: 100px; height: 150px;"">Box 2</div>
 </div>
+<p>NOTE: In this case, the overlapped area between the search origin and all candidates is the same.</p>
 <div id="resultSection">
   <br>
 </div>
 </body>
 <script type="text/javascript">
-const getResultBtn = document.getElementById('get_result');
-const resultSection = document.getElementById('resultSection');
-const container = document.getElementById('container');
-
-getResultBtn.addEventListener('click', function (e) {
+  const getResultBtn = document.getElementById('get_result');
+  const resultSection = document.getElementById('resultSection');
+  const container = document.getElementById('container');
   
-  const options = {
+  getResultBtn.addEventListener('click', function (e) {
+    
+    const options = {
                     point: document.getElementById('point_option').value, 
                     function: document.getElementById('function_option').value,
                     orth_weight_x: document.getElementById('orth_wx_option').value,
                     orth_weight_y: document.getElementById('orth_wy_option').value 
                   };
-
-  clearResult(resultSection);
-  let testArray = new Array();
-
-  // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
-  testArray.push(new SpatialNavigationTest(container, "initial_focus", "right", "right_focus", options));
-
-  console.log(testArray);
   
-  writeTestSummary(resultSection, testArray);
-});
-</script>
-<script type="text/javascript">
-function init() {
-  console.log('========Init=======');
-  const container = document.getElementById('container');
+    clearResult(resultSection);
+    let testArray = new Array();
+  
+    // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
+    testArray.push(new SpatialNavigationTest(container, "initial_focus", "right", "box2", options));
 
-  container.addEventListener('keydown', function(e) {
-    e.preventDefault();
-    const dir = ARROW_KEY_CODE[e.keyCode];
-    const target = e.target;
-    const options = {point: document.getElementById('point_option').value, 
-                    function: document.getElementById('function_option').value};
-
-    navigateByOption(container, target, dir, options);   
+    console.log(testArray);
     
+    writeTestSummary(resultSection, testArray);
   });
-}
-</script>
+  </script>
+  <script type="text/javascript">
+  function init() {
+    console.log('========Init=======');
+    const container = document.getElementById('container');
+  
+    container.addEventListener('keydown', function(e) {
+      e.preventDefault();
+      const dir = ARROW_KEY_CODE[e.keyCode];
+      const target = e.target;
+      const options = {point: document.getElementById('point_option').value, 
+                      function: document.getElementById('function_option').value};
+  
+      navigateByOption(container, target, dir, options);   
+      
+    });
+  }
+  </script>
 </html>
