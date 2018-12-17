@@ -26,21 +26,45 @@
 
 <body onload="init()">
 <div class="select">
-  Points :
-  <select id="point_option" style="margin:0 20px">
-    <option value="closest_point" selected>Closest points on edges</option>
-    <option value="closest_vertex">Closest points among vertices </option>
-    <option value="center_point">Center points</option>
-    <option value="center_edge">Center points on edges</option>
-  </select>
+  <div class="options">
+    Points :
+    <select id="point_option" style="margin:0 20px">
+      <option value="closest_point" selected>Closest points on edges</option>
+      <option value="closest_vertex">Closest points among vertices </option>
+      <option value="center_point">Center points</option>
+      <option value="center_edge">Center points on edges</option>
+    </select>
+  </div> 
 
-  Function :
-  <select id="function_option" style="margin:0 20px">
-    <option value="original" selected>A + B + C - D</option>
-    <option value="sameDirOriented">A + C - D</option>
-  </select>
+  <div class="options" style="margin:0 60px">
+    Function :
+    <select id="function_option" style="margin:0 20px">
+      <option value="original" selected>A + B + C - D</option>
+      <option value="sameDirOriented">A + C - D</option>
+    </select>
+  </div>  
 
-  <button id="get_result" style="margin:0 20px">Get Test Results</button>
+  <div class="options">
+    Orthogonal Weight (X-axis) :
+    <select id="orth_wx_option" style="margin: 15px 20px">
+      <option value="40">40</option>
+      <option value="35">35</option>
+      <option value="original" selected>30</option>
+      <option value="25">25</option>
+      <option value="20">20</option>
+    </select>
+
+    Orthogonal Weight (Y-axis) :
+    <select id="orth_wy_option" style="margin: 15px 20px">
+      <option value="1.5">1.5</option>
+      <option value="1.75">1.75</option>
+      <option value="original" selected>2</option>
+      <option value="2.25">2.25</option>
+      <option value="2.5">2.5</option>
+    </select>
+  </div>
+
+  <button class="btn test" id="get_result">Get Test Results</button>
 </div>  
 <div id="container">
   This is a <a href="https://github.com/WICG/spatial-navigation" target="blank" id="repository">repository</a> for making the Web excellently embrace the
