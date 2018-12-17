@@ -13,12 +13,12 @@ body { font-family: sans-serif; }
 
 .select {
   width: 720px;
+  height: 120px;
   padding: 10px;
   margin-top: 10px;
   color: white;
   border-radius: 10px 10px 0 0;
   background: gray;
-  height: 100px;
   line-height : 20px;
 }
 
@@ -32,12 +32,20 @@ body { font-family: sans-serif; }
 
 #get_result {
   font-weight: bold;
-  height: 30px;
 }
 
-#get_result::before, #get_result::after {
-  content: "";
-  display: block;
-  border: solid 1px navy;
-  margin: 1px;
+.btn {
+  border: 2px solid purple;
+  border-radius: 10px;
+  background-color: white;
+  color: purple;
+  margin: 5px 250px;
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn:hover, .btn:focus {
+  background: purple;
+  color: white;
 }
