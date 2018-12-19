@@ -158,10 +158,10 @@
         <a href="spatnav-distance-function-grid-align-001.html" target="blank">Grid Align 1</a>
       </td>
       <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
+      <td align="center">0/1</td>
+      <td align="center">0/1</td>
+      <td align="center">0/1</td>
+      <td align="center">0/1</td>
       <td align="center">0/1</td>
       <td align="center">0/1</td>
       <td align="center">1/1</td>
@@ -178,12 +178,12 @@
       <td align="center">0/1</td>
       <td align="center">0/1</td>
       <td align="center">0/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
       <td align="center">0/1</td>
       <td align="center">0/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
     </tr>
     <tr>
       <td align="center">
