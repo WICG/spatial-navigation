@@ -203,6 +203,38 @@
     </tr>
     <tr>
       <td align="center">
+        <a href="spatnav-distance-function-intersected-001.html" target="blank">Element Intersect 1</a>
+      </td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">-</td>
+      <td align="center">-</td>
+      <td align="center">-</td>
+      <td align="center">-</td>
+      <td align="center">-</td>
+      <td align="center">-</td>
+    </tr>
+    <tr>
+      <td align="center">
+        <a href="spatnav-distance-function-intersected-002.html" target="blank">Element Intersect 2</a>
+      </td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">1/1</td>
+      <td align="center">-</td>
+      <td align="center">-</td>
+      <td align="center">-</td>
+      <td align="center">-</td>
+      <td align="center">-</td>
+      <td align="center">-</td>
+    </tr>
+    <tr>
+      <td align="center">
         <a href="spatnav-distance-function-transformed-001.html" target="blank">Transformed elements</a>
       </td>
       <td align="center">1/1</td>
@@ -233,6 +265,7 @@
       <td align="center">1/3</td>
       <td align="center">1/3</td>
     </tr>
+
     <tr style="background-color: thistle ">
       <td align="center">Total</td>
       <td align="center">21/21</td>
