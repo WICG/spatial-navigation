@@ -701,23 +701,70 @@
   * check1. Whether the element is the browsing context (document, iframe)
   * check2. Whether the element is scrollable container or not. (regardless of scrollable axis)
   * check3. The value of tabIndex >= 0
-  *    There are several elements which the tabindex focus flag be set:
-  *    (https://html.spec.whatwg.org/multipage/interaction.html#specially-focusable)
-  *    The element with tabindex=-1 is omitted from the spatial navigation order,
-  *    but, if there is a focusable child element, it will be included in the spatial navigation order.
+  *         There are several elements which the tabindex focus flag be set:
+  *         (https://html.spec.whatwg.org/multipage/interaction.html#specially-focusable)
+  *         The element with tabindex=-1 is omitted from the spatial navigation order,
+  *         but, if there is a focusable child element, it will be included in the spatial navigation order.
   * check4. Whether the element is disabled or not.
+  * check5. Whether the element is expressly inert or not.
+  * check6. Whether the element is being rendered or not.
   *
   * @function
   * @param {<Node>} element
   * @returns {Boolean}
   **/
   function isFocusable(element) {
-    if (element.tabIndex < 0 || element.disabled)
+    return ((!element.parentElement) || (isScrollable(element) && isOverflow(element)) || (element.tabIndex >= 0) || 
+            (!isActuallyDisabled(element)) || (!isExpresslyInert(element)) || (isBeingRendered(element)));
+  }
+
+  /**
+  * isActuallyDisabled :
+  * Whether this element is actually disabled or not
+  * * reference: https://html.spec.whatwg.org/multipage/semantics-other.html#concept-element-disabled
+  * @function
+  * @param {<Node>} element
+  * @returns {Boolean}
+  **/
+  function isActuallyDisabled(element) {
+    if ((element.tagName === 'BUTTON') || (element.tagName === 'INPUT') || (element.tagName === 'SELECT') ||
+        (element.tagName === 'TEXTAREA') || (element.tagName === 'OPTGROUP') || (element.tagName === 'OPTION') ||
+        (element.tagName === 'FIELDSET'))
+      return (element.disabled);
+  }
+
+  /**
+  * isExpresslyInert :
+  * Whether the element is expressly inert or not.
+  * * reference: https://html.spec.whatwg.org/multipage/interaction.html#expressly-inert
+  * @function
+  * @param {<Node>} element
+  * @returns {Boolean}
+  **/
+  function isExpresslyInert(element) {
+    return ((element.inert) && (!element.ownerDocument.documentElement.inert));
+  }
+
+  /**
+  * isBeingRendered :
+  * Whether the element is being rendered or not. 
+  * * reference: https://html.spec.whatwg.org/multipage/rendering.html#being-rendered
+  *    "presence of the hidden attribute normally means the element is not being rendered"
+  * * reference: https://api.jquery.com/hidden-selector/
+  * check1. If an element has the style as "visibility: hidden | collapse" or "display: none", it is not being rendered.
+  * check2. If an element has the style as "opacity: 0", it is not being rendered.(that is, invisible).
+  * check3. If width and height of an element are explicitly set to 0, it is not being rendered.
+  * check4. If a parent element is hidden, an element itself is not being rendered.
+  *         (CSS visibility property and display property are inherited.)
+  * @function
+  * @param {<Node>} element
+  * @returns {Boolean}
+  **/
+  function isBeingRendered(element) {
+    if (!isVisibleStyleProperty(element.parentElement))
       return false;
-    else
-      return ((!element.parentElement) ||
-          (element.tabIndex >= 0) ||
-          (isScrollable(element) && isOverflow(element)));
+    return (isVisibleStyleProperty(element) || (element.style.opacity !== 0) || 
+            !((element.style.weight === '0px' || element.style.weight == 0) && (element.style.height === '0px' || element.style.height == 0)));
   }
 
   /**
@@ -749,7 +796,7 @@
     const entirelyVisible = !((rect.left < containerRect.left) ||
       (rect.right > containerRect.right) ||
       (rect.top < containerRect.top) ||
-      (rect.bottom > containerRect.botto));
+      (rect.bottom > containerRect.bottom));
 
     return entirelyVisible;
   }
