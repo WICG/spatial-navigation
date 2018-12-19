@@ -1,0 +1,86 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Spatnav sanity check</title>
+<link rel="author" title="Jihye Hong" href="jh.hong@lge.com">
+<meta name=flags content="">
+<link rel=help href="https://wicg.github.io/spatial-navigation/#high-level-api">
+
+<link rel="stylesheet" href="../../resources/testharness.css"></link>
+
+<!--load polyfill. To be removed before submitting to WPT-->
+<script src="../../polyfill/spatnav-heuristic.js"></script>
+<script src="spatnav-algorithm-test.js"></script>
+
+<style>
+  .box {
+    position: relative;
+    box-sizing: border-box;
+    width: 50px;
+    height: 50px;
+    border: 1px black solid;
+    background: #6ac;
+  }
+</style>
+
+<body onload="init()">
+<button class="btn test" id="get_result">Get Test Results</button>
+<div id="container">
+  <div tabindex="0" class="box"></div>
+  <div tabindex="0" class="box" style="left: 50px; top: -50px;"></div>
+  <div tabindex="0" class="box" id="up_focus" style="left: calc(50px * 2); top: calc(-50px * 2);"></div>
+  <div tabindex="0" class="box" style="top: calc(-50px * 2);"></div>
+  <div tabindex="0" class="box" id="left_focus" style="left: 50px; top: calc(-50px * 3);"></div>
+  <div tabindex="0" class="box" id="initial_focus" style="left: calc(50px * 2); top: calc(-50px * 4);"></div>
+  <div tabindex="0" class="box" style="top: calc(-50px * 4);"></div>
+  <div tabindex="0" class="box" style="left: 50px; top: calc(-50px * 5);"></div>
+  <div tabindex="0" class="box" id="down_focus" style="left: calc(50px * 2); top: calc(-50px * 6); visibility: hidden;"></div>
+</div>
+
+<div id="resultSection">
+  <br>
+</div>
+</body>
+
+<script type="text/javascript">
+const getResultBtn = document.getElementById('get_result');
+const resultSection = document.getElementById('resultSection');
+const container = document.getElementById('container');
+
+getResultBtn.addEventListener('click', function (e) {
+  
+  const options = {
+                    point: 'closest_point', 
+                    function: 'original',
+                    orth_weight_x: 30,
+                    orth_weight_y: 2 
+                  };
+
+  clearResult(resultSection);
+  let testArray = new Array();
+
+  // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options)
+  testArray.push(new SpatialNavigationTest(container, "initial_focus", "down", "down_focus", options));
+
+  console.log(testArray);
+  
+  writeTestSummary(resultSection, testArray);
+});
+</script>
+<script type="text/javascript">
+function init() {
+  console.log('========Init=======');
+  const container = document.getElementById('container');
+
+  container.addEventListener('keydown', function(e) {
+    e.preventDefault();
+    const dir = ARROW_KEY_CODE[e.keyCode];
+    const target = e.target;
+    const options = {point: document.getElementById('point_option').value, 
+                    function: document.getElementById('function_option').value};
+
+    navigateByOption(container, target, dir, options);   
+    
+  });
+}
+</script>
+</html>
