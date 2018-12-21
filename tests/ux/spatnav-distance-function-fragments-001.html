@@ -12,21 +12,16 @@
 <script src="spatnav-algorithm-test.js"></script>
 
 <style>
-  #container {
-    margin: 10px;
-    position: relative;
-    border: 1px solid black;
-    height: 300px;
-  }
-
-  .box {
-    position: absolute;
-    box-sizing: border-box;
-    width: 50px;
-    height: 50px;
-    border: 1px black solid;
-    background: #6ac;
-  }
+#container {
+  margin: 10px;
+  padding: 10px;
+  position: relative;
+  border: 1px solid black;
+  width: 510px;
+  height: 300px;
+  font-size: 16px;
+  font-family: 'Times New Roman', Times, serif;
+}
 </style>
 
 <body onload="init()">
@@ -58,7 +53,7 @@
       <option value="25">25</option>
       <option value="20">20</option>
     </select>
-  
+
     Orthogonal Weight (Y-axis) :
     <select id="orth_wy_option" style="margin: 15px 20px">
       <option value="1.5">1.5</option>
@@ -70,59 +65,59 @@
   </div>
 
   <button class="btn test" id="get_result">Get Test Results</button>
-</div>
+</div>  
 <div id="container">
-  <div tabindex="0" class="box" style="left: 220px; top: 40px;"></div>
-  <div tabindex="0" class="box" style="left: 280px; top: 40px;"></div>
-  <div tabindex="0" class="box" style="left: 340px; top: 40px;"></div>
-  <div tabindex="0" class="box" style="left: 320px; top: 175px;"></div>
-  <div tabindex="0" class="box" id="right_focus" style="left: 340px; top: 120px;"></div>
-  <div tabindex="0" class="box" id="initial_focus" style="width: 200px; left: 50px; top: 120px;"></div>
+  This is a <a href="https://github.com/WICG/spatial-navigation" target="blank" id="repository">repository</a> for making the Web excellently embrace the
+  <a href="https://wicg.github.io/spatial-navigation/" target="blank" id="spatial-navigation">spatial navigation</a>'s features so that
+  the Web technology can be propagated into <a href="https://www.merriam-webster.com/dictionary/several" target="blank" id="several">several</a> industries such as TV, IVI, game console,
+  and upcoming smart devices as well as PC and mobile for <a href="https://a11yproject.com/" target="blank" id="ally">a11y</a>.
 </div>
 <div id="resultSection">
   <br>
 </div>
 </body>
-<script type="text/javascript">
-const getResultBtn = document.getElementById('get_result');
-const resultSection = document.getElementById('resultSection');
-const container = document.getElementById('container');
 
-getResultBtn.addEventListener('click', function (e) {
+<script type="text/javascript">
+  const getResultBtn = document.getElementById('get_result');
+  const resultSection = document.getElementById('resultSection');
+  const container = document.getElementById('container');
   
-  const options = {
+  getResultBtn.addEventListener('click', function (e) {
+    
+    const options = {
                     point: document.getElementById('point_option').value, 
                     function: document.getElementById('function_option').value,
                     orth_weight_x: document.getElementById('orth_wx_option').value,
                     orth_weight_y: document.getElementById('orth_wy_option').value 
                   };
-
-  clearResult(resultSection);
-  let testArray = new Array();
-
-  // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
-  testArray.push(new SpatialNavigationTest(container, "initial_focus", "right", "right_focus", options));
-
-  console.log(testArray);
   
-  writeTestSummary(resultSection, testArray);
-});
-</script>
-<script type="text/javascript">
-function init() {
-  console.log('========Init=======');
-  const container = document.getElementById('container');
-
-  container.addEventListener('keydown', function(e) {
-    e.preventDefault();
-    const dir = ARROW_KEY_CODE[e.keyCode];
-    const target = e.target;
-    const options = {point: document.getElementById('point_option').value, 
-                    function: document.getElementById('function_option').value};
-
-    navigateByOption(container, target, dir, options);   
+    clearResult(resultSection);
+    let testArray = new Array();
+  
+    // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
+    testArray.push(new SpatialNavigationTest(container, "repository", "right", "spatial-navigation", options));
+    testArray.push(new SpatialNavigationTest(container, "several", "up", "spatial-navigation", options));
+    testArray.push(new SpatialNavigationTest(container, "several", "left", "spatial-navigation", options));
+  
+    console.log(testArray);
     
+    writeTestSummary(resultSection, testArray);
   });
-}
-</script>
-</html>
+  </script>
+  <script type="text/javascript">
+  function init() {
+    console.log('========Init=======');
+    const container = document.getElementById('container');
+  
+    container.addEventListener('keydown', function(e) {
+      e.preventDefault();
+      const dir = ARROW_KEY_CODE[e.keyCode];
+      const target = e.target;
+      const options = {point: document.getElementById('point_option').value, 
+                      function: document.getElementById('function_option').value};
+  
+      navigateByOption(container, target, dir, options);      
+    });
+  }
+  </script>
+  </html>

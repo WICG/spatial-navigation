@@ -1,0 +1,51 @@
+
+body { font-family: sans-serif; }
+
+:focus {
+  outline: 4px #3582ff solid;
+}
+
+.container, #container{
+  width: 720px;
+  margin: 10px;
+  border: black solid 1px;
+}
+
+.select {
+  width: 720px;
+  height: 120px;
+  padding: 10px;
+  margin-top: 10px;
+  color: white;
+  border-radius: 10px 10px 0 0;
+  background: gray;
+  line-height : 20px;
+}
+
+.options {
+  display: inline;
+}
+
+#initial_focus {
+  background: #F08080;
+}
+
+#get_result {
+  font-weight: bold;
+}
+
+.btn {
+  border: 2px solid purple;
+  border-radius: 10px;
+  background-color: white;
+  color: purple;
+  margin: 5px 250px;
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn:hover, .btn:focus {
+  background: purple;
+  color: white;
+}

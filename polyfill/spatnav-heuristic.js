@@ -33,7 +33,7 @@
   const ARROW_KEY_CODE = {37: 'left', 38: 'up', 39: 'right', 40: 'down'};
   const TAB_KEY_CODE = 9;
   let spatialNaviagtionKeyMode = 'ARROW';
-  let mapOfBoundRect = new Map();
+  let mapOfBoundRect = null;
 
   function focusNavigationHeuristics() {
 
@@ -58,12 +58,11 @@
       const currentKeyMode = (parent && parent.__spatialNavigation__.getKeyMode()) || window.__spatialNavigation__.getKeyMode();
       const eventTarget = document.activeElement;
       const dir = ARROW_KEY_CODE[e.keyCode];
-      mapOfBoundRect = new Map();
 
       if (e.keyCode === TAB_KEY_CODE)
         spatNavManager.startingPosition = null;
 
-      if(!currentKeyMode ||
+      if (!currentKeyMode ||
           (currentKeyMode === 'NONE') ||
           ((currentKeyMode === 'SHIFTARROW') && !e.shiftKey) ||
           ((currentKeyMode === 'ARROW') && e.shiftKey))
@@ -78,8 +77,11 @@
 
         if (focusNavigableArrowKey[dir]) {
           e.preventDefault();
+          mapOfBoundRect = new Map();
+
           navigate(dir);
 
+          mapOfBoundRect = null;
           spatNavManager.startingPosition = null;
         }
       }
@@ -121,8 +123,7 @@
 
       // 3
       eventTarget = elementFromPosition;
-    }
-    else {
+    } else {
       // 3
       eventTarget = startingPoint;
     }
@@ -140,12 +141,8 @@
       if (eventTarget.nodeName === 'IFRAME')
         eventTarget = eventTarget.contentDocument.body;
 
-      const candidates = eventTarget.focusableAreas();
-
       // 5-2
-      if (Array.isArray(candidates) && candidates.length > 0) {
-        if (focusingController(eventTarget.spatialNavigationSearch(dir), dir)) return;
-      }
+      if (focusingController(eventTarget.spatialNavigationSearch(dir), dir)) return;
       if (scrollingController(eventTarget, dir)) return;
     }
 
@@ -165,12 +162,9 @@
 
     // 7
     while (parentContainer) {
-      const candidates = filteredCandidates(eventTarget, container.focusableAreas(), dir, container);
-
-      if (Array.isArray(candidates) && candidates.length > 0) {
-        if (focusingController(eventTarget.spatialNavigationSearch(dir, candidates, container), dir)) return;
-      }
-      else {
+      if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir)) {
+        return;
+      } else {
         // If there isn't any candidate and the best candidate among candidate:
         // 1) Scroll or 2) Find candidates of the ancestor container
         // 8 - if
@@ -215,12 +209,8 @@
 
     if (!parentContainer && container) {
       // Getting out from the current spatnav container
-      const candidates = filteredCandidates(eventTarget, container.focusableAreas(), dir, container);
-
-      // 9
-      if (Array.isArray(candidates) && candidates.length > 0) {
-        if (focusingController(eventTarget.spatialNavigationSearch(dir, candidates, container), dir)) return;
-      }
+      if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir))
+        return;
     }
 
     if (scrollingController(container, dir)) return;
@@ -302,8 +292,8 @@
 
     // If the candidates is unknown, find candidates
     // 5-1
-    if(!candidates || candidates.length <= 0) {
-      if((isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
+    if (!candidates || candidates.length <= 0) {
+      if ((isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
         if (targetElement.nodeName === 'IFRAME')
           targetElement = targetElement.contentDocument.body;
 
@@ -331,8 +321,6 @@
   function spatialNavigationSearch (dir, candidates, container) {
     // Let container be the nearest ancestor of eventTarget that is a spatnav container.
     const targetElement = this;
-    let bestCandidate = null;
-
     candidates = spatNavCandidates(targetElement, dir, candidates, container);
 
     // Find the best candidate
@@ -341,20 +329,16 @@
     // find the best candidate within startingPoint
     if (candidates && candidates.length > 0) {
       if ((isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
-        if (candidates.every(x => targetElement.focusableAreas().includes(x))) {
+        const targetElementInTarget = targetElement.focusableAreas();
+        if (candidates.every(x => targetElementInTarget.includes(x))) {
           // if candidates are contained in the targetElement, then the focus moves inside the targetElement
-          bestCandidate = selectBestCandidateFromEdge(targetElement, candidates, dir);
-        }
-        else {
-          bestCandidate = selectBestCandidate(targetElement, candidates, dir);
+          return selectBestCandidateFromEdge(targetElement, candidates, dir);
         }
       }
-      else {
-        bestCandidate = selectBestCandidate(targetElement, candidates, dir);
-      }
+      return selectBestCandidate(targetElement, candidates, dir);
     }
 
-    return bestCandidate;
+    return null;
   }
 
   /**
@@ -373,15 +357,15 @@
     const originalContainer = currentElm.getSpatialNavigationContainer();
     let eventTargetRect;
 
-    // to do
-    // Offscreen handling when originalContainer is not <HTML>
-    if (!isVisible(currentElm) && originalContainer.parentElement && container !== originalContainer)
-      eventTargetRect = getBoundingClientRect(originalContainer);
-    else eventTargetRect = getBoundingClientRect(currentElm);
-
     // If D(dir) is null, let candidates be the same as visibles
     if (dir === undefined)
       return candidates;
+
+    // to do
+    // Offscreen handling when originalContainer is not <HTML>
+    if (originalContainer.parentElement && container !== originalContainer && !isVisible(currentElm))
+      eventTargetRect = getBoundingClientRect(originalContainer);
+    else eventTargetRect = getBoundingClientRect(currentElm);
 
     /*
       * Else, let candidates be the subset of the elements in visibles
@@ -406,19 +390,7 @@
   * @returns {<Node>} the best candidate
   **/
   function selectBestCandidate(currentElm, candidates, dir) {
-    let bestCandidate;
-    let minDistance = Number.POSITIVE_INFINITY;
-    let tempDistance = undefined;
-    let eventTargetRect = getBoundingClientRect(currentElm);
-
-    for (let i = 0; i < candidates.length; i++) {
-      tempDistance = getDistance(eventTargetRect, getBoundingClientRect(candidates[i]), dir);
-      if (tempDistance < minDistance) {
-        minDistance = tempDistance;
-        bestCandidate = candidates[i];
-      }
-    }
-    return bestCandidate;
+    return getNearestElement(currentElm, candidates, dir, getDistance);
   }
 
   /**
@@ -432,18 +404,31 @@
   * @returns {<Node>} the best candidate
   **/
   function selectBestCandidateFromEdge(currentElm, candidates, dir) {
-    const eventTargetRect = getBoundingClientRect(currentElm);
-    let minDistanceElement = undefined;
-    let minDistance = Number.POSITIVE_INFINITY;
-    let tempMinDistance = undefined;
+    return getNearestElement(currentElm, candidates, dir, getInnerDistance);
+  }
 
-    if(candidates) {
+
+  /**
+  * Select the nearest element from distance function
+  * @function
+  * @param {<Node>} startingPoint
+  * @param {sequence<Node>} candidates
+  * @param {SpatialNavigationDirection} direction
+  * @param {function} distanceFunction
+  * @returns {<Node>} the nearest element
+  **/
+  function getNearestElement(currentElm, candidates, dir, distanceFunction) {
+    const eventTargetRect = getBoundingClientRect(currentElm);
+    let minDistance = Number.POSITIVE_INFINITY;
+    let minDistanceElement = undefined;
+
+    if (candidates) {
       for (let i = 0; i < candidates.length; i++) {
-        tempMinDistance = getInnerDistance(eventTargetRect, getBoundingClientRect(candidates[i]), dir);
+        const distance = distanceFunction(eventTargetRect, getBoundingClientRect(candidates[i]), dir);
 
         // If the same distance, the candidate will be selected in the DOM order
-        if (tempMinDistance < minDistance) {
-          minDistance = tempMinDistance;
+        if (distance < minDistance) {
+          minDistance = distance;
           minDistanceElement = candidates[i];
         }
       }
@@ -480,39 +465,10 @@
   *         enum FocusableAreaSearchMode {'visible', 'all'};
   * @returns {sequence<Node>} focusable areas
   **/
-  function focusableAreas(option) {
-    let focusables = [];
-    let children = [];
-    let container = this;
-
-    option = option || {'mode': 'visible'};
-
-    if (container.childElementCount > 0) {
-      if (!container.parentElement)
-        container = document.body;
-
-      // Find focusable areas among this
-      children = container.children;
-
-      for (let i = 0; i < children.length; i++) {
-        const thisElement = children[i];
-        if (isFocusable(thisElement)) {
-          focusables.push(thisElement);
-        }
-        const recursiveFocusables = thisElement.focusableAreas({mode: 'all'});
-
-        if (Array.isArray(recursiveFocusables) && recursiveFocusables.length) {
-          focusables = focusables.concat(recursiveFocusables);
-        }
-      }
-    }
-
-    if (option.mode === 'all') {
-      return focusables;
-    }
-    else if (option.mode === 'visible') {
-      return findVisibles(focusables);
-    }
+  function focusableAreas(option = {'mode': 'visible'}) {
+    const container = this.parentElement ? this : document.body;
+    const focusables = Array.prototype.filter.call(container.getElementsByTagName('*'), isFocusable);
+    return (option.mode === 'all') ? focusables : focusables.filter(isVisible);
   }
 
   /**
@@ -556,17 +512,6 @@
       break;
     }
     element.dispatchEvent(triggeredEvent);
-  }
-
-  /**
-  * Find visible elements among focusable elements
-  * reference: https://wicg.github.io/spatial-navigation/#find-candidates (Step 4 - 5)
-  * @function
-  * @param {sequence<Node>} focusables - focusable areas
-  * @returns {sequence<Node>} - visible focusable areas
-  **/
-  function findVisibles(focusables) {
-    return focusables.filter(isVisible);
   }
 
   /**
@@ -642,8 +587,9 @@
   * @returns {Boolean}
   **/
   function isScrollContainer(element) {
-    const overflowX = window.getComputedStyle(element).getPropertyValue('overflow-x');
-    const overflowY = window.getComputedStyle(element).getPropertyValue('overflow-y');
+    const elementStyle = window.getComputedStyle(element, null);
+    const overflowX = elementStyle.getPropertyValue('overflow-x');
+    const overflowY = elementStyle.getPropertyValue('overflow-y');
     return (overflowX !== 'visible' && overflowX !== 'clip') && (overflowY !== 'visible' && overflowY !== 'clip');
   }
 
@@ -657,8 +603,9 @@
       if (dir && typeof dir === 'string') { // parameter: dir, element
         if (isOverflow(element, dir)) {
           // style property
-          const overflowX = window.getComputedStyle(element, null).getPropertyValue('overflow-x');
-          const overflowY = window.getComputedStyle(element, null).getPropertyValue('overflow-y');
+          const elementStyle = window.getComputedStyle(element, null);
+          const overflowX = elementStyle.getPropertyValue('overflow-x');
+          const overflowY = elementStyle.getPropertyValue('overflow-y');
 
           switch (dir) {
           case 'left':
@@ -754,23 +701,70 @@
   * check1. Whether the element is the browsing context (document, iframe)
   * check2. Whether the element is scrollable container or not. (regardless of scrollable axis)
   * check3. The value of tabIndex >= 0
-  *    There are several elements which the tabindex focus flag be set:
-  *    (https://html.spec.whatwg.org/multipage/interaction.html#specially-focusable)
-  *    The element with tabindex=-1 is omitted from the spatial navigation order,
-  *    but, if there is a focusable child element, it will be included in the spatial navigation order.
+  *         There are several elements which the tabindex focus flag be set:
+  *         (https://html.spec.whatwg.org/multipage/interaction.html#specially-focusable)
+  *         The element with tabindex=-1 is omitted from the spatial navigation order,
+  *         but, if there is a focusable child element, it will be included in the spatial navigation order.
   * check4. Whether the element is disabled or not.
+  * check5. Whether the element is expressly inert or not.
+  * check6. Whether the element is being rendered or not.
   *
   * @function
   * @param {<Node>} element
   * @returns {Boolean}
   **/
   function isFocusable(element) {
-    if (element.tabIndex < 0 || element.disabled)
+    return ((!element.parentElement) || (isScrollable(element) && isOverflow(element)) || (element.tabIndex >= 0) || 
+            (!isActuallyDisabled(element)) || (!isExpresslyInert(element)) || (isBeingRendered(element)));
+  }
+
+  /**
+  * isActuallyDisabled :
+  * Whether this element is actually disabled or not
+  * * reference: https://html.spec.whatwg.org/multipage/semantics-other.html#concept-element-disabled
+  * @function
+  * @param {<Node>} element
+  * @returns {Boolean}
+  **/
+  function isActuallyDisabled(element) {
+    if ((element.tagName === 'BUTTON') || (element.tagName === 'INPUT') || (element.tagName === 'SELECT') ||
+        (element.tagName === 'TEXTAREA') || (element.tagName === 'OPTGROUP') || (element.tagName === 'OPTION') ||
+        (element.tagName === 'FIELDSET'))
+      return (element.disabled);
+  }
+
+  /**
+  * isExpresslyInert :
+  * Whether the element is expressly inert or not.
+  * * reference: https://html.spec.whatwg.org/multipage/interaction.html#expressly-inert
+  * @function
+  * @param {<Node>} element
+  * @returns {Boolean}
+  **/
+  function isExpresslyInert(element) {
+    return ((element.inert) && (!element.ownerDocument.documentElement.inert));
+  }
+
+  /**
+  * isBeingRendered :
+  * Whether the element is being rendered or not. 
+  * * reference: https://html.spec.whatwg.org/multipage/rendering.html#being-rendered
+  *    "presence of the hidden attribute normally means the element is not being rendered"
+  * * reference: https://api.jquery.com/hidden-selector/
+  * check1. If an element has the style as "visibility: hidden | collapse" or "display: none", it is not being rendered.
+  * check2. If an element has the style as "opacity: 0", it is not being rendered.(that is, invisible).
+  * check3. If width and height of an element are explicitly set to 0, it is not being rendered.
+  * check4. If a parent element is hidden, an element itself is not being rendered.
+  *         (CSS visibility property and display property are inherited.)
+  * @function
+  * @param {<Node>} element
+  * @returns {Boolean}
+  **/
+  function isBeingRendered(element) {
+    if (!isVisibleStyleProperty(element.parentElement))
       return false;
-    else
-      return ((!element.parentElement) ||
-          (element.tabIndex >= 0) ||
-          (isScrollable(element) && isOverflow(element)));
+    return (isVisibleStyleProperty(element) || (element.style.opacity !== 0) || 
+            !((element.style.weight === '0px' || element.style.weight == 0) && (element.style.height === '0px' || element.style.height == 0)));
   }
 
   /**
@@ -783,7 +777,8 @@
   * @returns {Boolean}
   **/
   function isVisible(element) {
-    return (!element.parentElement) || (isVisibleStyleProperty(element) && hitTest(element));
+    const elementStyle = window.getComputedStyle(element, null);
+    return (!element.parentElement) || (isVisibleStyleProperty(elementStyle) && hitTest(element, elementStyle));
   }
 
   /**
@@ -801,22 +796,22 @@
     const entirelyVisible = !((rect.left < containerRect.left) ||
       (rect.right > containerRect.right) ||
       (rect.top < containerRect.top) ||
-      (rect.bottom > containerRect.botto));
+      (rect.bottom > containerRect.bottom));
 
     return entirelyVisible;
   }
 
   /** Check the style property of this element whether it's visible or not
   * @function
-  * @param {<Node>} element
+  * @param {CSSStyleDeclaration} elementStyle
   * @returns {Boolean}
   **/
-  function isVisibleStyleProperty(element) {
-    const thisVisibility = window.getComputedStyle(element, null).getPropertyValue('visibility');
-    const thisDisplay = window.getComputedStyle(element, null).getPropertyValue('display');
+  function isVisibleStyleProperty(elementStyle) {
+    const thisVisibility = elementStyle.getPropertyValue('visibility');
+    const thisDisplay = elementStyle.getPropertyValue('display');
     const invisibleStyle = ['hidden', 'collapse'];
 
-    return (!invisibleStyle.includes(thisVisibility) && thisDisplay !== 'none');
+    return (thisDisplay !== 'none' && !invisibleStyle.includes(thisVisibility));
   }
 
   /**
@@ -824,11 +819,12 @@
   * Check whether this element is entirely or partially visible within the viewport.
   * @function
   * @param {<Node>} element
+  * @param {CSSStyleDeclaration} elementStyle
   * @returns {Boolean}
   **/
-  function hitTest(element) {
-    let offsetX = parseInt(window.getComputedStyle(element, null).getPropertyValue('width')) / 10;
-    let offsetY = parseInt(window.getComputedStyle(element, null).getPropertyValue('height')) / 10;
+  function hitTest(element, elementStyle) {
+    let offsetX = parseInt(elementStyle.getPropertyValue('width')) / 10;
+    let offsetY = parseInt(elementStyle.getPropertyValue('height')) / 10;
 
     offsetX = isNaN(offsetX) ? 0 : offsetX;
     offsetY = isNaN(offsetY) ? 0 : offsetY;
@@ -836,16 +832,31 @@
     const elementRect = getBoundingClientRect(element);
 
     const middleElem = document.elementFromPoint((elementRect.left + elementRect.right) / 2, (elementRect.top + elementRect.bottom) / 2);
-    const leftTopElem = document.elementFromPoint(elementRect.left + offsetX, elementRect.top + offsetY);
-    const leftBottomElem = document.elementFromPoint(elementRect.left + offsetX, elementRect.bottom - offsetY);
-    const rightTopElem = document.elementFromPoint(elementRect.right - offsetX, elementRect.top + offsetY);
-    const rightBottomElem = document.elementFromPoint(elementRect.right - offsetX, elementRect.bottom - offsetY);
+    if (element === middleElem || element.contains(middleElem)) {
+      return true;
+    }
 
-    return ((element === middleElem || element.contains(middleElem)) ||
-          (element === leftTopElem || element.contains(leftTopElem)) ||
-          (element === leftBottomElem || element.contains(leftBottomElem)) ||
-          (element === rightTopElem || element.contains(rightTopElem)) ||
-          (element === rightBottomElem || element.contains(rightBottomElem)));
+    const leftTopElem = document.elementFromPoint(elementRect.left + offsetX, elementRect.top + offsetY);
+    if (element === leftTopElem || element.contains(leftTopElem)) {
+      return true;
+    }
+
+    const leftBottomElem = document.elementFromPoint(elementRect.left + offsetX, elementRect.bottom - offsetY);
+    if (element === leftBottomElem || element.contains(leftBottomElem)) {
+      return true;
+    }
+
+    const rightTopElem = document.elementFromPoint(elementRect.right - offsetX, elementRect.top + offsetY);
+    if (element === rightTopElem || element.contains(rightTopElem)) {
+      return true;
+    }
+
+    const rightBottomElem = document.elementFromPoint(elementRect.right - offsetX, elementRect.bottom - offsetY);
+    if (element === rightBottomElem || element.contains(rightBottomElem)) {
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -994,7 +1005,7 @@
 
     // D: The square root of the area of intersection between the border boxes of candidate and starting point
     const intersection_rect = getIntersectionRect(rect1, rect2);
-    const D = (intersection_rect) ? intersection_rect.width * intersection_rect.height : 0;
+    const D = (intersection_rect) ? Math.sqrt(intersection_rect.width * intersection_rect.height) : 0;
 
     return (A + B + C - D);
   }
@@ -1038,7 +1049,6 @@
     // Set orthogonal direction
     switch (dir) {
     case 'left':
-      /* falls through */
     case 'right':
       if (isBelow(rect1, rect2)) {
         points.exitPoint[1] = rect1.top;
@@ -1057,7 +1067,6 @@
       break;
 
     case 'up':
-    /* falls through */
     case 'down':
       if (isRightSide(rect1, rect2)) {
         points.exitPoint[0] = rect1.left;
@@ -1075,6 +1084,7 @@
       }
       break;
     }
+    
     return points;
   }
 
@@ -1117,7 +1127,7 @@
     const focusNavigableArrowKey = {'left': false, 'up': false, 'right': false, 'down': false};
 
     const dir = ARROW_KEY_CODE[e.keyCode];
-    if(dir === undefined) {
+    if (dir === undefined) {
       return focusNavigableArrowKey;
     }
 
@@ -1143,8 +1153,9 @@
   }
 
   function getBoundingClientRect(element) {
-    let rect = mapOfBoundRect.get(element);   // memoization
-    if(!rect) {
+    // memoization
+    let rect = mapOfBoundRect && mapOfBoundRect.get(element);
+    if (!rect) {
       const boundingClientRect = element.getBoundingClientRect();
       rect = {
         top: Number(boundingClientRect.top.toFixed(2)),
@@ -1154,7 +1165,7 @@
         width: Number(boundingClientRect.width.toFixed(2)),
         height: Number(boundingClientRect.height.toFixed(2))
       };
-      mapOfBoundRect.set(element, rect);
+      mapOfBoundRect && mapOfBoundRect.set(element, rect);
     }
     return rect;
   }
@@ -1198,7 +1209,7 @@
 
         // 5-2
         if (Array.isArray(candidates) && candidates.length > 0) {
-          if(findCandidate) {
+          if (findCandidate) {
             return spatNavCandidates(eventTarget, dir, candidates);
           } else {
             bestNextTarget = eventTarget.spatialNavigationSearch(dir, candidates);
@@ -1206,7 +1217,7 @@
           }
         }
         if (canScroll(eventTarget, dir)) {
-          if(findCandidate) {
+          if (findCandidate) {
             return [];
           } else {
             bestNextTarget = eventTarget;
@@ -1236,7 +1247,7 @@
         if (Array.isArray(candidates) && candidates.length > 0) {
           bestNextTarget = eventTarget.spatialNavigationSearch(dir, candidates, container);
           if (bestNextTarget) {
-            if(findCandidate) {
+            if (findCandidate) {
               return candidates;
             } else {
               return bestNextTarget;
@@ -1248,7 +1259,7 @@
         // 1) Scroll or 2) Find candidates of the ancestor container
         // 8 - if
         else if (canScroll(container, dir)) {
-          if(findCandidate) {
+          if (findCandidate) {
             return [];
           } else {
             bestNextTarget = eventTarget;
@@ -1265,7 +1276,7 @@
             eventTarget = window.frameElement;
             container = window.parent.document.documentElement;
           }
-          else if(findCandidate) {
+          else if (findCandidate) {
             return [];
           } else {
             return null;
@@ -1293,7 +1304,7 @@
           bestNextTarget = eventTarget.spatialNavigationSearch(dir, candidates, container);
 
           if (bestNextTarget) {
-            if(findCandidate) {
+            if (findCandidate) {
               return candidates;
             } else {
               return bestNextTarget;
@@ -1322,7 +1333,7 @@
       },
 
       setKeyMode : (option) => {
-        if(['SHIFTARROW', 'ARROW', 'NONE'].includes(option)) {
+        if (['SHIFTARROW', 'ARROW', 'NONE'].includes(option)) {
           spatialNaviagtionKeyMode = option;
         } else {
           spatialNaviagtionKeyMode = 'ARROW';

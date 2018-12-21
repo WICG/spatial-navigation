@@ -16,19 +16,30 @@
     margin: 10px;
     position: relative;
     border: 1px solid black;
+    width: 300px;
     height: 300px;
   }
 
   .box {
-    position: absolute;
     box-sizing: border-box;
     width: 50px;
     height: 50px;
     border: 1px black solid;
     background: #6ac;
+    text-align: center;
+  }
+
+  #grid {
+    display: grid;
+    writing-mode: vertical-lr;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-flow: row;
+    background-color: #fff;
+    color: #444;
+    width: 150px;
+    height: 150px;
   }
 </style>
-
 <body onload="init()">
 <div class="select">
   <div class="options">
@@ -71,13 +82,19 @@
 
   <button class="btn test" id="get_result">Get Test Results</button>
 </div>
+
 <div id="container">
-  <div tabindex="0" class="box" style="left: 220px; top: 40px;"></div>
-  <div tabindex="0" class="box" style="left: 280px; top: 40px;"></div>
-  <div tabindex="0" class="box" style="left: 340px; top: 40px;"></div>
-  <div tabindex="0" class="box" style="left: 320px; top: 175px;"></div>
-  <div tabindex="0" class="box" id="right_focus" style="left: 340px; top: 120px;"></div>
-  <div tabindex="0" class="box" id="initial_focus" style="width: 200px; left: 50px; top: 120px;"></div>
+  <div id="grid">
+    <div tabindex="0" class="box" id="item1"><strong>1</strong></div>
+    <div tabindex="0" class="box" id="item2"><strong>2</strong></div>
+    <div tabindex="0" class="box" id="item3"><strong>3</strong></div>
+    <div tabindex="0" class="box" id="item4"><strong>4</strong></div>
+    <div tabindex="0" class="box" id="initial_focus"><strong>5</strong></div>
+    <div tabindex="0" class="box" id="item6"><strong>6</strong></div>
+    <div tabindex="0" class="box" id="item7"><strong>7</strong></div>
+    <div tabindex="0" class="box" id="item8"><strong>8</strong></div>
+    <div tabindex="0" class="box" id="item9"><strong>9</strong></div>
+  </div>
 </div>
 <div id="resultSection">
   <br>
@@ -101,7 +118,7 @@ getResultBtn.addEventListener('click', function (e) {
   let testArray = new Array();
 
   // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
-  testArray.push(new SpatialNavigationTest(container, "initial_focus", "right", "right_focus", options));
+  testArray.push(new SpatialNavigationTest(container, "initial_focus", "left", "item4", options));
 
   console.log(testArray);
   
