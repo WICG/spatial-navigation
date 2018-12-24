@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="application-name" content="Test Navigation Behavior">
     <meta name="author" content="Jeonghee Ahn">
-    <meta name="description" content="You can check the spatial navigation behavior with custom elements. Create element using <b>mouse dragging</b> and remove element using <b>right-click.</b>">
+    <meta name="description" content="You can directly look into the spatial navigation behavior by yourself using elements you create and arrange. Try to create an element via <b>mouse dragging from empty space</b>, move an element via <b>mouse dragging from inside the element</b>, and delete an element via <b>right click</b>. In order to share a specific arrangement, you can get the snapshot using a set of expressions below as well.">
     <link rel="stylesheet" href="spatnav-style.css">
     <script src="spatnav-utils.js"></script>
     <script src="../../polyfill/spatnav-heuristic.js"></script>
@@ -30,17 +30,15 @@
     width: 720px;
     height: 150px;
   }
-  .node {
+  .b1 {
     position: absolute;
     box-sizing: border-box;
-    border: 1px solid #BBB;
-    background: orange;
     cursor: pointer;
     text-align: center;
     font-size: 24px;
   }
-  .node:focus {
-    background: #921;
+  .b1:focus {
+    background: #3e6e86;
     outline: 0px solid black;
   }
   .temp_node {
@@ -51,7 +49,6 @@
   </style>
 
   <script type="text/javascript">
-
     function init() {
       const resultSection = document.getElementById('resultSection');
       const container = document.getElementById('container');
@@ -62,18 +59,21 @@
 
       container.addEventListener("contextmenu", (e) => {
         e.preventDefault();
-        // if the right click is triggered, the target element is removed.
-        if (e.target.className.split(" ").includes("node")) {
+        // If the right click is triggered, the target element is removed.
+        if (e.target.className.split(" ").includes("box")) {
           container.removeChild(e.target);
           writeCurrentStatus();
         }
       });
+
       container.addEventListener("mousedown", (e) => {
-        // save the current mouse position
+        e.preventDefault();
+        e.target.focus();
+        // Save the current mouse position
         startX = e.clientX + window.pageXOffset;
         startY = e.clientY + window.pageYOffset;
-        // 1. select mode
-        if (e.target.className.split(" ").includes("node")) {
+        // 1. Select mode
+        if (e.target.className.split(" ").includes("box")) {
           mouseStatus = "select";
           selectNode = e.target;
         } else { // 2. draw mode
@@ -87,39 +87,39 @@
           }
         }
       });
-      container.addEventListener("mouseup", (e) => {
-        // 1. select mode
-        if (mouseStatus == "select") {
-          selectNode = null;
-        // 2. draw mode
-        // If no mouse move or tiny size, then the element isn't created.
-      } else if (mouseStatus == "down" || parseInt(tempNode.style.width) * parseInt(tempNode.style.height) < 300) {
-        container.removeChild(tempNode);
-        tempNode = null;
-      } else {
-        tempNode.className = "node";
-        tempNode.tabIndex = 0;
-        tempNode.innerText = String.fromCharCode(65 + childCount++);
-        tempNode = null;
-      }
-      mouseStatus = "up";
-      writeCurrentStatus();
 
-    });
-      container.addEventListener("mousemove", (e) => {
-        // 1. select mode
+      container.addEventListener("mouseup", (e) => {
         if (mouseStatus == "select") {
+          // 1. Select mode
+          selectNode = null;
+        } else if (tempNode && (mouseStatus == "down" || parseInt(tempNode.style.width) * parseInt(tempNode.style.height) < 300)) {
+          // 2. Draw mode
+          // If no mouse move or tiny size, then the element isn't created.
+          container.removeChild(tempNode);
+          tempNode = null;
+        } else if (tempNode) {
+          tempNode.className = "box b1";
+          tempNode.tabIndex = 0;
+          tempNode.innerText = String.fromCharCode(65 + childCount++);
+          tempNode = null;
+        }
+        mouseStatus = "up";
+        writeCurrentStatus();
+      });
+
+      container.addEventListener("mousemove", (e) => {
+        if (mouseStatus == "select") {
+          // 1. Select mode
           selectNode.style.left = selectNode.offsetLeft - startX + e.clientX + window.pageXOffset + "px";
           selectNode.style.top = selectNode.offsetTop - startY + e.clientY + window.pageYOffset + "px";
           startX = e.clientX + window.pageXOffset;
           startY = e.clientY + window.pageYOffset;
-        }
-        // 2. draw mode
-        else if (mouseStatus == "down" || mouseStatus == "drag") {
+        } else if (tempNode && (mouseStatus == "down" || mouseStatus == "drag")) {
+          // 2. draw mode
           let currentX = e.clientX + window.pageXOffset;
           let currentY = e.clientY + window.pageYOffset;
-          tempNode.style.left = (currentX - startX < 0) ? currentX + "px" : startX + "px";
-          tempNode.style.top = (currentY - startY < 0) ? currentY + "px" : startY + "px";
+          tempNode.style.left = ((currentX - startX < 0) ? currentX : startX) + "px";
+          tempNode.style.top = ((currentY - startY < 0) ? currentY : startY) + "px";
           tempNode.style.width = Math.abs(currentX - startX) + "px";
           tempNode.style.height = Math.abs(currentY - startY) + "px";
           mouseStatus = "drag";
@@ -135,14 +135,14 @@
           top: newElement.style.top
         } = styleInfo);
 
-        newElement.className = "node";
+        newElement.className = "box b1";
         newElement.tabIndex = "0";
         newElement.innerText = String.fromCharCode(65 + childCount++);
         return newElement;
       }
 
       function writeCurrentStatus() {
-        let nodeList = document.getElementsByClassName("node");
+        let nodeList = document.getElementsByClassName("box");
         let currentStatus = "";
         for(node of nodeList) {
           const styleObj = {
@@ -163,7 +163,6 @@
         }
         let strArray = nodeInfo.value.trim().split("\n");
         nodeInfo.value = "";
-
         childCount = 0;
         for(let str of strArray) {
           if(str.trim().length) {
@@ -174,14 +173,15 @@
         }
       }
       nodeInfo.addEventListener('change',  onchangeTextarea);
-      nodeInfo.value = `{"width":"100px","height":"100px","left":"200px","top":"100px"}
-        {"width":"100px","height":"100px","left":"300px","top":"100px"}
-        {"width":"100px","height":"100px","left":"400px","top":"100px"}
-        {"width":"100px","height":"100px","left":"200px","top":"200px"}
-        {"width":"100px","height":"100px","left":"300px","top":"200px"}
-        {"width":"100px","height":"100px","left":"400px","top":"200px"}`;
-      onchangeTextarea();
 
+      // Add initial element
+      nodeInfo.value = `{"width":"80px","height":"80px","left":"212px","top":"82px"}
+        {"width":"80px","height":"80px","left":"292px","top":"82px"}
+        {"width":"80px","height":"80px","left":"372px","top":"82px"}
+        {"width":"80px","height":"80px","left":"212px","top":"162px"}
+        {"width":"80px","height":"80px","left":"292px","top":"162px"}
+        {"width":"80px","height":"80px","left":"372px","top":"162px"}`;
+      onchangeTextarea();
     }
   </script>
 </html>
