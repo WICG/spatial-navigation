@@ -10,11 +10,6 @@
 
 (function () {
 
-  // Indicates global variables for spatnav (starting position)
-  const spatNavManager = {
-    startingPosition: null
-  };
-
   // Use non standard names by default, as per https://www.w3.org/2001/tag/doc/polyfills/#don-t-squat-on-proposed-names-in-speculative-polyfills
   // Allow binding to standard name for testing purposes
   if (window.navigate === undefined) {
@@ -28,6 +23,7 @@
   const TAB_KEY_CODE = 9;
   let spatialNaviagtionKeyMode = 'ARROW';
   let mapOfBoundRect = null;
+  let startingPosition = null; // Indicates global variables for spatnav (starting position)
 
   function focusNavigationHeuristics() {
 
@@ -54,7 +50,7 @@
       const dir = ARROW_KEY_CODE[e.keyCode];
 
       if (e.keyCode === TAB_KEY_CODE)
-        spatNavManager.startingPosition = null;
+        startingPosition = null;
 
       if (!currentKeyMode ||
           (currentKeyMode === 'NONE') ||
@@ -76,7 +72,7 @@
           navigate(dir);
 
           mapOfBoundRect = null;
-          spatNavManager.startingPosition = null;
+          startingPosition = null;
         }
       }
     });
@@ -87,7 +83,7 @@
     * *NOTE: Let UA set the spatial navigation starting point based on click
     */
     document.addEventListener('mouseup', function(e) {
-      spatNavManager.startingPosition = {xPosition: e.clientX, yPosition: e.clientY};
+      startingPosition = {xPosition: e.clientX, yPosition: e.clientY};
     });
   }
 
@@ -107,13 +103,13 @@
     let elementFromPosition = null;
 
     // 2 Optional step, UA defined starting point
-    if (spatNavManager.startingPosition) {
-      elementFromPosition = document.elementFromPoint(spatNavManager.startingPosition.xPosition, spatNavManager.startingPosition.yPosition);
+    if (startingPosition) {
+      elementFromPosition = document.elementFromPoint(startingPosition.xPosition, startingPosition.yPosition);
     }
 
     if (elementFromPosition && startingPoint.contains(elementFromPosition)) {
-      startingPoint = spatNavManager.startingPosition;
-      spatNavManager.startingPosition = null;
+      startingPoint = startingPosition;
+      startingPosition = null;
 
       // 3
       eventTarget = elementFromPosition;
