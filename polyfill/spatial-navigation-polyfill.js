@@ -504,7 +504,7 @@
   }
 
   function isCSSSpatNavContain(el) {
-    return readCssVar(el, 'spatial-navigation-contain') == 'contain';
+    return readCssVar(el, 'spatial-navigation-contain') === 'contain';
   }
 
   /**
@@ -640,13 +640,18 @@
   * @returns {Boolean}
   **/
   function isHTMLScrollBoundary(element, dir) {
-    const scrollBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
-    const scrollRight = element.scrollWidth - element.scrollLeft - element.clientWidth;
-    const scrollTop = window.scrollY;
-    const scrollLeft = window.scrollX;
-
-    const checkTargetValue = {left: scrollLeft, right: scrollRight, up: scrollTop, down: scrollBottom};
-    return (checkTargetValue[dir] == 0);
+    let result = false;
+    switch (dir) {
+    case 'left':
+      result = window.scrollX === 0;
+    case 'right':
+      result = (element.scrollWidth - element.scrollLeft - element.clientWidth) === 0;
+    case 'up':
+      result = window.scrollY === 0;
+    case 'down':
+      result = (element.scrollHeight - element.scrollTop - element.clientHeight) === 0;
+    }
+    return result;
   }
 
   /** Whether the scrollbar of an element reaches to the end or not
@@ -742,7 +747,7 @@
     if (!isVisibleStyleProperty(element.parentElement))
       return false;
     return (isVisibleStyleProperty(element) || (element.style.opacity !== 0) || 
-            !((element.style.width === '0px' || element.style.width == 0) && (element.style.height === '0px' || element.style.height == 0)));
+            !((element.style.width === '0px' || element.style.width === 0) && (element.style.height === '0px' || element.style.height === 0)));
   }
 
   /**
