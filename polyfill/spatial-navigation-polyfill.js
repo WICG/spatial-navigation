@@ -710,9 +710,7 @@
   * @returns {Boolean}
   **/
   function isActuallyDisabled(element) {
-    if ((element.tagName === 'BUTTON') || (element.tagName === 'INPUT') || (element.tagName === 'SELECT') ||
-        (element.tagName === 'TEXTAREA') || (element.tagName === 'OPTGROUP') || (element.tagName === 'OPTION') ||
-        (element.tagName === 'FIELDSET'))
+    if (['BUTTON', 'INPUT', 'SELECT', 'TEXTAREA', 'OPTGROUP', 'OPTION', 'FIELDSET'].includes(element.tagName))
       return (element.disabled);
   }
 
