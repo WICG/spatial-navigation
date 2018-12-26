@@ -1345,4 +1345,4 @@
   }
   activeExperimentalAPI();
 
-})(window, document);
+})();
