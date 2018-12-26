@@ -1011,13 +1011,11 @@
     case 'right':
       if (isBelow(rect1, rect2)) {
         points.exitPoint[1] = rect1.top;
-        if (rect2.bottom < rect1.top) points.entryPoint[1] = rect2.bottom;
-        else points.entryPoint[1] = rect1.top;
+        points.entryPoint[1] = (rect2.bottom < rect1.top) ? rect2.bottom : rect1.top;
       }
       else if (isBelow(rect2, rect1)) {
         points.exitPoint[1] = rect1.bottom;
-        if (rect2.top > rect1.bottom) points.entryPoint[1] = rect2.top;
-        else points.entryPoint[1] = rect1.bottom;
+        points.entryPoint[1] = (rect2.top > rect1.bottom) ? rect2.top : rect1.bottom;
       }
       else {
         points.exitPoint[1] = Math.max(rect1.top, rect2.top);
@@ -1029,13 +1027,11 @@
     case 'down':
       if (isRightSide(rect1, rect2)) {
         points.exitPoint[0] = rect1.left;
-        if (rect2.right < rect1.left) points.entryPoint[0] = rect2.right;
-        else points.entryPoint[0] = rect1.left;
+        points.entryPoint[0] = (rect2.right < rect1.left) ? rect2.right : rect1.left;
       }
       else if (isRightSide(rect2, rect1)) {
         points.exitPoint[0] = rect1.right;
-        if (rect2.left > rect1.right) points.entryPoint[0] = rect2.left;
-        else points.entryPoint[0] = rect1.right;
+        points.entryPoint[0] = (rect2.left > rect1.right) ? rect2.left : rect1.right;
       }
       else {
         points.exitPoint[0] = Math.max(rect1.left, rect2.left);
