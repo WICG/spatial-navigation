@@ -901,31 +901,9 @@
   * @returns {SpatialNavigationDirection} distance
   **/
   function getInnerDistance(rect1, rect2, dir) {
-    const points = {fromPoint: 0, toPoint: 0};
-
-    switch (dir) {
-    case 'right':
-      points.fromPoint = rect1.left;
-      points.toPoint = rect2.left;
-      break;
-
-    case 'down' :
-      points.fromPoint = rect1.top;
-      points.toPoint = rect2.top;
-      break;
-
-    case 'left' :
-      points.fromPoint = rect1.right;
-      points.toPoint = rect2.right;
-      break;
-
-    case 'up' :
-      points.fromPoint = rect1.bottom;
-      points.toPoint = rect2.bottom;
-      break;
-    }
-
-    return Math.abs(points.fromPoint - points.toPoint);
+    const baseEdgeForEachDirection = {left: 'right', right: 'left', up: 'bottom', down: 'top'};
+    const baseEdge = baseEdgeForEachDirection[dir];
+    return Math.abs(rect1[baseEdge] - rect2[baseEdge]);
   }
 
   /**
