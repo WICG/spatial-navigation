@@ -10,22 +10,25 @@
 
 (function () {
 
-  // Use non standard names by default, as per https://www.w3.org/2001/tag/doc/polyfills/#don-t-squat-on-proposed-names-in-speculative-polyfills
-  // Allow binding to standard name for testing purposes
+  // If spatial navigation is already enabled via browser engine or browser extensions, all the following code isn't executed.
   if (window.navigate === undefined) {
-    window.navigate = navigate;
-    window.Element.prototype.spatialNavigationSearch = spatialNavigationSearch;
-    window.Element.prototype.focusableAreas = focusableAreas;
-    window.Element.prototype.getSpatialNavigationContainer = getSpatialNavigationContainer;
+    return;
   } 
 
   const ARROW_KEY_CODE = {37: 'left', 38: 'up', 39: 'right', 40: 'down'};
   const TAB_KEY_CODE = 9;
-  let spatialNaviagtionKeyMode = 'ARROW';
+  let spatialNaviagtionKeyMode = 'ARROW'; // Options: 'SHIFTARROW', 'ARROW', 'NONE'
   let mapOfBoundRect = null;
   let startingPosition = null; // Indicates global variables for spatnav (starting position)
 
-  function focusNavigationHeuristics() {
+  function initiateSpatialNavigation() {
+    /**
+    * Bind the standards APIs to be exposed to the window object for authors
+    **/
+    window.navigate = navigate;
+    window.Element.prototype.spatialNavigationSearch = spatialNavigationSearch;
+    window.Element.prototype.focusableAreas = focusableAreas;
+    window.Element.prototype.getSpatialNavigationContainer = getSpatialNavigationContainer;
 
     /**
     * CSS.registerProperty() from the Properties and Values API
@@ -1125,13 +1128,6 @@
     return rect;
   }
 
-  window.addEventListener('load', function() {
-
-    // load SpatNav polyfill
-    focusNavigationHeuristics();
-  });
-
-
   function activeExperimentalAPI() {
     function canScroll(container, dir) {
       return (isScrollable(container, dir) && !isScrollBoundary(container, dir)) ||
@@ -1294,6 +1290,11 @@
       getKeyMode : () => spatialNaviagtionKeyMode
     };
   }
+
+  window.addEventListener('load', function() {
+    initiateSpatialNavigation();
+  });
+
   activeExperimentalAPI();
 
 })();
