@@ -12,23 +12,17 @@
 
   // Indicates global variables for spatnav (starting position)
   const spatNavManager = {
-    startingPosition: null,
-    useStandardName: true
+    startingPosition: null
   };
 
   // Use non standard names by default, as per https://www.w3.org/2001/tag/doc/polyfills/#don-t-squat-on-proposed-names-in-speculative-polyfills
   // Allow binding to standard name for testing purposes
-  if (spatNavManager.useStandardName) {
+  if (window.navigate === undefined) {
     window.navigate = navigate;
     window.Element.prototype.spatialNavigationSearch = spatialNavigationSearch;
     window.Element.prototype.focusableAreas = focusableAreas;
     window.Element.prototype.getSpatialNavigationContainer = getSpatialNavigationContainer;
-  } else {
-    window.navigatePolyfill = navigate;
-    window.Element.prototype.spatialNavigationSearchPolyfill = spatialNavigationSearch;
-    window.Element.prototype.focusableAreasPolyfill = focusableAreas;
-    window.Element.prototype.getSpatialNavigationContainerPolyfill = getSpatialNavigationContainer;
-  }
+  } 
 
   const ARROW_KEY_CODE = {37: 'left', 38: 'up', 39: 'right', 40: 'down'};
   const TAB_KEY_CODE = 9;
@@ -488,27 +482,15 @@
 
     switch (option) {
     case 'beforefocus':
-      if (spatNavManager.useStandardName) {
-        triggeredEvent.initCustomEvent('navbeforefocus', true, true, data_);
-      } else {
-        triggeredEvent.initCustomEvent('navbeforefocusPolyfill', true, true, data_);
-      }
+      triggeredEvent.initCustomEvent('navbeforefocus', true, true, data_);
       break;
 
     case 'beforescroll':
-      if (spatNavManager.useStandardName) {
-        triggeredEvent.initCustomEvent('navbeforescroll', true, true, data_);
-      } else {
-        triggeredEvent.initCustomEvent('navbeforescrollPolyfill', true, true, data_);
-      }
+      triggeredEvent.initCustomEvent('navbeforescroll', true, true, data_);
       break;
 
     case 'notarget':
-      if (spatNavManager.useStandardName) {
-        triggeredEvent.initCustomEvent('navnotarget', true, true, data_);
-      } else {
-        triggeredEvent.initCustomEvent('navnotargetPolyfill', true, true, data_);
-      }
+      triggeredEvent.initCustomEvent('navnotarget', true, true, data_);
       break;
     }
     element.dispatchEvent(triggeredEvent);
@@ -1168,10 +1150,6 @@
       mapOfBoundRect && mapOfBoundRect.set(element, rect);
     }
     return rect;
-  }
-
-  function setStandardName() {
-    spatNavManager.useStandardName = true;
   }
 
   window.addEventListener('load', function() {
