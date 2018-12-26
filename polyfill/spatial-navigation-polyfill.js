@@ -469,7 +469,7 @@
   * @returns NaN
   **/
   function createSpatNavEvents(option, element, direction) {
-    const data_ = {
+    const data = {
       relatedTarget: element,
       dir: direction
     };
@@ -478,15 +478,15 @@
 
     switch (option) {
     case 'beforefocus':
-      triggeredEvent.initCustomEvent('navbeforefocus', true, true, data_);
+      triggeredEvent.initCustomEvent('navbeforefocus', true, true, data);
       break;
 
     case 'beforescroll':
-      triggeredEvent.initCustomEvent('navbeforescroll', true, true, data_);
+      triggeredEvent.initCustomEvent('navbeforescroll', true, true, data);
       break;
 
     case 'notarget':
-      triggeredEvent.initCustomEvent('navnotarget', true, true, data_);
+      triggeredEvent.initCustomEvent('navnotarget', true, true, data);
       break;
     }
     element.dispatchEvent(triggeredEvent);
@@ -504,7 +504,7 @@
   }
 
   function isCSSSpatNavContain(el) {
-    return readCssVar(el, 'spatial-navigation-contain') == 'contain';
+    return readCssVar(el, 'spatial-navigation-contain') === 'contain';
   }
 
   /**
@@ -640,13 +640,18 @@
   * @returns {Boolean}
   **/
   function isHTMLScrollBoundary(element, dir) {
-    const scrollBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
-    const scrollRight = element.scrollWidth - element.scrollLeft - element.clientWidth;
-    const scrollTop = window.scrollY;
-    const scrollLeft = window.scrollX;
-
-    const checkTargetValue = {left: scrollLeft, right: scrollRight, up: scrollTop, down: scrollBottom};
-    return (checkTargetValue[dir] == 0);
+    let result = false;
+    switch (dir) {
+    case 'left':
+      result = window.scrollX === 0;
+    case 'right':
+      result = (element.scrollWidth - element.scrollLeft - element.clientWidth) === 0;
+    case 'up':
+      result = window.scrollY === 0;
+    case 'down':
+      result = (element.scrollHeight - element.scrollTop - element.clientHeight) === 0;
+    }
+    return result;
   }
 
   /** Whether the scrollbar of an element reaches to the end or not
@@ -705,9 +710,7 @@
   * @returns {Boolean}
   **/
   function isActuallyDisabled(element) {
-    if ((element.tagName === 'BUTTON') || (element.tagName === 'INPUT') || (element.tagName === 'SELECT') ||
-        (element.tagName === 'TEXTAREA') || (element.tagName === 'OPTGROUP') || (element.tagName === 'OPTION') ||
-        (element.tagName === 'FIELDSET'))
+    if (['BUTTON', 'INPUT', 'SELECT', 'TEXTAREA', 'OPTGROUP', 'OPTION', 'FIELDSET'].includes(element.tagName))
       return (element.disabled);
   }
 
@@ -742,7 +745,7 @@
     if (!isVisibleStyleProperty(element.parentElement))
       return false;
     return (isVisibleStyleProperty(element) || (element.style.opacity !== 0) || 
-            !((element.style.width === '0px' || element.style.width == 0) && (element.style.height === '0px' || element.style.height == 0)));
+            !((element.style.width === '0px' || element.style.width === 0) && (element.style.height === '0px' || element.style.height === 0)));
   }
 
   /**
@@ -938,7 +941,7 @@
     const kOrthogonalWeightForLeftRight = 30;
     const kOrthogonalWeightForUpDown = 2;
 
-    let orthogonal_bias = 0;
+    let orthogonalBias = 0;
 
     // Get exit point, entry point
     const points = getEntryAndExitPoints(dir, rect1, rect2);
@@ -961,8 +964,8 @@
       B = P1;
       // If not aligned => add bias
       if (!isAligned(rect1, rect2, dir))
-        orthogonal_bias = (rect1.height / 2);
-      C = (P2 + orthogonal_bias) * kOrthogonalWeightForLeftRight;
+        orthogonalBias = (rect1.height / 2);
+      C = (P2 + orthogonalBias) * kOrthogonalWeightForLeftRight;
       break;
 
     case 'up' :
@@ -971,8 +974,8 @@
       B = P2;
       // If not aligned => add bias
       if (!isAligned(rect1, rect2, dir))
-        orthogonal_bias = (rect1.width / 2);
-      C = (P1 + orthogonal_bias) * kOrthogonalWeightForUpDown;
+        orthogonalBias = (rect1.width / 2);
+      C = (P1 + orthogonalBias) * kOrthogonalWeightForUpDown;
       break;
 
     default:
@@ -982,8 +985,8 @@
     }
 
     // D: The square root of the area of intersection between the border boxes of candidate and starting point
-    const intersection_rect = getIntersectionRect(rect1, rect2);
-    const D = (intersection_rect) ? Math.sqrt(intersection_rect.width * intersection_rect.height) : 0;
+    const intersectionRect = getIntersectionRect(rect1, rect2);
+    const D = (intersectionRect) ? Math.sqrt(intersectionRect.width * intersectionRect.height) : 0;
 
     return (A + B + C - D);
   }
@@ -1075,17 +1078,17 @@
   * @returns {Object} The intersection area between two elements (width , height)
   **/
   function getIntersectionRect(rect1, rect2) {
-    let intersection_rect;
-    const new_location = [Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)];
-    const new_max_point = [Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom)];
+    let intersectionRect;
+    const newLocation = [Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)];
+    const newMaxPoint = [Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom)];
 
-    if (!(new_location[0] >= new_max_point[0] || new_location[1] >= new_max_point[1])) {
+    if (!(newLocation[0] >= newMaxPoint[0] || newLocation[1] >= newMaxPoint[1])) {
       // intersecting-cases
-      intersection_rect = {width: 0, height: 0};
-      intersection_rect.width = Math.abs(new_location[0] - new_max_point[0]);
-      intersection_rect.height = Math.abs(new_location[1] - new_max_point[1]);
+      intersectionRect = {width: 0, height: 0};
+      intersectionRect.width = Math.abs(newLocation[0] - newMaxPoint[0]);
+      intersectionRect.height = Math.abs(newLocation[1] - newMaxPoint[1]);
     }
-    return intersection_rect;
+    return intersectionRect;
   }
 
   /**
@@ -1097,8 +1100,8 @@
   * @returns {Boolean}
   **/
   function handlingEditableElement(e) {
-    const spinnableInputTypes = ['email', 'date', 'month', 'number', 'time', 'week'],
-      textInputTypes = ['password', 'text', 'search', 'tel', 'url'];
+    const SPINNABLE_INPUT_TYPES = ['email', 'date', 'month', 'number', 'time', 'week'],
+      TEXT_INPUT_TYPES = ['password', 'text', 'search', 'tel', 'url'];
     const eventTarget = document.activeElement;
     const startPosition = eventTarget.selectionStart;
     const endPosition = eventTarget.selectionEnd;
@@ -1109,11 +1112,11 @@
       return focusNavigableArrowKey;
     }
 
-    if (spinnableInputTypes.includes(eventTarget.getAttribute('type')) &&
+    if (SPINNABLE_INPUT_TYPES.includes(eventTarget.getAttribute('type')) &&
       (dir === 'up' || dir === 'down')) {
       focusNavigableArrowKey[dir] = true;
     }
-    else if (textInputTypes.includes(eventTarget.getAttribute('type'))) {
+    else if (TEXT_INPUT_TYPES.includes(eventTarget.getAttribute('type'))) {
       if (startPosition === 0) {
         focusNavigableArrowKey.left = true;
         focusNavigableArrowKey.up = true;
