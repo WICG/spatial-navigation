@@ -87,7 +87,7 @@ enabling spatial navigation.
 
 ```html
 ...
-    <script src="/node_modules/spatial-navigation-polyfill/polyfill/spatnav-heuristic.js"></script>
+    <script src="/node_modules/spatial-navigation-polyfill/polyfill/spatial-navigation-polyfill.js"></script>
   </body>
 </html>
 ```
@@ -195,6 +195,6 @@ unlike what is described in section [#using-the-apis].
 for purposes other than runing the automated tests of the specication**.
 
 ````html
-<script src="../spatnav-heuristic.js"></script>
+<script src="../spatial-navigation-polyfill.js"></script>
 <script>setStandardName();</script>
 ````
