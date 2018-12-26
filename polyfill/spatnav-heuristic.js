@@ -764,7 +764,7 @@
     if (!isVisibleStyleProperty(element.parentElement))
       return false;
     return (isVisibleStyleProperty(element) || (element.style.opacity !== 0) || 
-            !((element.style.weight === '0px' || element.style.weight == 0) && (element.style.height === '0px' || element.style.height == 0)));
+            !((element.style.width === '0px' || element.style.width == 0) && (element.style.height === '0px' || element.style.height == 0)));
   }
 
   /**
