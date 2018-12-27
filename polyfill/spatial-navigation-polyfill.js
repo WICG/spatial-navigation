@@ -17,7 +17,6 @@
 
   const ARROW_KEY_CODE = {37: 'left', 38: 'up', 39: 'right', 40: 'down'};
   const TAB_KEY_CODE = 9;
-  let spatialNaviagtionKeyMode = 'ARROW'; // Options: 'SHIFTARROW', 'ARROW', 'NONE'
   let mapOfBoundRect = null;
   let startingPosition = null; // Indicates global variables for spatnav (starting position)
 
@@ -48,7 +47,7 @@
     * If arrow key pressed, get the next focusing element and send it to focusing controller
     */
     window.addEventListener('keydown', function(e) {
-      const currentKeyMode = (parent && parent.__spatialNavigation__.getKeyMode()) || window.__spatialNavigation__.getKeyMode();
+      const currentKeyMode = (parent && parent.__spatialNavigation__.keyMode) || window.__spatialNavigation__.keyMode;
       const eventTarget = document.activeElement;
       const dir = ARROW_KEY_CODE[e.keyCode];
 
@@ -1132,7 +1131,7 @@
     return rect;
   }
 
-  function activeExperimentalAPI() {
+  function getExperimentalAPI() {
     function canScroll(container, dir) {
       return (isScrollable(container, dir) && !isScrollBoundary(container, dir)) ||
              (!container.parentElement && !isHTMLScrollBoundary(container, dir));
@@ -1270,7 +1269,7 @@
       }
     }
 
-    window.__spatialNavigation__ = {
+    return {
       isContainer: isContainer,
       findCandidates: findTarget.bind(null, true),
       findNextTarget: findTarget.bind(null, false),
@@ -1281,24 +1280,27 @@
           }
         }
         return getDistance(getBoundingClientRect(element), getBoundingClientRect(candidateElement), dir);
-      },
+      }
+    };
+  }
 
-      setKeyMode : (option) => {
-        if (['SHIFTARROW', 'ARROW', 'NONE'].includes(option)) {
-          spatialNaviagtionKeyMode = option;
-        } else {
-          spatialNaviagtionKeyMode = 'ARROW';
-        }
-      },
+  function enableExperimentalAPIs (option) {
+    const currentKeyMode = window.__spatialNavigation__ && window.__spatialNavigation__.keyMode;
+    window.__spatialNavigation__ = (option === false) ? getInitialAPIs() : Object.assign(getInitialAPIs(), getExperimentalAPI());
+    window.__spatialNavigation__.keyMode = currentKeyMode;
+    Object.seal(window.__spatialNavigation__);
+  }
 
-      getKeyMode : () => spatialNaviagtionKeyMode
+  function getInitialAPIs() {
+    return {
+      enableExperimentalAPIs,
+      get keyMode() {return this._keymode ? this._keymode : 'ARROW';},
+      set keyMode(mode) {this._keymode  = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW';},
     };
   }
 
   window.addEventListener('load', function() {
     initiateSpatialNavigation();
+    enableExperimentalAPIs(false);
   });
-
-  activeExperimentalAPI();
-
 })();
