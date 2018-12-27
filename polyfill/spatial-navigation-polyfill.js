@@ -11,7 +11,7 @@
 (function () {
 
   // If spatial navigation is already enabled via browser engine or browser extensions, all the following code isn't executed.
-  if (window.navigate === undefined) {
+  if (window.navigate !== undefined) {
     return;
   } 
 
@@ -647,12 +647,16 @@
     switch (dir) {
     case 'left':
       result = window.scrollX === 0;
+      break;
     case 'right':
       result = (element.scrollWidth - element.scrollLeft - element.clientWidth) === 0;
+      break;
     case 'up':
       result = window.scrollY === 0;
+      break;
     case 'down':
       result = (element.scrollHeight - element.scrollTop - element.clientHeight) === 0;
+      break;
     }
     return result;
   }
