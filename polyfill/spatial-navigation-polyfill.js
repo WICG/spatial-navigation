@@ -991,23 +991,19 @@
     switch (dir) {
     case 'left':
       points.exitPoint[0] = rect1.left;
-      if (rect2.right < rect1.left) points.entryPoint[0] = rect2.right;
-      else points.entryPoint[0] = rect1.left;
+      points.entryPoint[0] = (rect2.right < rect1.left) ? rect2.right : rect1.left;
       break;
     case 'up':
       points.exitPoint[1] = rect1.top;
-      if (rect2.bottom < rect1.top) points.entryPoint[1] = rect2.bottom;
-      else points.entryPoint[1] = rect1.top;
+      points.entryPoint[1] = (rect2.bottom < rect1.top) ? rect2.bottom :  rect1.top;
       break;
     case 'right':
       points.exitPoint[0] = rect1.right;
-      if (rect2.left > rect1.right) points.entryPoint[0] = rect2.left;
-      else points.entryPoint[0] = rect1.right;
+      points.entryPoint[0] = (rect2.left > rect1.right) ? rect2.left : rect1.right;
       break;
     case 'down':
       points.exitPoint[1] = rect1.bottom;
-      if (rect2.top > rect1.bottom) points.entryPoint[1] = rect2.top;
-      else points.entryPoint[1] = rect1.bottom;
+      points.entryPoint[1] = (rect2.top > rect1.bottom) ? rect2.top : rect1.bottom;
       break;
     }
 
@@ -1058,17 +1054,17 @@
   * @returns {Object} The intersection area between two elements (width , height)
   **/
   function getIntersectionRect(rect1, rect2) {
-    let intersectionRect;
     const newLocation = [Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)];
     const newMaxPoint = [Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom)];
 
     if (!(newLocation[0] >= newMaxPoint[0] || newLocation[1] >= newMaxPoint[1])) {
       // intersecting-cases
-      intersectionRect = {width: 0, height: 0};
-      intersectionRect.width = Math.abs(newLocation[0] - newMaxPoint[0]);
-      intersectionRect.height = Math.abs(newLocation[1] - newMaxPoint[1]);
+      return {
+        width: Math.abs(newLocation[0] - newMaxPoint[0]),
+        height: Math.abs(newLocation[1] - newMaxPoint[1])
+      };
     }
-    return intersectionRect;
+    return {};
   }
 
   /**
@@ -1159,20 +1155,10 @@
 
         // 5-2
         if (Array.isArray(candidates) && candidates.length > 0) {
-          if (findCandidate) {
-            return spatNavCandidates(eventTarget, dir, candidates);
-          } else {
-            bestNextTarget = eventTarget.spatialNavigationSearch(dir, candidates);
-            return bestNextTarget;
-          }
+          return findCandidate ? spatNavCandidates(eventTarget, dir, candidates) : eventTarget.spatialNavigationSearch(dir, candidates);
         }
         if (canScroll(eventTarget, dir)) {
-          if (findCandidate) {
-            return [];
-          } else {
-            bestNextTarget = eventTarget;
-            return bestNextTarget;
-          }
+          return findCandidate ? [] : eventTarget;
         }
       }
 
@@ -1197,11 +1183,7 @@
         if (Array.isArray(candidates) && candidates.length > 0) {
           bestNextTarget = eventTarget.spatialNavigationSearch(dir, candidates, container);
           if (bestNextTarget) {
-            if (findCandidate) {
-              return candidates;
-            } else {
-              return bestNextTarget;
-            }
+            return findCandidate ? candidates : bestNextTarget;
           }
         }
 
@@ -1209,12 +1191,7 @@
         // 1) Scroll or 2) Find candidates of the ancestor container
         // 8 - if
         else if (canScroll(container, dir)) {
-          if (findCandidate) {
-            return [];
-          } else {
-            bestNextTarget = eventTarget;
-            return bestNextTarget;
-          }
+          return findCandidate ? [] : eventTarget;
         } else if (container === document || container === document.documentElement) {
           container = window.document.documentElement;
 
@@ -1226,13 +1203,7 @@
             eventTarget = window.frameElement;
             container = window.parent.document.documentElement;
           }
-          else if (findCandidate) {
-            return [];
-          } else {
-            return null;
-          }
-
-          parentContainer = container.getSpatialNavigationContainer();
+          return findCandidate ? [] : null;
         }
         else {
           // avoiding when spatnav container with tabindex=-1
@@ -1252,13 +1223,8 @@
         // 9
         if (Array.isArray(candidates) && candidates.length > 0) {
           bestNextTarget = eventTarget.spatialNavigationSearch(dir, candidates, container);
-
           if (bestNextTarget) {
-            if (findCandidate) {
-              return candidates;
-            } else {
-              return bestNextTarget;
-            }
+            return findCandidate ? candidates : bestNextTarget;
           }
         }
       }
