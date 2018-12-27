@@ -720,6 +720,8 @@
   function isActuallyDisabled(element) {
     if (['BUTTON', 'INPUT', 'SELECT', 'TEXTAREA', 'OPTGROUP', 'OPTION', 'FIELDSET'].includes(element.tagName))
       return (element.disabled);
+    else
+      return false;
   }
 
   /**
