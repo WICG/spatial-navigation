@@ -999,7 +999,7 @@
       break;
     case 'up':
       points.exitPoint[1] = rect1.top;
-      points.entryPoint[1] = (rect2.bottom < rect1.top) ? rect2.bottom :  rect1.top;
+      points.entryPoint[1] = (rect2.bottom < rect1.top) ? rect2.bottom : rect1.top;
       break;
     case 'right':
       points.exitPoint[0] = rect1.right;
@@ -1095,17 +1095,19 @@
       (dir === 'up' || dir === 'down')) {
       focusNavigableArrowKey[dir] = true;
     }
-    else if (TEXT_INPUT_TYPES.includes(eventTarget.getAttribute('type'))) {
-      if (startPosition === 0) {
-        focusNavigableArrowKey.left = true;
-        focusNavigableArrowKey.up = true;
-      }
-      if (endPosition === eventTarget.value.length) {
-        focusNavigableArrowKey.right = true;
-        focusNavigableArrowKey.down = true;
+    else if (TEXT_INPUT_TYPES.includes(eventTarget.getAttribute('type')) || eventTarget.nodeName === 'TEXTAREA') {
+      if (startPosition == endPosition) { // if there isn't any selected text
+        if (startPosition === 0) {
+          focusNavigableArrowKey.left = true;
+          focusNavigableArrowKey.up = true;
+        }
+        if (endPosition === eventTarget.value.length) {
+          focusNavigableArrowKey.right = true;
+          focusNavigableArrowKey.down = true;
+        }
       }
     }
-    else {
+    else { // HTMLDataListElement, HTMLSelectElement, HTMLOptGroup
       focusNavigableArrowKey[dir] = true;
     }
 
@@ -1263,8 +1265,8 @@
   function getInitialAPIs() {
     return {
       enableExperimentalAPIs,
-      get keyMode() {return this._keymode ? this._keymode : 'ARROW';},
-      set keyMode(mode) {this._keymode  = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW';},
+      get keyMode() { return this._keymode ? this._keymode : 'ARROW';},
+      set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW';},
     };
   }
 
