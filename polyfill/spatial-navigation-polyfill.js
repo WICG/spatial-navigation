@@ -687,25 +687,27 @@
   /**
   * isFocusable :
   * Whether this element is focusable with spatnav.
-  * check1. Whether the element is the browsing context (document, iframe)
-  * check2. Whether the element is scrollable container or not. (regardless of scrollable axis)
-  * check3. The value of tabIndex >= 0
-  *         There are several elements which the tabindex focus flag be set:
-  *         (https://html.spec.whatwg.org/multipage/interaction.html#specially-focusable)
+  * (reference: https://html.spec.whatwg.org/multipage/interaction.html#focusable-area)
+  * check1. If element is the browsing context (document, iframe), then it's focusable
+  * check2. If the element is scrollable container (regardless of scrollable axis), then it's focusable
+  * check3. The value of tabIndex >= 0, then it's focusable
+  *         There are several elements which the tabindex focus flag be set
   *         The element with tabindex=-1 is omitted from the spatial navigation order,
   *         but, if there is a focusable child element, it will be included in the spatial navigation order.
-  * check4. Whether the element is disabled or not.
-  * check5. Whether the element is expressly inert or not.
+  * check4. If the element is disabled, it isn't focusable.
+  * check5. If the element is expressly inert, it isn't focusable.
   * check6. Whether the element is being rendered or not.
   *
   * @function
   * @param {<Node>} element
   * @returns {Boolean}
   **/
-  function isFocusable(element) {
-    return ((!element.parentElement) || (isScrollable(element) && isOverflow(element)) || (element.tabIndex >= 0) || 
-            (!isActuallyDisabled(element)) || (!isExpresslyInert(element)) || (isBeingRendered(element)));
-  }
+ function isFocusable(element) {
+  if (isActuallyDisabled(element) && isExpresslyInert(element) && !isBeingRendered(element))
+    return false;
+  else if ((!element.parentElement) || (isScrollable(element) && isOverflow(element)) || (element.tabIndex >= 0))
+    return true;
+}
 
   /**
   * isActuallyDisabled :
