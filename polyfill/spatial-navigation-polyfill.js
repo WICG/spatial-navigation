@@ -1064,7 +1064,6 @@
         height: Math.abs(newLocation[1] - newMaxPoint[1])
       };
     }
-    return {};
   }
 
   /**
