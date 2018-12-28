@@ -33,7 +33,8 @@
     * CSS.registerProperty() from the Properties and Values API
     * Reference: https://drafts.css-houdini.org/css-properties-values-api/#the-registerproperty-function
     **/
-    if (window.CSS && CSS.registerProperty) {
+    if (window.CSS && CSS.registerProperty &&
+      window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-contain') == "") {
       CSS.registerProperty({
         name: '--spatial-navigation-contain',
         syntax: 'auto | contain',
