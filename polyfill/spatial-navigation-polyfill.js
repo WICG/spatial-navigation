@@ -89,12 +89,10 @@
     });
   }
 
-  /*
-   * Navigate API :
-   * reference: https://wicg.github.io/spatial-navigation/#dom-window-navigate
-   * @function for Window
-   * @param {SpatialNavigationDirection} direction
-   * @returns NaN
+  /**
+   * navigate() API (https://wicg.github.io/spatial-navigation/#dom-window-navigate)
+   * @function navigate
+   * @param {SpatialNavigationDirection} dir - dir could be LRUD for specifing one of the directions.
    */
   function navigate(dir) {
     // spatial navigation steps
@@ -208,10 +206,10 @@
     if (scrollingController(container, dir)) return;
   }
 
-  /*
+  /**
    * focusing controller :
    * Move focus or do nothing.
-   * @function
+   * @function focusingController
    * @param {<Node>} the best candidate
    * @param {SpatialNavigationDirection} direction
    * @returns NaN
@@ -241,7 +239,7 @@
     }
   }
 
-  /*
+  /**
    * scrolling controller :
    * Directionally scroll the element if it can be manually scrolled more.
    * @function
@@ -269,7 +267,7 @@
     return false;
   }
 
-  /*
+  /**
    * Find the candidates among focusable candidates within the container from the element
    * @function for Element
    * @param {SpatialNavigationDirection} direction
@@ -301,7 +299,7 @@
     return candidates;
   }
 
-  /*
+  /**
    * Find the best candidate among focusable candidates within the container from the element
    * reference: https://wicg.github.io/spatial-navigation/#js-api
    * @function for Element
@@ -333,7 +331,7 @@
     return null;
   }
 
-  /*
+  /**
    * Get the filtered candidate among candidates
    * - Get rid of the starting point from the focusables
    * - Get rid of the elements which aren't in the direction from the focusables
@@ -370,7 +368,7 @@
     );
   }
 
-  /*
+  /**
    * Select the best candidate among candidates
    * - Find the closet candidate from the starting point
    * - If there are element having same distance, then select the one depend on DOM tree order.
@@ -385,7 +383,7 @@
     return getNearestElement(currentElm, candidates, dir, getDistance);
   }
 
-  /*
+  /**
    * Select the best candidate among candidates
    * - Find the closet candidate from the edge of the starting point
    * reference: https://wicg.github.io/spatial-navigation/#select-the-best-candidate (Step 5)
@@ -400,7 +398,7 @@
   }
 
 
-  /*
+  /**
    * Select the nearest element from distance function
    * @function
    * @param {<Node>} startingPoint
@@ -429,7 +427,7 @@
     return minDistanceElement;
   }
 
-  /*
+  /**
    * Get container of this element.
    * - NOTE: Container could be different by the arrow direction, even if it's the same element
    * reference: https://wicg.github.io/spatial-navigation/#dom-element-getspatialnavigationcontainer
@@ -448,7 +446,7 @@
     return container;
   }
 
-  /*
+  /**
    * Find focusable elements within the container
    * reference: https://wicg.github.io/spatial-navigation/#dom-element-focusableareas
    * @function
@@ -463,7 +461,7 @@
     return (option.mode === 'all') ? focusables : focusables.filter(isVisible);
   }
 
-  /*
+  /**
    * Support the NavigatoinEvent: navbeforefocus, navbeforescroll, navnotarget
    * reference: https://wicg.github.io/spatial-navigation/#events-navigationevent
    * @function
@@ -494,7 +492,7 @@
     element.dispatchEvent(triggeredEvent);
   }
 
-  /*
+  /**
    * Gives a CSS custom property value applied at the element
    * @function
    * @param
@@ -509,7 +507,7 @@
     return readCssVar(el, 'spatial-navigation-contain') === 'contain';
   }
 
-  /*
+  /**
    * Find starting point :
    * reference: https://wicg.github.io/spatial-navigation/#spatial-navigation-steps
    * @function
@@ -525,7 +523,7 @@
     return startingPoint;
   }
 
-  /*
+  /**
    * Move Element Scroll :
    * Move the scroll of this element for the arrow directrion
    * (Assume that User Agent defined distance is '40px')
@@ -547,7 +545,7 @@
     }
   }
 
-  /*
+  /**
    * Whether this element is container or not
    * @function
    * @param {<Node>} element
@@ -560,7 +558,8 @@
             (isCSSSpatNavContain(element));
   }
 
-  /* Whether this element is a scrollable container or not
+  /**
+   * Whether this element is a scrollable container or not
    * reference: https://drafts.csswg.org/css-overflow-3/#scroll-container
    * @function
    * @param {<Node>} element
@@ -573,7 +572,8 @@
     return (overflowX !== 'visible' && overflowX !== 'clip') && (overflowY !== 'visible' && overflowY !== 'clip');
   }
 
-  /* Whether this element is scrollable or not
+  /**
+   * Whether this element is scrollable or not
    * @function
    * @param {<Node>} element
    * @returns {Boolean}
@@ -606,7 +606,7 @@
     }
   }
 
-  /*
+  /**
    * isOverflow
    * Whether this element is overflow or not
    * @function
@@ -633,8 +633,8 @@
     }
   }
 
-  /*
-   *  isHTMLScrollBoundary
+  /**
+   * isHTMLScrollBoundary
    * Check whether the scrollbar of window reaches to the end or not
    * @function
    * @param {<Node>} element
@@ -660,7 +660,8 @@
     return result;
   }
 
-  /* Whether the scrollbar of an element reaches to the end or not
+  /**
+   * Whether the scrollbar of an element reaches to the end or not
    * @function
    * @param {<Node>} element
    * @param {String} direction
@@ -684,7 +685,7 @@
     return false;
   }
 
-  /*
+  /**
    * isFocusable :
    * Whether this element is focusable with spatnav.
    * (reference: https://html.spec.whatwg.org/multipage/interaction.html#focusable-area)
@@ -709,7 +710,7 @@
     return true;
   }
 
-  /*
+  /**
    * isActuallyDisabled :
    * Whether this element is actually disabled or not
    * reference: https://html.spec.whatwg.org/multipage/semantics-other.html#concept-element-disabled
@@ -724,7 +725,7 @@
       return false;
   }
 
-  /*
+  /**
    * isExpresslyInert :
    * Whether the element is expressly inert or not.
    * reference: https://html.spec.whatwg.org/multipage/interaction.html#expressly-inert
@@ -736,7 +737,7 @@
     return ((element.inert) && (!element.ownerDocument.documentElement.inert));
   }
 
-  /*
+  /**
    * isBeingRendered :
    * Whether the element is being rendered or not. 
    * reference: https://html.spec.whatwg.org/multipage/rendering.html#being-rendered
@@ -758,7 +759,7 @@
             !((element.style.width === '0px' || element.style.width === 0) && (element.style.height === '0px' || element.style.height === 0)));
   }
 
-  /*
+  /**
    * isVisible :
    * Whether this element is partially or completely visible to user agent.
    * check1. style property
@@ -772,7 +773,7 @@
     return (!element.parentElement) || (isVisibleStyleProperty(elementStyle) && hitTest(element, elementStyle));
   }
 
-  /*
+  /**
    * isEntirelyVisible :
    * Check whether this element is completely visible in this viewport for the arrow direction.
    * @function
@@ -792,7 +793,8 @@
     return entirelyVisible;
   }
 
-  /* Check the style property of this element whether it's visible or not
+  /**
+   * Check the style property of this element whether it's visible or not
    * @function
    * @param {CSSStyleDeclaration} elementStyle
    * @returns {Boolean}
@@ -805,7 +807,7 @@
     return (thisDisplay !== 'none' && !invisibleStyle.includes(thisVisibility));
   }
 
-  /*
+  /**
    * hitTest :
    * Check whether this element is entirely or partially visible within the viewport.
    * @function
@@ -850,7 +852,7 @@
     return false;
   }
 
-  /*
+  /**
    * isOutside
    * Check whether this element is entirely or partially visible within the viewport.
    * Note: rect1 is outside of rect2 for the dir
@@ -901,7 +903,7 @@
     }
   }
 
-  /*
+  /**
    * Get distance between rect1 and rect2 for the direction when rect2 is inside rect1
    * reference: https://wicg.github.io/spatial-navigation/#select-the-best-candidate
    * @function
@@ -916,7 +918,7 @@
     return Math.abs(rect1[baseEdge] - rect2[baseEdge]);
   }
 
-  /*
+  /**
    * Get the distance between two elements considering the direction
    * reference: https://wicg.github.io/spatial-navigation/#select-the-best-candidate
    * @function
@@ -979,7 +981,7 @@
     return (A + B + C - D);
   }
 
-  /*
+  /**
    * Get entry point and exit point of two elements considering the direction
    * Note: The default value for dir is 'down'
    * @function
@@ -1049,7 +1051,7 @@
     return points;
   }
 
-  /*
+  /**
    * Find focusable elements within the container
    * reference: https://wicg.github.io/spatial-navigation/#dom-element-focusableareas
    * @function
@@ -1070,7 +1072,7 @@
     }
   }
 
-  /*
+  /**
    * Handle the input elements
    * reference- input element types:
    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
