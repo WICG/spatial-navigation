@@ -1082,7 +1082,7 @@
    */
   function handlingEditableElement(e) {
     const SPINNABLE_INPUT_TYPES = ['email', 'date', 'month', 'number', 'time', 'week'],
-      TEXT_INPUT_TYPES = ['password', 'text', 'search', 'tel', 'url'];
+      TEXT_INPUT_TYPES = ['password', 'text', 'search', 'tel', 'url', null];
     const eventTarget = document.activeElement;
     const startPosition = eventTarget.selectionStart;
     const endPosition = eventTarget.selectionEnd;
