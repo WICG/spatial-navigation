@@ -367,7 +367,7 @@
      * whose boundary goes through the geometric center of starting point and is perpendicular to D.
      */
     return candidates.filter(candidate =>
-      container.focusableAreas().includes(candidate) &&
+      container.contains(candidate) &&
       isOutside(getBoundingClientRect(candidate), eventTargetRect, dir)
     );
   }
