@@ -33,7 +33,7 @@
      * Reference: https://drafts.css-houdini.org/css-properties-values-api/#the-registerproperty-function
      */
     if (window.CSS && CSS.registerProperty &&
-      window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-contain') === "") {
+      window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-contain') === '') {
       CSS.registerProperty({
         name: '--spatial-navigation-contain',
         syntax: 'auto | contain',
@@ -1250,7 +1250,7 @@
     }
 
     return {
-      isContainer: isContainer,
+      isContainer,
       findCandidates: findTarget.bind(null, true),
       findNextTarget: findTarget.bind(null, false),
       getDistanceFromTarget: (element, candidateElement, dir) => {
@@ -1274,8 +1274,8 @@
   function getInitialAPIs() {
     return {
       enableExperimentalAPIs,
-      get keyMode() { return this._keymode ? this._keymode : 'ARROW';},
-      set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW';},
+      get keyMode() { return this._keymode ? this._keymode : 'ARROW'; },
+      set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW'; },
     };
   }
 
