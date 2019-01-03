@@ -141,15 +141,11 @@
     // 6
     // Let container be the nearest ancestor of eventTarget
     let container = eventTarget.getSpatialNavigationContainer();
-    let parentContainer = container.getSpatialNavigationContainer();
+    let parentContainer = (container.parentElement) ? container.parentElement.getSpatialNavigationContainer() : null;
 
     // When the container is the viewport of a browsing context
-    if (!parentContainer) {
-      parentContainer = window.document.documentElement;
-      // The container is IFRAME, so parentContainer will be retargeted to the document of the parent window
-      if ( window.location !== window.parent.location ) {
-        parentContainer = window.parent.document.documentElement;
-      }
+    if (!parentContainer && ( window.location !== window.parent.location)) {
+      parentContainer = window.parent.document.documentElement;
     }
 
     // 7
@@ -169,22 +165,24 @@
 
           createSpatNavEvents('notarget', container, dir);
 
+          // find the container
+
           if (container === document || container === document.documentElement) {
-            container = window.document.documentElement;
-
-            // The page is in an iframe
+            
             if ( window.location !== window.parent.location ) {
-
+              // The page is in an iframe
               // eventTarget needs to be reset because the position of the element in the IFRAME
               // is unuseful when the focus moves out of the iframe
               eventTarget = window.frameElement;
               container = window.parent.document.documentElement;
+           
+              if (container.parentElement)
+                parentContainer = container.parentElement.getSpatialNavigationContainer();
+              else {
+                parentContainer = null;
+                break;
+              }
             }
-            else {
-              return;
-            }
-
-            parentContainer = container.getSpatialNavigationContainer();
           }
           else {
             // avoiding when spatnav container with tabindex=-1
@@ -193,16 +191,22 @@
             }
 
             container = parentContainer;
-            parentContainer = container.getSpatialNavigationContainer();
+
+            if (container.parentElement)
+              parentContainer = container.parentElement.getSpatialNavigationContainer();
+            else {
+              parentContainer = null;
+              break;
+            }
           }
         }
       }
     }
 
+    // Behavior after 'navnotarget' - Getting out from the current spatnav container
     if (!parentContainer && container) {
-      // Getting out from the current spatnav container
       if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir))
-        return;
+      return;
     }
 
     if (scrollingController(container, dir)) return;
@@ -365,7 +369,7 @@
       * whose boundary goes through the geometric center of starting point and is perpendicular to D.
       */
     return candidates.filter(candidate =>
-      container.contains(candidate.getSpatialNavigationContainer()) &&
+      container.focusableAreas().includes(candidate) &&
       isOutside(getBoundingClientRect(candidate), eventTargetRect, dir)
     );
   }
@@ -437,15 +441,18 @@
   * @returns {<Node>} container
   **/
   function getSpatialNavigationContainer() {
-    let container = this.parentElement;
+    let container = this;
 
-    if (!container) return null; // if element==HTML
     while(!isContainer(container)) {
-      container = container.parentElement;
-      if (!container) return null; // if element==HTML
-    }
-
-    return container;
+      if (!container.parentElement) {
+        container = window.document.documentElement;
+        break;
+      } 
+      else {
+        container = container.parentElement;
+      }
+    }  
+    return container;    
   }
 
   /**
