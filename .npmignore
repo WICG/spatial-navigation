@@ -1,12 +1,12 @@
 .DS_Store
 .npmignore
-explainer.md
+.gitignore
 implStatus.md
-index.bs
-index.html
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
 LICENSE.md
 blink_impl/
 docs/
+images/
 resources/
 tests/
-
