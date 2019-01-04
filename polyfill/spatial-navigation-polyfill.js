@@ -714,7 +714,7 @@
    * @returns {Boolean}
    */
   function isFocusable(element) {
-  if ((isActuallyDisabled(element) && isExpresslyInert(element) && !isBeingRendered(element)) || (element.tabIndex < 0))
+  if ((element.tabIndex < 0) || (isActuallyDisabled(element) && isExpresslyInert(element) && !isBeingRendered(element)))
     return false;
   else if ((!element.parentElement) || (isScrollable(element) && isOverflow(element)) || (element.tabIndex >= 0))
     return true;
