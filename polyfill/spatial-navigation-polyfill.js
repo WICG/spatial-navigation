@@ -1196,15 +1196,11 @@
       // 6
       // Let container be the nearest ancestor of eventTarget
       let container = eventTarget.getSpatialNavigationContainer();
-      let parentContainer = container.getSpatialNavigationContainer();
+      let parentContainer = (container.parentElement) ? container.parentElement.getSpatialNavigationContainer() : null;
 
       // When the container is the viewport of a browsing context
-      if (!parentContainer) {
-        parentContainer = window.document.documentElement;
-        // The container is IFRAME, so parentContainer will be retargeted to the document of the parent window
-        if ( window.location !== window.parent.location ) {
-          parentContainer = window.parent.document.documentElement;
-        }
+      if (!parentContainer && ( window.location !== window.parent.location)) {
+        parentContainer = window.parent.document.documentElement;
       }
 
       // 7
@@ -1233,17 +1229,26 @@
             // is unuseful when the focus moves out of the iframe
             eventTarget = window.frameElement;
             container = window.parent.document.documentElement;
+            if (container.parentElement)
+              parentContainer = container.parentElement.getSpatialNavigationContainer();
+            else {
+              parentContainer = null;
+              break;
+            }
           }
-          return findCandidate ? [] : null;
-        }
-        else {
+        } else {
           // avoiding when spatnav container with tabindex=-1
           if (isFocusable(container)) {
             eventTarget = container;
           }
 
           container = parentContainer;
-          parentContainer = container.getSpatialNavigationContainer();
+          if (container.parentElement)
+            parentContainer = container.parentElement.getSpatialNavigationContainer();
+          else {
+            parentContainer = null;
+            break;
+          }
         }
       }
 
