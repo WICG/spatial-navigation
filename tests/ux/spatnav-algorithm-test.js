@@ -40,8 +40,8 @@ class SpatialNavigationTest {
                 from ${this.targetId} 
                 to ${this.actualId} `;
     else if (this.test_result === false)
-      return `Expected ${this.expectedId}, but got ${this.actualId}
-              when moving focus ${this.test_dir} from ${this.targetId}`;
+      return `Expected '${this.expectedId}', but got '${this.actualId}'
+              when moving focus ${this.test_dir} from '${this.targetId}'`;
   }
 }
 
@@ -196,13 +196,23 @@ function getDistance(rect1, rect2, dir, options) {
 
   // D: The square root of the area of intersection between the border boxes of candidate and starting point
   const intersection_rect = getIntersectionRect(rect1, rect2);
+  //console.log(intersection_rect);
+  //console.log(`overlap area : '${(intersection_rect.width * intersection_rect.height)}'`);
   const D = (intersection_rect) ? Math.sqrt(intersection_rect.width * intersection_rect.height) : 0;
+  //const D = (intersection_rect) ? ((intersection_rect.width * intersection_rect.height) / (rect2.width * rect2.height)) : 0;
   
   if (options.function === 'original') {
     console.log(`distance function : A + B + C - D ='${(A + B + C - D)}'`);
+    console.log(`=> A : '${A}'`);
+    console.log(`=> B : '${B}'`);
+    console.log(`=> C : '${C}'`);
+    console.log(`=> D : '${D}'`);
     return (A + B + C - D);
   } else if (options.function === 'sameDirOriented') {
     console.log(`distance function : A + C - D ='${(A + C - D)}'`);
+    console.log(`=> A : '${A}'`);
+    console.log(`=> C : '${C}'`);
+    console.log(`=> D : '${D}'`);
     return (A + C - D);
   }  
 }
@@ -436,12 +446,21 @@ function getIntersectionRect(rect1, rect2) {
   const new_location = [Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)];
   const new_max_point = [Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom)];
 
-  if (new_location[0] < new_max_point[0] && new_location[1] < new_max_point[1]) {
+  console.log(new_location);
+  console.log(new_max_point);
+
+  if (!(new_location[0] >= new_max_point[0] || new_location[1] >= new_max_point[1])) {
     // intersecting-cases
     intersection_rect = {width: 0, height: 0};
     intersection_rect.width = Math.abs(new_location[0] - new_max_point[0]);
     intersection_rect.height = Math.abs(new_location[1] - new_max_point[1]);
   }
+
+  if (intersection_rect)
+    console.log(`Intersection rect: width=${intersection_rect.width}, height=${intersection_rect.height}`);
+  else
+    console.log(`Intersection rect: ${intersection_rect}`);
+
   return intersection_rect;
 }
 

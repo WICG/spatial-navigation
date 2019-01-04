@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../../resources/testharness.css"></link>
 
 <!--load polyfill. To be removed before submitting to WPT-->
-<script src="../../polyfill/spatnav-heuristic.js"></script>
+<script src="../../polyfill/spatial-navigation-polyfill.js"></script>
 <script src="spatnav-algorithm-test.js"></script>
 
 <style>
@@ -50,30 +50,18 @@
   
     <div class="options">
       Orthogonal Weight (X-axis) :
-      <select id="orth_wx_option" style="margin: 15px 20px">
-        <option value="40">40</option>
-        <option value="35">35</option>
-        <option value="30" selected>30</option>
-        <option value="25">25</option>
-        <option value="20">20</option>
-      </select>
+      <input id="orth_wx_option" type="number" value="30" style="margin: 15px 20px; width: 50px;">
     
       Orthogonal Weight (Y-axis) :
-      <select id="orth_wy_option" style="margin: 15px 20px">
-        <option value="1.5">1.5</option>
-        <option value="1.75">1.75</option>
-        <option value="2" selected>2</option>
-        <option value="2.25">2.25</option>
-        <option value="2.5">2.5</option>
-      </select>
+      <input id="orth_wy_option" type="number" value="2" style="margin: 15px 20px; width: 50px;">
     </div>
   
     <button class="btn test" id="get_result">Get Test Results</button>
   </div>
 <div id="container">
   <div tabindex="0" class="box" id="initial_focus" style="left: 50px; top: 100px; width: 200px; height: 200px;"></div>
-  <div tabindex="0" class="box" id="box1" style="left: 300px; top: 0px; width: 100px; height: 200px;">Box 1</div>
-  <div tabindex="0" class="box" id="box2" style="left: 300px; top: 250px; width: 100px; height: 100px;">Box 2</div>
+  <div tabindex="0" class="box" id="box1" style="left: 300px; top: 50px; width: 100px; height: 100px;">Box 1</div>
+  <div tabindex="0" class="box" id="box2" style="left: 300px; top: 170px; width: 100px; height: 200px;">Box 2</div>
 </div>
 <div id="resultSection">
   <br>
@@ -93,7 +81,7 @@
     let testArray = new Array();
   
     // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
-    testArray.push(new SpatialNavigationTest(container, "initial_focus", "right", "box1", options));
+    testArray.push(new SpatialNavigationTest(container, "initial_focus", "right", "box2", options));
 
     console.log(testArray);
     
