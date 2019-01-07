@@ -29,45 +29,6 @@ can include this polyfill in their page.
 It can also be used for people interested in reviewing the specification
 it order to test the behavior it defines in various situations.
 
-## Current Status
-
-### Browser Support
-With the polyfill, the Spatial Navigation has been tested and known to work in the following browsers:
-
-<table>
-  <tr>
-    <td align="center">
-      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/chrome/chrome_48x48.png" alt="Chrome"><br>
-      49+
-    </td>
-    <td align="center">
-      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/firefox/firefox_48x48.png" alt="Firefox"><br>
-      61+
-    </td>
-    <td align="center">
-      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/safari/safari_48x48.png" alt="Safari"><br>
-      11.1+
-    </td>
-    <td align="center">
-      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/edge/edge_48x48.png" alt="Edge"><br>
-      17+
-    </td>
-    <td align="center">
-      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/opera/opera_48x48.png" alt="Opera"><br>
-      36+
-    </td>
-  </tr>  
-</table>
-
-### Remaining Issues
-
-The polyfill is not yet complete.
-It roughly matches the specification
-but does not yet follow it closely,
-and has a number of known issues.
-
-See [the list of open bugs](https://github.com/wicg/spatial-navigation/issues?q=is%3Aissue+is%3Aopen+label%3Atopic%3Apolyfill) in github.
-
 ## How to Use
 
 ### Installation
@@ -176,6 +137,45 @@ NOTE: The APIs below are non-standard and experimental features of the spatial n
       * option: Required.
         - It should be one of <code>['ARROW',  'SHIFTARROW', 'NONE']</code>.
         - In the case of using <code>'NONE'</code> value as the option, the spatial navigation feature will be turned off.
+
+## Current Status
+
+### Browser Support
+With the polyfill, the Spatial Navigation has been tested and known to work in the following browsers:
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/chrome/chrome_48x48.png" alt="Chrome"><br>
+      49+
+    </td>
+    <td align="center">
+      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/firefox/firefox_48x48.png" alt="Firefox"><br>
+      61+
+    </td>
+    <td align="center">
+      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/safari/safari_48x48.png" alt="Safari"><br>
+      11.1+
+    </td>
+    <td align="center">
+      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/edge/edge_48x48.png" alt="Edge"><br>
+      17+
+    </td>
+    <td align="center">
+      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/opera/opera_48x48.png" alt="Opera"><br>
+      36+
+    </td>
+  </tr>  
+</table>
+
+### Remaining Issues
+
+The polyfill is not yet complete.
+It roughly matches the specification
+but does not yet follow it closely,
+and has a number of known issues.
+
+See [the list of open bugs](https://github.com/wicg/spatial-navigation/issues?q=is%3Aissue+is%3Aopen+label%3Atopic%3Apolyfill) in github.
 
 ## Usage in automated tests
 
