@@ -1,7 +1,7 @@
-/* Spatial Navigation Polyfill v1.0
+/* Spatial Navigation Polyfill v1.1.0
  * : common function for Spatial Navigation
  *
- * Copyright (c) 2018 LG Electronics Inc.
+ * Copyright (c) 2018-2019 LG Electronics Inc.
  * https://github.com/WICG/spatial-navigation
  *
  * Licensed under the MIT license (MIT)
