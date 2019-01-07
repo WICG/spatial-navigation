@@ -30,7 +30,6 @@
    * Initiate the spatial navigation features of the polyfill.
    * This function defines which input methods trigger the spatial navigation behavior.
    * @function initiateSpatialNavigation
-   * @returns {NaN}
    */
   function initiateSpatialNavigation() {
     /*
@@ -107,7 +106,6 @@
    * @see {@link https://wicg.github.io/spatial-navigation/#dom-window-navigate}
    * @function navigate
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
-   * @returns {NaN}
    */
   function navigate(dir) {
     // spatial navigation steps
@@ -484,7 +482,6 @@
    * @param option {string} - Type of the navigation event (beforefocus, beforescroll, notarget)
    * @param element {Node} - The target element of the event
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
-   * @returns {NaN}
    */
   function createSpatNavEvents(option, element, direction) {
     const data = {
@@ -556,7 +553,6 @@
    * @param element {Node} - The scrollable element
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @param offset {Number} - The explicit amount of offset for scrolling. Default value is 0.
-   * @returns {NaN}
    */
   function moveScroll(element, dir, offset = 0) {
     if (element) {
