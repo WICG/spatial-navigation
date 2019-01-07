@@ -176,19 +176,3 @@ but does not yet follow it closely,
 and has a number of known issues.
 
 See [the list of open bugs](https://github.com/wicg/spatial-navigation/issues?q=is%3Aissue+is%3Aopen+label%3Atopic%3Apolyfill) in github.
-
-## Usage in automated tests
-
-Automated tests for the specification are written assuming standard syntax.
-In order to be able to use the Polyfill to run those tests,
-it is possible to load it in a special mode
-where it uses the standard names for the APIs and Events,
-unlike what is described in section [#using-the-apis].
-
-**It is recommended not to use this option
-for purposes other than runing the automated tests of the specication**.
-
-````html
-<script src="../spatial-navigation-polyfill.js"></script>
-<script>setStandardName();</script>
-````
