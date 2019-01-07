@@ -39,6 +39,7 @@ npm i spatial-navigation-polyfill
 ```
 
 We recommend only using versions of the polyfill that have been published to npm, rather than cloning the repo and using the source directly. This helps ensure the version you're using is stable and thoroughly tested.
+See the [changes](https://wicg.github.io/spatial-navigation/polyfill/changelog.html) in the polyfill so far.
 
 If you do want to build from source, make sure you clone the latest tag!
 
