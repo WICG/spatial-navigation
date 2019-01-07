@@ -133,12 +133,11 @@ NOTE: The APIs below are non-standard and experimental features of the spatial n
     * dir : Required. 
        - The direction to find candidates.
        - It should be one of <code>['up', 'down', 'left', 'right']</code>.
-* <code>setKeyMode (option)</code> :
-  * Sets which key type to use for the spatial navigation.
-  * Parameter
-      * option: Required.
-        - It should be one of <code>['ARROW',  'SHIFTARROW', 'NONE']</code>.
-        - In the case of using <code>'NONE'</code> value as the option, the spatial navigation feature will be turned off.
+* <code>keyMode</code> :
+  * Variable for getting or setting which key type to use for the spatial navigation.
+  * value
+      - It should be one of <code>['ARROW', 'SHIFTARROW', 'NONE']</code>.
+      - In the case of using <code>'NONE'</code> value, the spatial navigation feature will be turned off.
 
 ## Current Status
 

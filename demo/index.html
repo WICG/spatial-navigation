@@ -48,7 +48,7 @@
        let polyfilStateDiv = document.getElementById('polyfill-state');
 
        // toggle spatialNavigation
-       window.__spatialNavigation__.setKeyMode(window.__spatialNavigation__.getKeyMode()==='NONE'? '':'NONE');
+       window.__spatialNavigation__.keyMode = (window.__spatialNavigation__.keyMode === 'NONE' ? 'ARROW' : 'NONE');
 
       if(polyfilEnableSwitch.checked) {
         polyfilStateDiv.classList.remove('deactivate');
