@@ -16,7 +16,7 @@ will either move the focus in that direction,
 or scroll the page, as appropriate.
 
 For more details, see [the specification](https://wicg.github.io/spatial-navigation/)
-or [its explainer document](https://wicg.github.io/spatial-navigation/explainer.html).
+or its [explainer document](https://drafts.csswg.org/css-nav-1/explainer).
 
 ## Why Use the Polyfill
 
