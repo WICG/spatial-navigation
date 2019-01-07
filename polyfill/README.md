@@ -114,20 +114,14 @@ and users can start using the arrow keys as soon as the polyfill is included,
 but they can be convenient for authors who wish to override the default behavior in some cases.
 See the specification for more details.
 
-Following [the guidance from the W3C Technical Architecture Group](https://www.w3.org/2001/tag/doc/polyfills/#don-t-squat-on-proposed-names-in-speculative-polyfills),
-the polyfill provides these features under alternative names,
-to avoid interfering with the standardization process.
-
 #### Standard APIs
-| Standard Name | Polyfill Name |
+| Standard APIs | Feature |
 |-|-|
-| navbeforefocus | navbeforefocusPolyfill |
-| navbeforescroll | navbeforescrollPolyfill |
-| navnotarget | navnotargetPolyfill |
-| spatNavSearch() | spatNavSearchPolyfill() |
-| navigate() | navigatePolyfill() |
-| getSpatnavContainer() | getSpatnavContainerPolyfill() |
-| focusableAreas() | focusableAreasPolyfill() |
+| [navigate()](https://drafts.csswg.org/css-nav-1/#dom-window-navigate) | Enables the author to trigger spatial navigation programatically |
+| [spatialNavigationSearch()](https://drafts.csswg.org/css-nav-1/#dom-element-spatialnavigationsearch) | Finds the element which will gain the focus within the spatial navigation container from the currently focused element |
+| [getSpatialNavigationContainer()](https://drafts.csswg.org/css-nav-1/#dom-element-getspatialnavigationcontainer) | Gets the spatial navigation container of an element |
+| [focusableAreas()](https://drafts.csswg.org/css-nav-1/#dom-element-focusableareas) | Finds focusable elements within the spatial navigation container |
+| [Navigation Events](https://drafts.csswg.org/css-nav-1/#events-navigationevent) | Occurs depending on the specific contextual behavior associated with spatial navigation
 
 #### Experimental APIs
 NOTE: The APIs below are non-standard and experimental features of the spatial navigation.
