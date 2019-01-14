@@ -130,6 +130,10 @@ function getDistance(rect1, rect2, dir, options) {
   let orthogonal_bias = 0;
   let points = null;
 
+  let align_bias = 0;
+  let kAlignWeightForLeftRight = 0.5;
+  let kAlignWeightForUpDown = 0.5;
+
   // get the orthogonal weight 
   if (options.orth_weight_x)
     kOrthogonalWeightForLeftRight = options.orth_weight_x;
@@ -162,20 +166,30 @@ function getDistance(rect1, rect2, dir, options) {
   const P2 = Math.abs(points.entryPoint[1] - points.exitPoint[1]);
 
   // A = The euclidian distance between P1 and P2.
-  const A = Math.sqrt(Math.pow(P1, 2) + Math.pow(P2, 2));
-  let B, C;
-
   // B: The absolute distance in the dir direction between P1 and P2, or 0 if dir is null.
   // C: The absolute distance in the direction which is orthogonal to dir between P1 and P2, or 0 if dir is null.
+  // D: The square root of the area of intersection between the border boxes of candidate and starting point
+  // E: The intersection edges between a candidate and the starting point
+
+  const A = Math.sqrt(Math.pow(P1, 2) + Math.pow(P2, 2));
+  let B, C, E;
+    
+  const intersection_rect = getIntersectionRect(rect1, rect2);
+  const D = intersection_rect.area;
+
+  
   switch (dir) {
   case 'left':
     /* falls through */
   case 'right' :
     B = P1;
     // If not aligned => add bias
-    if (!isAligned(rect1, rect2, dir))
-      orthogonal_bias = (rect1.height / 2);
+    if (isAligned(rect1, rect2, dir))
+      align_bias = kAlignWeightForLeftRight;
+        
     C = (P2 + orthogonal_bias) * kOrthogonalWeightForLeftRight;
+    E = (intersection_rect.height / d)* align_bias;
+    console.log(`orthogonal_bias: ${orthogonal_bias}, C factor: ${C}`);
     break;
 
   case 'up' :
@@ -183,24 +197,21 @@ function getDistance(rect1, rect2, dir, options) {
   case 'down' :
     B = P2;
     // If not aligned => add bias
-    if (!isAligned(rect1, rect2, dir))
-      orthogonal_bias = (rect1.width / 2);
+    if (isAligned(rect1, rect2, dir))
+      align_bias = kAlignWeightForUpDown;
+        
     C = (P1 + orthogonal_bias) * kOrthogonalWeightForUpDown;
+    E = intersection_rect.width * align_bias;
+    console.log(`orthogonal_bias: ${orthogonal_bias}, C factor: ${C}`);
     break;
 
   default:
     B = 0;
     C = 0;
+    E = 0;
     break;
   }
 
-  // D: The square root of the area of intersection between the border boxes of candidate and starting point
-  const intersection_rect = getIntersectionRect(rect1, rect2);
-  //console.log(intersection_rect);
-  //console.log(`overlap area : '${(intersection_rect.width * intersection_rect.height)}'`);
-  const D = (intersection_rect) ? Math.sqrt(intersection_rect.width * intersection_rect.height) : 0;
-  //const D = (intersection_rect) ? ((intersection_rect.width * intersection_rect.height) / (rect2.width * rect2.height)) : 0;
-  
   if (options.function === 'original') {
     console.log(`distance function : A + B + C - D ='${(A + B + C - D)}'`);
     console.log(`=> A : '${A}'`);
@@ -214,6 +225,13 @@ function getDistance(rect1, rect2, dir, options) {
     console.log(`=> C : '${C}'`);
     console.log(`=> D : '${D}'`);
     return (A + C - D);
+  } else if (options.function === 'additionalAlignFactor') {
+    console.log(`distance function : A + C - D - E ='${(A + C - D + E)}'`);
+    console.log(`=> A : '${A}'`);
+    console.log(`=> C : '${C}'`);
+    console.log(`=> D : '${D}'`);
+    console.log(`=> E : '${E}'`);
+    return (A + C - D - E);
   }  
 }
 
@@ -442,25 +460,23 @@ function getPointsFromCenterPointsOnEdges(dir = 'down', rect1, rect2) {
 }
 
 function getIntersectionRect(rect1, rect2) {
-  let intersection_rect;
+  let intersection_rect = {width: 0, height: 0, area: 0, wRatio: 0, hRatio:0};
   const new_location = [Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)];
   const new_max_point = [Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom)];
 
   console.log(new_location);
   console.log(new_max_point);
 
+  intersection_rect.width = Math.abs(new_location[0] - new_max_point[0]);
+  intersection_rect.height = Math.abs(new_location[1] - new_max_point[1]);
+
   if (!(new_location[0] >= new_max_point[0] || new_location[1] >= new_max_point[1])) {
     // intersecting-cases
-    intersection_rect = {width: 0, height: 0};
-    intersection_rect.width = Math.abs(new_location[0] - new_max_point[0]);
-    intersection_rect.height = Math.abs(new_location[1] - new_max_point[1]);
+    intersection_rect.area = Math.sqrt(intersection_rect.width * intersection_rect.height);
   }
 
-  if (intersection_rect)
-    console.log(`Intersection rect: width=${intersection_rect.width}, height=${intersection_rect.height}`);
-  else
-    console.log(`Intersection rect: ${intersection_rect}`);
-
+  console.log(`Intersection rect: width=${intersection_rect.width}, height=${intersection_rect.height}, area=${intersection_rect.area}`);
+  
   return intersection_rect;
 }
 
