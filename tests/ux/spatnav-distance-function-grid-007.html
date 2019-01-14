@@ -15,7 +15,7 @@
 #containerbox {
   background-color: #eee;
   width: 745px;
-  height: 530px;
+  height: 430px;
   border: 1px solid black;
 }
 
@@ -80,6 +80,14 @@
   margin: 2em auto 0 auto;
 }
 
+#box1 {
+  height: 310px;
+}
+
+#box3 {
+  width: 550px;
+}
+
 </style>
 </head>
 <body onload="init()">
@@ -115,21 +123,12 @@
   <div id="containerbox">
     <div class="leftbox">
       <div class="navigable" id="box1" tabindex="0">box 1</div>
-      <div class="navigable" id="box2" tabindex="0">box 2</div>
-      <div class="navigable" id="box3" tabindex="0">box 3</div>
-      <div class="navigable" id="box4" tabindex="0">box 4</div>
-      <div class="nonfocusable" id="box8">(non focusable) box 8</div>
+      <div class="navigable" id="box4" tabindex="0">box 2</div>
     </div>
     <div class="rightbox">
       <div id="main" class="navigable" tabindex="0">main</div>
       <div class="bottombox">
-        <div class="navigable" id="box5" tabindex="0">box 5</div>
-        <div class="navigable" id="box6" tabindex="0">box 6</div>
-        <div class="navigable" id="box7" tabindex="0">box 7</div>
-        <br>
-        <div class="navigable" id="box9" tabindex="0">box 9</div>
-        <div class="navigable" id="box10" tabindex="0">box 10</div>
-        <div class="navigable" id="box11" tabindex="0">box 11</div>
+        <div class="navigable" id="box3" tabindex="0">box 3</div>
       </div>
     </div>
   </div>
