@@ -217,7 +217,7 @@
     // Behavior after 'navnotarget' - Getting out from the current spatnav container
     if (!parentContainer && container) {
       if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir))
-      return;
+        return;
     }
 
     if (scrollingController(container, dir)) return;
@@ -721,10 +721,21 @@
    * @see {@link https://html.spec.whatwg.org/multipage/interaction.html#focusable-area}
    */
   function isFocusable(element) {
-  if ((element.tabIndex < 0) || (isActuallyDisabled(element) && isExpresslyInert(element) && !isBeingRendered(element)))
-    return false;
-  else if ((!element.parentElement) || (isScrollable(element) && isOverflow(element)) || (element.tabIndex >= 0))
-    return true;
+    if ((element.tabIndex < 0) || isAtagWithoutHref(element) || (isActuallyDisabled(element) && isExpresslyInert(element) && !isBeingRendered(element)))
+      return false;
+    else if ((!element.parentElement) || (isScrollable(element) && isOverflow(element)) || (element.tabIndex >= 0))
+      return true;
+  }
+
+  /**
+   * Decide whether an element is a tag without href attribute or not.
+   *
+   * @function isAtagWithoutHref
+   * @param element {Node}
+   * @returns {boolean}
+   */
+  function isAtagWithoutHref(element) {
+    return (element.tagName === 'A' && element.getAttribute('href') === null);
   }
 
   /**
