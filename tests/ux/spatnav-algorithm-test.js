@@ -127,12 +127,12 @@ function getDistance(rect1, rect2, dir, options) {
   let kOrthogonalWeightForLeftRight = 30;
   let kOrthogonalWeightForUpDown = 2;
 
-  let orthogonal_bias = 0;
+  let orthogonalBias = 0;
   let points = null;
 
-  let align_bias = 0;
-  let kAlignWeightForLeftRight = 0.5;
-  let kAlignWeightForUpDown = 0.5;
+  let alignBias = 0;
+  let alignWeight = 5.0;
+  let gap = 0;
 
   // get the orthogonal weight 
   if (options.orth_weight_x)
@@ -141,24 +141,12 @@ function getDistance(rect1, rect2, dir, options) {
     kOrthogonalWeightForUpDown = options.orth_weight_y;
 
   console.log(`orthogonal weight : 'X-axis: ${kOrthogonalWeightForLeftRight}, Y-axis: ${kOrthogonalWeightForUpDown}'`);
+  
+  // get the align weight 
+  if (options.align_weight)
+    alignWeight = options.align_weight;
 
-  if (options.point === 'closest_point') {
-    // calculate the distance function with closest points
-    points = getPointsFromClosestPointsOnEdges(dir, rect1, rect2);
-    console.log(`point option : closest points ='Exit: ${points.exitPoint}, Entry: ${points.entryPoint}'`);
-  } else if (options.point === 'closest_vertex') {
-    // calculate the distance function with closest vertex
-    points = getPointsFromVertices(dir, rect1, rect2);
-    console.log(`point option : closest vertices ='Exit: ${points.exitPoint}, Entry: ${points.entryPoint}'`);
-  } else if (options.point === 'center_point') {
-    // calculate the distance function with center points
-    points = getPointsFromCenterPoints(dir, rect1, rect2);
-    console.log(`point option : center point ='Exit: ${points.exitPoint}, Entry: ${points.entryPoint}'`);
-  } else if (options.point === 'center_edge') {
-  // calculate the distance function with center points on the edges
-    points = getPointsFromCenterPointsOnEdges(dir, rect1, rect2);
-    console.log(`point option : center point of the edges ='Exit: ${points.exitPoint}, Entry: ${points.entryPoint}'`);
-  }
+  points = getPointsFromClosestPointsOnEdges(dir, rect1, rect2);
 
   // Find the points P1 inside the border box of starting point and P2 inside the border box of candidate
   // that minimize the distance between these two points
@@ -174,35 +162,55 @@ function getDistance(rect1, rect2, dir, options) {
   const A = Math.sqrt(Math.pow(P1, 2) + Math.pow(P2, 2));
   let B, C, E;
     
-  const intersection_rect = getIntersectionRect(rect1, rect2);
-  const D = intersection_rect.area;
+  const intersectionRect = getIntersectionRect(rect1, rect2);
+  const D = intersectionRect.area;
 
   
   switch (dir) {
   case 'left':
     /* falls through */
   case 'right' :
+    gap = intersectionRect.width;
     B = P1;
-    // If not aligned => add bias
-    if (isAligned(rect1, rect2, dir))
-      align_bias = kAlignWeightForLeftRight;
-        
-    C = (P2 + orthogonal_bias) * kOrthogonalWeightForLeftRight;
-    E = (intersection_rect.height / d)* align_bias;
-    console.log(`orthogonal_bias: ${orthogonal_bias}, C factor: ${C}`);
+    
+    // If two elements are aligned, add align bias
+    if (isAligned(rect1, rect2, dir)) {
+      alignBias = intersectionRect.height / rect1.height;
+      if (alignBias > 1) align_bias = 1;
+    } 
+    else  // else, add orthogonal bias
+      orthogonalBias = (rect1.height / 2);
+
+    C = (P2 + orthogonalBias) * kOrthogonalWeightForLeftRight;
+
+    E = alignWeight * alignBias;
+    
+    console.log(`orthogonal weight: ${kOrthogonalWeightForLeftRight}, orthogonal bias: ${orthogonalBias}`);
+    console.log(`align weight : ${alignWeight}, align bias: ${alignBias}`);
+
     break;
 
   case 'up' :
     /* falls through */
   case 'down' :
     B = P2;
-    // If not aligned => add bias
-    if (isAligned(rect1, rect2, dir))
-      align_bias = kAlignWeightForUpDown;
-        
-    C = (P1 + orthogonal_bias) * kOrthogonalWeightForUpDown;
-    E = intersection_rect.width * align_bias;
-    console.log(`orthogonal_bias: ${orthogonal_bias}, C factor: ${C}`);
+    gap = intersectionRect.height;
+
+    // If two elements are aligned, add align bias
+    if (isAligned(rect1, rect2, dir)) {
+      alignBias = intersectionRect.width / rect1.width;  
+      if (alignBias > 1) alignBias = 1;
+    }
+    else  // else, add orthogonal bias
+      orthogonalBias = (rect1.width / 2);
+      
+    C = (P1 + orthogonalBias) * kOrthogonalWeightForUpDown;
+
+    E = alignWeight * alignBias;
+    
+    console.log(`orthogonal weight: ${kOrthogonalWeightForUpDown}, orthogonal bias: ${orthogonalBias}`);
+    console.log(`align weight : ${alignWeight}, align bias: ${alignBias}`);
+
     break;
 
   default:
@@ -226,11 +234,12 @@ function getDistance(rect1, rect2, dir, options) {
     console.log(`=> D : '${D}'`);
     return (A + C - D);
   } else if (options.function === 'additionalAlignFactor') {
-    console.log(`distance function : A + C - D - E ='${(A + C - D + E)}'`);
+    console.log(`distance function : A + C - D - E ='${(A + C - D - E)}'`);
     console.log(`=> A : '${A}'`);
     console.log(`=> C : '${C}'`);
     console.log(`=> D : '${D}'`);
     console.log(`=> E : '${E}'`);
+    console.log(`gap: '${gap}'`);
     return (A + C - D - E);
   }  
 }
