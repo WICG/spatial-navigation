@@ -26,22 +26,7 @@
             console.log("%cscroll event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target});
           });
         }
-        onChangeSelect();
       };
-
-      function onChangeSelect() {
-        let selectValue = document.getElementById('option').value;
-        let codeElement = document.getElementById('code');
-        codeElement.innerText = `        // sequence<Node> focusableAreas()
-        const focusableAreas = e.target.focusableAreas({'mode': '${selectValue}'});
-        if(focusableAreas) {
-          focusableAreas.forEach(focusable => {
-            focusable.style.outline = '5px solid red';
-          });
-        }
-        console.log(focusableAreas);`
-        hljs.highlightBlock(codeElement);
-      }
     </script>
   </head>
   <body onload="init()">
