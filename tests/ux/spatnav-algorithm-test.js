@@ -127,8 +127,12 @@ function getDistance(rect1, rect2, dir, options) {
   let kOrthogonalWeightForLeftRight = 30;
   let kOrthogonalWeightForUpDown = 2;
 
-  let orthogonal_bias = 0;
+  let orthogonalBias = 0;
   let points = null;
+
+  let alignBias = 0;
+  let alignWeight = 5.0;
+  let gap = 0;
 
   // get the orthogonal weight 
   if (options.orth_weight_x)
@@ -137,24 +141,12 @@ function getDistance(rect1, rect2, dir, options) {
     kOrthogonalWeightForUpDown = options.orth_weight_y;
 
   console.log(`orthogonal weight : 'X-axis: ${kOrthogonalWeightForLeftRight}, Y-axis: ${kOrthogonalWeightForUpDown}'`);
+  
+  // get the align weight 
+  if (options.align_weight)
+    alignWeight = options.align_weight;
 
-  if (options.point === 'closest_point') {
-    // calculate the distance function with closest points
-    points = getPointsFromClosestPointsOnEdges(dir, rect1, rect2);
-    console.log(`point option : closest points ='Exit: ${points.exitPoint}, Entry: ${points.entryPoint}'`);
-  } else if (options.point === 'closest_vertex') {
-    // calculate the distance function with closest vertex
-    points = getPointsFromVertices(dir, rect1, rect2);
-    console.log(`point option : closest vertices ='Exit: ${points.exitPoint}, Entry: ${points.entryPoint}'`);
-  } else if (options.point === 'center_point') {
-    // calculate the distance function with center points
-    points = getPointsFromCenterPoints(dir, rect1, rect2);
-    console.log(`point option : center point ='Exit: ${points.exitPoint}, Entry: ${points.entryPoint}'`);
-  } else if (options.point === 'center_edge') {
-  // calculate the distance function with center points on the edges
-    points = getPointsFromCenterPointsOnEdges(dir, rect1, rect2);
-    console.log(`point option : center point of the edges ='Exit: ${points.exitPoint}, Entry: ${points.entryPoint}'`);
-  }
+  points = getPointsFromClosestPointsOnEdges(dir, rect1, rect2);
 
   // Find the points P1 inside the border box of starting point and P2 inside the border box of candidate
   // that minimize the distance between these two points
@@ -162,45 +154,72 @@ function getDistance(rect1, rect2, dir, options) {
   const P2 = Math.abs(points.entryPoint[1] - points.exitPoint[1]);
 
   // A = The euclidian distance between P1 and P2.
-  const A = Math.sqrt(Math.pow(P1, 2) + Math.pow(P2, 2));
-  let B, C;
-
   // B: The absolute distance in the dir direction between P1 and P2, or 0 if dir is null.
   // C: The absolute distance in the direction which is orthogonal to dir between P1 and P2, or 0 if dir is null.
+  // D: The square root of the area of intersection between the border boxes of candidate and starting point
+  // E: The intersection edges between a candidate and the starting point
+
+  const A = Math.sqrt(Math.pow(P1, 2) + Math.pow(P2, 2));
+  let B, C, E;
+    
+  const intersectionRect = getIntersectionRect(rect1, rect2);
+  const D = intersectionRect.area;
+
+  
   switch (dir) {
   case 'left':
     /* falls through */
   case 'right' :
+    gap = intersectionRect.width;
     B = P1;
-    // If not aligned => add bias
-    if (!isAligned(rect1, rect2, dir))
-      orthogonal_bias = (rect1.height / 2);
-    C = (P2 + orthogonal_bias) * kOrthogonalWeightForLeftRight;
+    
+    // If two elements are aligned, add align bias
+    if (isAligned(rect1, rect2, dir)) {
+      alignBias = intersectionRect.height / rect1.height;
+      if (alignBias > 1) align_bias = 1;
+    } 
+    else  // else, add orthogonal bias
+      orthogonalBias = (rect1.height / 2);
+
+    C = (P2 + orthogonalBias) * kOrthogonalWeightForLeftRight;
+
+    E = alignWeight * alignBias;
+    
+    console.log(`orthogonal weight: ${kOrthogonalWeightForLeftRight}, orthogonal bias: ${orthogonalBias}`);
+    console.log(`align weight : ${alignWeight}, align bias: ${alignBias}`);
+
     break;
 
   case 'up' :
     /* falls through */
   case 'down' :
     B = P2;
-    // If not aligned => add bias
-    if (!isAligned(rect1, rect2, dir))
-      orthogonal_bias = (rect1.width / 2);
-    C = (P1 + orthogonal_bias) * kOrthogonalWeightForUpDown;
+    gap = intersectionRect.height;
+
+    // If two elements are aligned, add align bias
+    if (isAligned(rect1, rect2, dir)) {
+      alignBias = intersectionRect.width / rect1.width;  
+      if (alignBias > 1) alignBias = 1;
+    }
+    else  // else, add orthogonal bias
+      orthogonalBias = (rect1.width / 2);
+      
+    C = (P1 + orthogonalBias) * kOrthogonalWeightForUpDown;
+
+    E = alignWeight * alignBias;
+    
+    console.log(`orthogonal weight: ${kOrthogonalWeightForUpDown}, orthogonal bias: ${orthogonalBias}`);
+    console.log(`align weight : ${alignWeight}, align bias: ${alignBias}`);
+
     break;
 
   default:
     B = 0;
     C = 0;
+    E = 0;
     break;
   }
 
-  // D: The square root of the area of intersection between the border boxes of candidate and starting point
-  const intersection_rect = getIntersectionRect(rect1, rect2);
-  //console.log(intersection_rect);
-  //console.log(`overlap area : '${(intersection_rect.width * intersection_rect.height)}'`);
-  const D = (intersection_rect) ? Math.sqrt(intersection_rect.width * intersection_rect.height) : 0;
-  //const D = (intersection_rect) ? ((intersection_rect.width * intersection_rect.height) / (rect2.width * rect2.height)) : 0;
-  
   if (options.function === 'original') {
     console.log(`distance function : A + B + C - D ='${(A + B + C - D)}'`);
     console.log(`=> A : '${A}'`);
@@ -214,6 +233,14 @@ function getDistance(rect1, rect2, dir, options) {
     console.log(`=> C : '${C}'`);
     console.log(`=> D : '${D}'`);
     return (A + C - D);
+  } else if (options.function === 'additionalAlignFactor') {
+    console.log(`distance function : A + C - D - E ='${(A + C - D - E)}'`);
+    console.log(`=> A : '${A}'`);
+    console.log(`=> C : '${C}'`);
+    console.log(`=> D : '${D}'`);
+    console.log(`=> E : '${E}'`);
+    console.log(`gap: '${gap}'`);
+    return (A + C - D - E);
   }  
 }
 
@@ -442,25 +469,23 @@ function getPointsFromCenterPointsOnEdges(dir = 'down', rect1, rect2) {
 }
 
 function getIntersectionRect(rect1, rect2) {
-  let intersection_rect;
+  let intersection_rect = {width: 0, height: 0, area: 0, wRatio: 0, hRatio:0};
   const new_location = [Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)];
   const new_max_point = [Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom)];
 
   console.log(new_location);
   console.log(new_max_point);
 
+  intersection_rect.width = Math.abs(new_location[0] - new_max_point[0]);
+  intersection_rect.height = Math.abs(new_location[1] - new_max_point[1]);
+
   if (!(new_location[0] >= new_max_point[0] || new_location[1] >= new_max_point[1])) {
     // intersecting-cases
-    intersection_rect = {width: 0, height: 0};
-    intersection_rect.width = Math.abs(new_location[0] - new_max_point[0]);
-    intersection_rect.height = Math.abs(new_location[1] - new_max_point[1]);
+    intersection_rect.area = Math.sqrt(intersection_rect.width * intersection_rect.height);
   }
 
-  if (intersection_rect)
-    console.log(`Intersection rect: width=${intersection_rect.width}, height=${intersection_rect.height}`);
-  else
-    console.log(`Intersection rect: ${intersection_rect}`);
-
+  console.log(`Intersection rect: width=${intersection_rect.width}, height=${intersection_rect.height}, area=${intersection_rect.area}`);
+  
   return intersection_rect;
 }
 

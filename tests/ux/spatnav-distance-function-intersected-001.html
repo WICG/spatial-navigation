@@ -44,25 +44,28 @@
 <div class="options" style="margin:0 60px">
   Function :
   <select id="function_option" style="margin:0 20px">
-    <option value="original" selected>A + B + C - D</option>
+    <option value="original">A + B + C - D</option>
     <option value="sameDirOriented">A + C - D</option>
+    <option value="additionalAlignFactor" selected>A + C - D - E</option>
   </select>
-</div>  
+</div>
 
 <div class="options">
-  Orthogonal Weight (X-axis) :
-  <input id="orth_wx_option" type="number" value="30" style="margin: 15px 20px; width: 50px;">
-
-  Orthogonal Weight (Y-axis) :
-  <input id="orth_wy_option" type="number" value="2" style="margin: 15px 20px; width: 50px;">
+  Orthogonal Weight (X-axis, Y-axis) :
+  <input id="orth_wx_option" type="number" value="30" style="margin: 0px 20px; width: 40px;">,
+  <input id="orth_wy_option" type="number" value="2" style="margin: 0px 20px; width: 40px;">
+</div>
+<div class="options">
+  Align Weight :
+  <input id="align_w" type="number" value="5" style="margin: 5px 20px; width: 40px;">
 </div>
 
 <button class="btn test" id="get_result">Get Test Results</button>
 </div>
 <div id="container">
   <div tabindex="0" class="box" id="initial_focus" style="left: 50px; top: 125px; width: 200px; height: 270px;"></div>
-  <div tabindex="0" class="box" id="box1" style="left: 300px; top: 0px; width: 100px; height: 200px;">Box 1</div>
-  <div tabindex="0" class="box" id="box2" style="left: 200px; top: 320px; width: 150px; height: 150px;">Box 2</div>
+  <div tabindex="0" class="box" id="box1" style="left: 280px; top: 10px; width: 100px; height: 200px;">Box 1</div>
+  <div tabindex="0" class="box" id="box2" style="left: 220px; top: 310px; width: 150px; height: 150px;">Box 2</div>
 </div>
 <div id="resultSection">
   <br>
@@ -75,12 +78,10 @@
   
   getResultBtn.addEventListener('click', function (e) {
     
-    const options = {
-                    point: document.getElementById('point_option').value, 
-                    function: document.getElementById('function_option').value,
-                    orth_weight_x: document.getElementById('orth_wx_option').value,
-                    orth_weight_y: document.getElementById('orth_wy_option').value 
-                  };
+    const options = { function: document.getElementById('function_option').value,
+                          orth_weight_x: document.getElementById('orth_wx_option').value,
+                          orth_weight_y: document.getElementById('orth_wy_option').value, 
+                          align_weight: document.getElementById('align_w').value};
   
     clearResult(resultSection);
     let testArray = new Array();
@@ -102,8 +103,10 @@
       e.preventDefault();
       const dir = ARROW_KEY_CODE[e.keyCode];
       const target = e.target;
-      const options = {point: document.getElementById('point_option').value, 
-                      function: document.getElementById('function_option').value};
+      const options = { function: document.getElementById('function_option').value,
+                          orth_weight_x: document.getElementById('orth_wx_option').value,
+                          orth_weight_y: document.getElementById('orth_wy_option').value, 
+                          align_weight: document.getElementById('align_w').value};
   
       navigateByOption(container, target, dir, options);   
       
