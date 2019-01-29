@@ -90,6 +90,12 @@ iframe:focus {
   height: 200px;
 }
 
+.c3 {
+  border: 3px #00b176b0 solid;
+  width: 200px;
+  height: 200px;
+}
+
 .box {
   position: relative;
   box-sizing: border-box;
