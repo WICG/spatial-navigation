@@ -15,10 +15,11 @@
   .box {
     position: relative;
     box-sizing: border-box;
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: 100px;
     border: 1px black solid;
     background: #6ac;
+    text-align: center;
   }
 </style>
 
@@ -57,16 +58,16 @@
       </div>
       
 
-<div id="container">
+<div id="container" style="height: 500px;">
   <div tabindex="0" class="box"></div>
-  <div tabindex="0" class="box" style="left: 50px; top: -50px;"></div>
-  <div tabindex="0" class="box" id="up_focus" style="left: calc(50px * 2); top: calc(-50px * 2);"></div>
-  <div tabindex="0" class="box" style="top: calc(-50px * 2);"></div>
-  <div tabindex="0" class="box" id="left_focus" style="left: 50px; top: calc(-50px * 3);"></div>
-  <div tabindex="0" class="box" id="initial_focus" style="left: calc(50px * 2); top: calc(-50px * 4);"></div>
-  <div tabindex="0" class="box" style="top: calc(-50px * 4);"></div>
-  <div tabindex="0" class="box" style="left: 50px; top: calc(-50px * 5);"></div>
-  <div tabindex="0" class="box" id="down_focus" style="left: calc(50px * 2); top: calc(-50px * 6);"></div>
+  <div tabindex="0" class="box" style="left: 100px; top: -100px;"></div>
+  <div tabindex="0" id="initial_focus" class="box" id="up_focus" style="left: calc(100px * 2); top: calc(-100px * 2);"></div>
+  <div tabindex="0" class="box" style="top: calc(-100px * 2);"></div>
+  <div tabindex="0" class="box" id="green" style="left: 100px; top: calc(-100px * 3); background-color: seagreen;"></div>
+  <div class="box" id="nonFocusable" style="left: calc(100px * 2); top: calc(-100px * 4); background-color: lightgray;">non-focusable</div>
+  <div tabindex="0" class="box" id="yellow" style="top: calc(-100px * 4); background-color: yellow;"></div>
+  <div tabindex="0" class="box" id="maroon" style="left: 100px; top: calc(-100px * 5); background-color: maroon;"></div>
+  <div tabindex="0" class="box" id="purple" style="left: calc(100px * 2); top: calc(-100px * 6); background-color: slateblue;"></div>
 </div>
 
 <div id="resultSection">
@@ -90,9 +91,7 @@ getResultBtn.addEventListener('click', function (e) {
   let testArray = new Array();
 
   // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
-  testArray.push(new SpatialNavigationTest(container, "initial_focus", "left", "left_focus", options));
-  testArray.push(new SpatialNavigationTest(container, "initial_focus", "up", "up_focus", options));
-  testArray.push(new SpatialNavigationTest(container, "initial_focus", "down", "down_focus", options));
+  testArray.push(new SpatialNavigationTest(container, "initial_focus", "down", "purple", options));
 
   console.log(testArray);
   

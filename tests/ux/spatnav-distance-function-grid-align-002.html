@@ -31,43 +31,42 @@
 
 <body onload="init()">
 <div class="select">
-  <div class="options">
-    Points :
-    <select id="point_option" style="margin:0 20px">
-      <option value="closest_point" selected>Closest points on edges</option>
-      <option value="closest_vertex">Closest points among vertices </option>
-      <option value="center_point">Center points</option>
-      <option value="center_edge">Center points on edges</option>
-    </select>
-  </div> 
+<div class="options">
+  Points :
+  <select id="point_option" style="margin:0 20px">
+    <option value="closest_point" selected>Closest points on edges</option>
+    <option value="closest_vertex">Closest points among vertices </option>
+    <option value="center_point">Center points</option>
+    <option value="center_edge">Center points on edges</option>
+  </select>
+</div> 
 
-  <div class="options" style="margin:0 60px">
-    Function :
-    <select id="function_option" style="margin:0 20px">
-      <option value="original">A + B + C - D</option>
-      <option value="sameDirOriented">A + C - D</option>
-      <option value="additionalAlignFactor" selected>A + C - D - E</option>
-    </select>
-  </div>  
+<div class="options" style="margin:0 60px">
+  Function :
+  <select id="function_option" style="margin:0 20px">
+    <option value="original">A + B + C - D</option>
+    <option value="sameDirOriented">A + C - D</option>
+    <option value="additionalAlignFactor" selected>A + C - D - E</option>
+  </select>
+</div>  
 
-  <div class="options">
-    Orthogonal Weight (X-axis, Y-axis) :
-    <input id="orth_wx_option" type="number" value="30" style="margin: 0px 20px; width: 40px;">,
-    <input id="orth_wy_option" type="number" value="2" style="margin: 0px 20px; width: 40px;">
-  </div>
-  <div class="options">
-    Align Weight :
-    <input id="align_w" type="number" value="5" style="margin: 5px 20px; width: 40px;">
-  </div>
+<div class="options">
+  Orthogonal Weight (X-axis, Y-axis) :
+  <input id="orth_wx_option" type="number" value="30" style="margin: 0px 20px; width: 40px;">,
+  <input id="orth_wy_option" type="number" value="2" style="margin: 0px 20px; width: 40px;">
+</div>
+<div class="options">
+  Align Weight :
+  <input id="align_w" type="number" value="5" style="margin: 5px 20px; width: 40px;">
+</div>
 
-  <button class="btn test" id="get_result">Get Test Results</button>
+<button class="btn test" id="get_result">Get Test Results</button>
 </div>
 <div id="container">
-  <div tabindex="0" class="box" id="initial_focus" style="left: 50px; top: 75px; width: 200px; height: 200px;"></div>
-  <div tabindex="0" class="box" id="box1" style="left: 300px; top: 0px; width: 150px; height: 150px;">Box 1</div>
-  <div tabindex="0" class="box" id="box2" style="left: 300px; top: 200px; width: 100px; height: 150px;">Box 2</div>
+  <div tabindex="0" class="box" id="initial_focus" style="width:280px; height: 80px; left: 135px; top: 50px;"></div>
+  <div tabindex="0" class="box" id="box1" style="width:240px; height: 60px; left: 90px; top: 301px;">Box 1</div>
+  <div tabindex="0" class="box" id="box2" style="width:100px; height: 80px; left: 335px; top: 300px;">Box 2</div>
 </div>
-<p>NOTE: In this case, the overlapped area between the search origin and all candidates is the same.</p>
 <div id="resultSection">
   <br>
 </div>
@@ -88,7 +87,7 @@
     let testArray = new Array();
   
     // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
-    testArray.push(new SpatialNavigationTest(container, "initial_focus", "right", "box1", options));
+    testArray.push(new SpatialNavigationTest(container, "initial_focus", "down", "box1", options));
 
     console.log(testArray);
     
