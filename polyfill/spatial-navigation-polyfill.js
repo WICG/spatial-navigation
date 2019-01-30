@@ -488,22 +488,23 @@
       relatedTarget: element,
       dir: direction
     };
-
-    const triggeredEvent = document.createEvent('CustomEvent');
+    
+    let triggeredEvent = null;
 
     switch (option) {
     case 'beforefocus':
-      triggeredEvent.initCustomEvent('navbeforefocus', true, true, data);
+      triggeredEvent = new CustomEvent('navbeforefocus', {'bubbles': true, 'cancelable': true, detail: data});
       break;
 
     case 'beforescroll':
-      triggeredEvent.initCustomEvent('navbeforescroll', true, true, data);
+      triggeredEvent = new CustomEvent('navbeforescroll', {'bubbles': true, 'cancelable': true, detail: data});
       break;
 
     case 'notarget':
-      triggeredEvent.initCustomEvent('navnotarget', true, true, data);
+      triggeredEvent = new CustomEvent('navnotarget', {'bubbles': true, 'cancelable': true, detail: data});
       break;
     }
+
     element.dispatchEvent(triggeredEvent);
   }
 
