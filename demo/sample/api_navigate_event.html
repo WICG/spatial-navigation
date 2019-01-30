@@ -20,6 +20,20 @@
         for(container of containers) {
           container.addEventListener('navbeforescroll', function(e) {
             console.log("%cnavbeforescroll event: \n%o, %o", "background: lightblue", {currentTarget: e.currentTarget}, {target: e.target});
+
+            if (e.target == document.getElementById('textContainer')){
+              console.log("target is the text container");
+
+              let container = e.target.parentElement.parentElement.getSpatialNavigationContainer();
+              let candidates = container.focusableAreas({'mode': 'visible'});
+
+              candidates = candidates.filter(item => (item !== (e.target || e.target.parentElement)));          
+
+              let nextTarget = e.target.spatialNavigationSearch(e.dir, candidates, container);
+              // 여기서 document.getElementById('textContainer') 다음의 요소로 focus 보내고 싶으면?
+
+              nextTarget.focus();
+            }
           });
 
           container.addEventListener('scroll', function(e) {
@@ -51,12 +65,14 @@
         </div>
       </div>
 
-      <div class="container c1" tabindex="0" style="position: relative; left:110px; width:600px; height:400px; overflow-y: scroll;">
-        <div class="container c3" tabindex="0" style="position: relative; left:50px; width:200px; height:150px; overflow-y: scroll;">
+      <div class="container c1" tabindex="0" style="position: relative; left:110px; width:600px; height:250px; overflow-y: scroll;">
+        <div class="container c3" id="textContainer" tabindex="0" style="position: relative; left:50px; width:200px; height:150px; overflow-y: scroll;">
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Num quid tale Democritus? Ne amores quidem sanctos a sapiente alienos esse arbitrantur. In quibus doctissimi illi veteres inesse quiddam caeleste et divinum putaverunt. Quis est, qui non oderit libidinosam, protervam adolescentiam?
             Utrum igitur tibi litteram videor an totas paginas commovere? In his igitur partibus duabus nihil erat, quod Zeno commutare gestiret. Nos vero, inquit ille; Urgent tamen et nihil remittunt. </p>
         </div>
       </div>
+
+      <button class="box b3" style="left: 250px; width:50px; height:50px; background-color: #00b176b0"></button>
     </div>
   </body>
 </html>
