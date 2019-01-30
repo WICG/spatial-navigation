@@ -38,9 +38,9 @@
         <div class="options" style="margin:0 60px">
           Function :
           <select id="function_option" style="margin:0 20px">
-            <option value="original">A + B + C - D</option>
-            <option value="sameDirOriented">A + C - D</option>
-            <option value="additionalAlignFactor" selected>A + C - D - E</option>
+            <option value="original">Original (A + B + C - D)</option>
+            <option value="sameDirOriented">Original (A + C - D)</option>
+            <option value="additionalAlignFactor" selected>Proposed (A + B - C - D)</option>
           </select>
         </div>  
       
@@ -61,7 +61,7 @@
 <div id="container" style="height: 500px;">
   <div tabindex="0" class="box"></div>
   <div tabindex="0" class="box" style="left: 100px; top: -100px;"></div>
-  <div tabindex="0" id="initial_focus" class="box" id="up_focus" style="left: calc(100px * 2); top: calc(-100px * 2);"></div>
+  <div tabindex="0" id="initial_focus" class="box" id="up_focus" style="left: calc(100px * 2); top: calc(-100px * 2);">Initial Focus</div>
   <div tabindex="0" class="box" style="top: calc(-100px * 2);"></div>
   <div tabindex="0" class="box" id="green" style="left: 100px; top: calc(-100px * 3); background-color: seagreen;"></div>
   <div class="box" id="nonFocusable" style="left: calc(100px * 2); top: calc(-100px * 4); background-color: lightgray;">non-focusable</div>
