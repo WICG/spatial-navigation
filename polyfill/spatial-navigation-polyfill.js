@@ -736,7 +736,7 @@
    * @returns {boolean}
    */
   function isAtagWithoutHref(element) {
-    return (element.tagName === 'A' && element.getAttribute('href') === null);
+    return (element.tagName === 'A' && element.getAttribute('href') === null && element.getAttribute('tabIndex') === null);
   }
 
   /**
