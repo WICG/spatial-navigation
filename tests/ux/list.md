@@ -70,7 +70,7 @@ NOTE:
       <td align="center">
         <a href="spatnav-distance-function-grid-align-004.html" target="blank">Grid Align 4</a>
       </td>
-      <td align="center">Focus will move from the search origin to one of the candidates. This test aims to make sure that the Euclidean distance has a decisive effect on the final value of the distance function more than the amount of alignment.</td>
+      <td align="center">Focus will move from the search origin to one of the candidates. This test aims to make sure that the Euclidean distance has a decisive effect on the final value of the distance function more than the degree of alignment.</td>
       <td align="center"></td>
     </tr>
     <tr>
@@ -84,7 +84,7 @@ NOTE:
       <td align="center">
         <a href="spatnav-distance-function-intersected-002.html" target="blank">Element Intersect 2</a>
       </td>
-      <td align="center">Focus will move from the search origin to one of the candidates. This test aims to make sure that the amount of intersected area affects more than the amount of alignment to the final value of the distance function.</td>
+      <td align="center">Focus will move from the search origin to one of the candidates. This test aims to make sure that the amount of intersected area affects more than the degree of alignment to the final value of the distance function.</td>
       <td align="center"></td>
     </tr>
     <tr>
