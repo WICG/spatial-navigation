@@ -44,9 +44,9 @@
 <div class="options" style="margin:0 60px">
   Function :
   <select id="function_option" style="margin:0 20px">
-    <option value="original">A + B + C - D</option>
-    <option value="sameDirOriented">A + C - D</option>
-    <option value="additionalAlignFactor" selected>A + C - D - E</option>
+    <option value="original">Original (A + B + C - D)</option>
+    <option value="sameDirOriented">Original (A + C - D)</option>
+    <option value="additionalAlignFactor" selected>Proposed (A + B - C - D)</option>
   </select>
 </div>  
 
@@ -63,9 +63,9 @@
 <button class="btn test" id="get_result">Get Test Results</button>
 </div>
 <div id="container">
-  <div tabindex="0" class="box" id="initial_focus" style="width:280px; height: 80px; left: 139px; top: 140px;"></div>
-  <div tabindex="0" class="box" id="box1" style="width:240px; height: 60px; left: 105px; top: 232px;">Box 1</div>
-  <div tabindex="0" class="box" id="box2" style="width:80px; height: 80px; left: 355px; top: 230px;">Box 2</div>
+  <div tabindex="0" class="box" id="initial_focus" style="width:80px; height: 40px; left: 220px; top: 150px;"></div>
+  <div tabindex="0" class="box" id="blueBox" style="width:4px; height: 4px; left: 295px; top: 192px; background-color: blue;"></div>
+  <div tabindex="0" class="box" id="greenBox" style="width:80px; height: 40px; left: 220px; top: 198px; background-color: green;"></div>
 </div>
 <div id="resultSection">
   <br>
@@ -87,7 +87,7 @@
     let testArray = new Array();
   
     // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
-    testArray.push(new SpatialNavigationTest(container, "initial_focus", "down", "box1", options));
+    testArray.push(new SpatialNavigationTest(container, "initial_focus", "down", "blueBox", options));
 
     console.log(testArray);
     

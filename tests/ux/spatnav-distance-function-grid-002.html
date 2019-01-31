@@ -66,9 +66,9 @@
     <div class="options" style="margin:0 60px">
       Function :
       <select id="function_option" style="margin:0 20px">
-        <option value="original">A + B + C - D</option>
-        <option value="sameDirOriented">A + C - D</option>
-        <option value="additionalAlignFactor" selected>A + C - D - E</option>
+        <option value="original">Original (A + B + C - D)</option>
+        <option value="sameDirOriented">Original (A + C - D)</option>
+        <option value="additionalAlignFactor" selected>Proposed (A + B - C - D)</option>
       </select>
     </div>
   
@@ -97,15 +97,11 @@
     <div class="grid-item grid-item--height2" tabindex="0"></div>
     <div class="grid-item grid-item--width2 grid-item--height3" tabindex="0"></div>
     <div class="grid-item" tabindex="0"></div>
-    <div class="grid-item grid-item--height2" id="initial_focus" style="background-color:cornflowerblue;" tabindex="0">
-      <p>Initial focused element</p>
-    </div>
-    <div class="grid-item" tabindex="0"></div>
+    <div class="grid-item grid-item--height2" id="blueBox" style="background-color:cornflowerblue;" tabindex="0"></div>
+    <div class="grid-item" tabindex="0" id="initial_focus" style="background-color:green;"><p>Initial focused element</p></div>
     <div class="grid-item grid-item--width2 grid-item--height2" tabindex="0"></div>
     <div class="grid-item grid-item--width2" tabindex="0"></div>
-    <div class="grid-item" id="purpleBox" style="background-color:darkorchid;" tabindex="0">
-      <p>Expected</p>
-    </div>
+    <div class="grid-item" id="purpleBox" style="background-color:darkorchid;" tabindex="0"></div>
   </div>
   
   <div id="resultSection">
@@ -129,7 +125,7 @@ getResultBtn.addEventListener('click', function (e) {
   let testArray = new Array();
 
   // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
-  testArray.push(new SpatialNavigationTest(container, "initial_focus", "down", "purpleBox", options));
+  testArray.push(new SpatialNavigationTest(container, "initial_focus", "right", "blueBox", options));
 
   console.log(testArray);
   
