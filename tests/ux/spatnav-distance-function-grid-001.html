@@ -82,10 +82,11 @@ const container = document.getElementById('container');
 
 getResultBtn.addEventListener('click', function (e) {
   
-  const options = { function: document.getElementById('function_option').value,
-                          orth_weight_x: document.getElementById('orth_wx_option').value,
-                          orth_weight_y: document.getElementById('orth_wy_option').value, 
-                          align_weight: document.getElementById('align_w').value};
+  const options = { point: document.getElementById('point_option').value,
+                    function: document.getElementById('function_option').value,
+                    orth_weight_x: document.getElementById('orth_wx_option').value,
+                    orth_weight_y: document.getElementById('orth_wy_option').value, 
+                    align_weight: document.getElementById('align_w').value};
 
   clearResult(resultSection);
   let testArray = new Array();
