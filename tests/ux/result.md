@@ -39,7 +39,7 @@ e.g.) [Related test case](https://jihyerish.github.io/spatial-navigation/tests/u
 
 e.g.) [Related test case](https://jihyerish.github.io/spatial-navigation/tests/ux/spatnav-distance-function-grid-003.html)
 
-#### Case 3: The focus moves to the unexpected candidate when he Euclidean distances of candidates are slightly different (about 1px), but the degrees of alignment with the search origin are significantly different.
+#### Case 3: The focus moves to the unexpected candidate when the Euclidean distances of candidates are slightly different (about 1px), but the degrees of alignment with the search origin are significantly different.
 
 e.g.) [Related test case](https://jihyerish.github.io/spatial-navigation/tests/ux/spatnav-distance-function-grid-align-002.html)
 
@@ -51,7 +51,7 @@ The distance formula needs to change as below:
 
 In Case 1, the aligned elements are more desirable element to gain the focus. But calculating the absolute distance in the navigation direction (B Factor of the distance formula in the spec) penalizes elements which are aligned, so it's the reason for the unexpected behavior.
 
-[See the test result](#)
+[See the test result](#2-remove-redundant-distance-value)
 
 #### 2. Add the factor about calculating the degree of alignment between the search origin and a candidate
 
@@ -65,7 +65,7 @@ It is calculated as
 
 Also, considering Case 3, **alignWeight** is decided as 5.
 
-[See the test result](#)
+[See the test result](#3-considering-the-degree-of-alignment)
 
 ## Summary of the proposal
 
@@ -145,7 +145,7 @@ Also, considering Case 3, **alignWeight** is decided as 5.
 Also the most appropriate way to select the point from each element for measuring distance is considered.<br>
 The conclusion is keeping the method in the spec, which is **choosing the point from each element's edges which is the closest point from another element.**
 
-[See the test result](#)
+[See the test result](#1-selection-of-points)
 
 ## Test
 
