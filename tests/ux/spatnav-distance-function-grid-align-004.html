@@ -63,9 +63,9 @@
 <button class="btn test" id="get_result">Get Test Results</button>
 </div>
 <div id="container">
-  <div tabindex="0" class="box" id="initial_focus" style="width:280px; height: 80px; left: 135px; top: 50px;"></div>
-  <div tabindex="0" class="box" id="box1" style="width:240px; height: 60px; left: 90px; top: 301px;">Box 1</div>
-  <div tabindex="0" class="box" id="box2" style="width:100px; height: 80px; left: 335px; top: 300px;">Box 2</div>
+  <div tabindex="0" class="box" id="initial_focus" style="width:80px; height: 40px; left: 220px; top: 150px;"></div>
+  <div tabindex="0" class="box" id="blueBox" style="width:4px; height: 4px; left: 295px; top: 192px; background-color: blue;"></div>
+  <div tabindex="0" class="box" id="greenBox" style="width:80px; height: 40px; left: 220px; top: 198px; background-color: green;"></div>
 </div>
 <div id="resultSection">
   <br>
@@ -88,7 +88,7 @@
     let testArray = new Array();
   
     // SpatialNavigationTest constructor (container, targetId, dir, expectedId, options) 
-    testArray.push(new SpatialNavigationTest(container, "initial_focus", "down", "box1", options));
+    testArray.push(new SpatialNavigationTest(container, "initial_focus", "down", "blueBox", options));
 
     console.log(testArray);
     

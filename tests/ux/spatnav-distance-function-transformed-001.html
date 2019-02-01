@@ -42,8 +42,9 @@
   <div class="options" style="margin:0 60px">
     Function :
     <select id="function_option" style="margin:0 20px">
-      <option value="original" selected>A + B + C - D</option>
-      <option value="sameDirOriented">A + C - D</option>
+      <option value="original">Original (A + B + C - D)</option>
+      <option value="sameDirOriented">Original (A + C - D)</option>
+      <option value="additionalAlignFactor" selected>Proposed (A - B + C - D)</option>
     </select>
   </div>  
 
@@ -72,12 +73,10 @@
   
   getResultBtn.addEventListener('click', function (e) {
     
-    const options = {
-                    point: document.getElementById('point_option').value, 
+    const options = { point: document.getElementById('point_option').value,
                     function: document.getElementById('function_option').value,
                     orth_weight_x: document.getElementById('orth_wx_option').value,
-                    orth_weight_y: document.getElementById('orth_wy_option').value 
-                  };
+                    orth_weight_y: document.getElementById('orth_wy_option').value};
                   
     clearResult(resultSection);
     let testArray = new Array();
@@ -99,9 +98,11 @@
       e.preventDefault();
       const dir = ARROW_KEY_CODE[e.keyCode];
       const target = e.target;
-      const options = {point: document.getElementById('point_option').value, 
-                      function: document.getElementById('function_option').value};
-  
+      const options = { function: document.getElementById('function_option').value,
+                          orth_weight_x: document.getElementById('orth_wx_option').value,
+                          orth_weight_y: document.getElementById('orth_wy_option').value, 
+                          align_weight: document.getElementById('align_w').value};
+                          
       navigateByOption(container, target, dir, options);   
       
     });

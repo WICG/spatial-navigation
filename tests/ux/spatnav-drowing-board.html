@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name=flags content="">
+    <link rel=help href="https://wicg.github.io/spatial-navigation/#high-level-api">
+
+    <link rel="stylesheet" href="../../resources/testharness.css"></link>
+
+    <!--load polyfill. To be removed before submitting to WPT-->
+    <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+    <script src="spatnav-algorithm-test.js"></script>
+  </head>
+  <body onload="init()">
+    <div class="select">
+          
+      <div class="options" style="margin:0 20px">
+        Function :
+        <select id="function_option" style="margin:0 20px">
+          <option value="original">Original (A + B + C - D)</option>
+          <option value="sameDirOriented">Original (A + C - D)</option>
+          <option value="additionalAlignFactor" selected>Proposed (A - B + C - D)</option>
+        </select>
+      </div>  
+    
+      <div class="options">
+        Orthogonal Weight (X-axis, Y-axis) :
+        <input id="orth_wx_option" type="number" value="30" style="margin: 0px 20px; width: 40px;">,
+        <input id="orth_wy_option" type="number" value="2" style="margin: 0px 20px; width: 40px;">
+      </div>
+      <div class="options">
+        Align Weight :
+        <input id="align_w" type="number" value="5" style="margin: 5px 20px; width: 40px;">
+      </div>
+    
+      <button class="btn test" id="get_result">Get Test Results</button>
+    </div>
+    <div id="container"></div>
+    <textarea id="nodeInfo"></textarea>
+  </body>
+
+  <style>
+  #container {
+    margin-left: 10px;
+    width: 720px;
+    height: 400px;
+    border: 2px #555 solid;;
+    cursor: crosshair;
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, #777 1px, transparent 1px), linear-gradient(to bottom, #777 1px, transparent 1px);
+  }
+  #nodeInfo {
+    margin-left: 10px;
+    width: 720px;
+    height: 150px;
+  }
+  .b1 {
+    position: absolute;
+    box-sizing: border-box;
+    cursor: pointer;
+    text-align: center;
+    font-size: 24px;
+    background-color: teal;
+  }
+  .b1:focus {
+    background: maroon;
+    outline: 5px solid red;
+  }
+  .temp_node {
+    position: absolute;
+    box-sizing: border-box;
+    border: 1px #777 dashed;
+  }
+  </style>
+
+  <script type="text/javascript">
+    function init() {
+      const resultSection = document.getElementById('resultSection');
+      const container = document.getElementById('container');
+      const nodeInfo = document.getElementById('nodeInfo');
+      let tempNode = null, selectNode = null;
+      let startX, startY, mouseStatus;
+      let childCount = 0;
+
+      container.addEventListener('keydown', function(e) {
+        e.preventDefault();
+        const dir = ARROW_KEY_CODE[e.keyCode];
+        const target = e.target;
+        const options = { function: document.getElementById('function_option').value,
+                          orth_weight_x: document.getElementById('orth_wx_option').value,
+                          orth_weight_y: document.getElementById('orth_wy_option').value, 
+                          align_weight: document.getElementById('align_w').value};
+
+        navigateByOption(container, target, dir, options);   
+        
+      });
+
+      container.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        // If the right click is triggered, the target element is removed.
+        if (e.target.className.split(" ").includes("box")) {
+          container.removeChild(e.target);
+          writeCurrentStatus();
+        }
+      });
+
+      container.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        e.target.focus();
+        // Save the current mouse position
+        startX = e.clientX + window.pageXOffset;
+        startY = e.clientY + window.pageYOffset;
+        // 1. Select mode
+        if (e.target.className.split(" ").includes("box")) {
+          mouseStatus = "select";
+          selectNode = e.target;
+        } else { // 2. draw mode
+          mouseStatus = "down";
+          if (tempNode == null) {
+            tempNode = document.createElement("div");
+            tempNode.className = "temp_node";
+            tempNode.style.left = startX + "px";
+            tempNode.style.top = startY + "px";
+            container.appendChild(tempNode);
+          }
+        }
+      });
+
+      container.addEventListener("mouseup", (e) => {
+        if (mouseStatus == "select") {
+          // 1. Select mode
+          selectNode = null;
+        } else if (tempNode && (mouseStatus == "down" || parseInt(tempNode.style.width) * parseInt(tempNode.style.height) < 300)) {
+          // 2. Draw mode
+          // If no mouse move or tiny size, then the element isn't created.
+          container.removeChild(tempNode);
+          tempNode = null;
+        } else if (tempNode) {
+          tempNode.className = "box b1";
+          tempNode.tabIndex = 0;
+          tempNode.innerText = String.fromCharCode(65 + childCount++);
+          tempNode = null;
+        }
+        mouseStatus = "up";
+        writeCurrentStatus();
+      });
+
+      container.addEventListener("mousemove", (e) => {
+        if (mouseStatus == "select") {
+          // 1. Select mode
+          selectNode.style.left = selectNode.offsetLeft - startX + e.clientX + window.pageXOffset + "px";
+          selectNode.style.top = selectNode.offsetTop - startY + e.clientY + window.pageYOffset + "px";
+          startX = e.clientX + window.pageXOffset;
+          startY = e.clientY + window.pageYOffset;
+        } else if (tempNode && (mouseStatus == "down" || mouseStatus == "drag")) {
+          // 2. draw mode
+          let currentX = e.clientX + window.pageXOffset;
+          let currentY = e.clientY + window.pageYOffset;
+          tempNode.style.left = ((currentX - startX < 0) ? currentX : startX) + "px";
+          tempNode.style.top = ((currentY - startY < 0) ? currentY : startY) + "px";
+          tempNode.style.width = Math.abs(currentX - startX) + "px";
+          tempNode.style.height = Math.abs(currentY - startY) + "px";
+          mouseStatus = "drag";
+        }
+      });
+
+      function createElement(styleInfo) {
+        const newElement = document.createElement("div");
+        ({
+          width: newElement.style.width,
+          height: newElement.style.height,
+          left: newElement.style.left,
+          top: newElement.style.top
+        } = styleInfo);
+
+        newElement.className = "box b1";
+        newElement.tabIndex = "0";
+        newElement.innerText = String.fromCharCode(65 + childCount++);
+        return newElement;
+      }
+
+      function writeCurrentStatus() {
+        let nodeList = document.getElementsByClassName("box");
+        let currentStatus = "";
+        for(node of nodeList) {
+          const styleObj = {
+            width: node.style.width,
+            height: node.style.height,
+            left: node.style.left,
+            top: node.style.top
+          }
+          currentStatus = currentStatus + "\n" + JSON.stringify(styleObj);
+        }
+        nodeInfo.value = currentStatus.trim();
+      }
+
+      function onchangeTextarea() {
+        const childNodes = container.children;
+        while(container.children.length) {
+          container.children[0].remove();
+        }
+        let strArray = nodeInfo.value.trim().split("\n");
+        nodeInfo.value = "";
+        childCount = 0;
+        for(let str of strArray) {
+          if(str.trim().length) {
+            const styleObj = JSON.parse(str);
+            container.appendChild(createElement(styleObj));
+            nodeInfo.value = nodeInfo.value + "\n" + JSON.stringify(styleObj);
+          }
+        }
+      }
+      nodeInfo.addEventListener('change',  onchangeTextarea);
+
+      // Add initial element
+      onchangeTextarea();
+    }
+  </script>
+</html>
