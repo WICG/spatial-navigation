@@ -33,15 +33,15 @@ When the spatial navigation is used for the real pages, there are unexpected beh
 
 #### Case 1: The focus moves to the unexpected element with the smallest Euclidean distance but not aligned with the search origin in the navigation direction.
 
-e.g.) https://jihyerish.github.io/spatial-navigation/tests/ux/spatnav-distance-function-grid-001.html
+e.g.) [Related test case](https://jihyerish.github.io/spatial-navigation/tests/ux/spatnav-distance-function-grid-001.html)
 
 #### Case 2: The focus moves to the unexpected candidate when there are multiple candidates which have the same Euclidean distance.
 
-e.g.) https://jihyerish.github.io/spatial-navigation/tests/ux/spatnav-distance-function-grid-003.html
+e.g.) [Related test case](https://jihyerish.github.io/spatial-navigation/tests/ux/spatnav-distance-function-grid-003.html)
 
 #### Case 3: The focus moves to the unexpected candidate when he Euclidean distances of candidates are slightly different (about 1px), but the degrees of alignment with the search origin are significantly different.
 
-e.g.) https://jihyerish.github.io/spatial-navigation/tests/ux/spatnav-distance-function-grid-align-002.html
+e.g.) [Related test case](https://jihyerish.github.io/spatial-navigation/tests/ux/spatnav-distance-function-grid-align-002.html)
 
 ## Approach
 
@@ -96,7 +96,6 @@ Also, considering Case 3, **alignWeight** is decided as 5.
               <li>Orthogonal weight for LEFT and RIGHT direction: 30</li>
               <li>Orthogonal weight for UP and DOWN direction: 2</li>
             </ul>
-          </li>
           <li>D: The square root of the area of intersection between the boundary box of a candidate and the search origin</li>
         </ul>
       </td>
@@ -109,7 +108,6 @@ Also, considering Case 3, **alignWeight** is decided as 5.
               <li>Orthogonal weight for LEFT and RIGHT direction: 30</li>
               <li>Orthogonal weight for UP and DOWN direction: 2</li>
             </ul>
-          </li>
           <li>C: The degree of alignment in the navigation direction between a candidate and the search origin</li>
             <ul>
               <li>Align weight: 5</li>
@@ -124,23 +122,23 @@ Also, considering Case 3, **alignWeight** is decided as 5.
 #### General Rules (of To-Be)
 
 - A Factor has a decisive effect on the final value of the distance formula.
-  e.g.) http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-grid-align-004.html
+  e.g.) [Related test case](http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-grid-align-004.html)
 
 - If the values of D factor is 0, and the values of A Factor are the same, select the candidate which has the largest value of C Factor.
 
-  e.g.) http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-grid-001.html
+  e.g.) [Related test case](http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-grid-001.html)
 
 - If the values of B factor is 0, and the values of A Factor are slightly different (1px), select the candidate which has the largest value of C Factor.
 
-  e.g.) http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-grid-align-002.html
+  e.g.) [Related test case](http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-grid-align-002.html)
 
 - If the value of D Factor is more than 0, then the value of A Factor is always 0 and select the candidate which has the largest value of D Factor.
 
-  e.g.) http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-intersected-002.html
+  e.g.) [Related test case](http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-intersected-002.html)
 
 - If there are multiple candidates which have the final value of the distance formula, select the first element in the DOM order.
 
-  e.g.) http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-grid-002.html
+  e.g.) [Related test case](http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-grid-002.html)
 
 ## Additional Experiment
 
@@ -186,130 +184,120 @@ For investigating the proper result about selecting the best candidate, the dist
       <td align="center">
         <a href="spatnav-distance-function-grid-002.html" target="blank">Grid Layout 2</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">0 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-003.html" target="blank">Grid Layout 3</a>
       </td>
-      <td align="center">2/2</td>
-      <td align="center">0/2</td>
-      <td align="center">0/2</td>
-      <td align="center">0/2</td>
-      <td align="center">0/2</td>
+      <td align="center">2 / 2</td>
+      <td align="center">0 / 2</td>
+      <td align="center">0 / 2</td>
+      <td align="center">2 / 2</td>
+      <td align="center">2 / 2</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-004.html" target="blank">Grid Layout 4</a>
       </td>
-      <td align="center">4/4</td>
-      <td align="center">4/4</td>
-      <td align="center">4/4</td>
-      <td align="center">4/4</td>
-      <td align="center">4/4</td>
-      <td align="center">4/4</td>
+      <td align="center">4 / 4</td>
+      <td align="center">4 / 4</td>
+      <td align="center">4 / 4</td>
+      <td align="center">4 / 4</td>
+      <td align="center">4 / 4</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-align-001.html" target="blank">Grid Align 1</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-align-002.html" target="blank">Grid Align 2</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-align-003.html" target="blank">Grid Align 3</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">1/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-align-004.html" target="blank">Grid Align 4</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">1/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">0 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-intersected-001.html" target="blank">Element Intersect 1</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">-</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-intersected-002.html" target="blank">Element Intersect 2</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">-</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">0 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-transformed-001.html" target="blank">Transformed elements</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-fragments-001.html" target="blank">Fragmented elements</a>
       </td>
-      <td align="center">3/3</td>
-      <td align="center">1/3</td>
-      <td align="center">1/3</td>
-      <td align="center">1/3</td>
-      <td align="center">1/3</td>
-      <td align="center">0/3</td>
+      <td align="center">3 / 3</td>
+      <td align="center">1 / 3</td>
+      <td align="center">0 / 3</td>
+      <td align="center">1 / 3</td>
+      <td align="center">1 / 3</td>
     </tr>
 
     <tr style="background-color: thistle ">
       <td align="center">Total</td>
-      <td align="center">21/21</td>
-      <td align="center">12/21</td>
-      <td align="center">12/21</td>
-      <td align="center">12/21</td>
-      <td align="center">13/21</td>
-      <td align="center">10/21</td>
+      <td align="center">17 / 17</td>
+      <td align="center">11 / 17</td>
+      <td align="center">8 / 17</td>
+      <td align="center">12 / 17</td>
+      <td align="center">12 / 17</td>
     </tr>
   </tbody>
 </table>
@@ -327,7 +315,6 @@ For investigating the proper result about selecting the best candidate, the dist
   <tr style="background-color:purple; font-weight: bold; color: white;">
     <td align="center" rowspan="2">Method</td>
     <td align="center" rowspan="2">Expected</td>
-    <td align="center" rowspan="2">Blink</td>
     <td align="center" colspan="2">Spec</td>
   </tr>
   <tr style="background-color: plum;">
@@ -340,99 +327,88 @@ For investigating the proper result about selecting the best candidate, the dist
       <td align="center">
         <a href="spatnav-distance-function-grid-001.html" target="blank">Grid Layout 1</a>
       </td>
-      <td align="center">3/3</td>
-      <td align="center">3/3</td>
-      <td align="center">3/3</td>
-      <td align="center">3/3</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">0 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-002.html" target="blank">Grid Layout 2</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-003.html" target="blank">Grid Layout 3</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">2 / 2</td>
+      <td align="center">0 / 2</td>
+      <td align="center">0 / 2</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-004.html" target="blank">Grid Layout 4</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">4 / 4</td>
+      <td align="center">4 / 4</td>
+      <td align="center">4 / 4</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-align-001.html" target="blank">Grid Align 1</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">0 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-align-002.html" target="blank">Grid Align 2</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">0 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-align-003.html" target="blank">Grid Align 3</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-align-004.html" target="blank">Grid Align 4</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-intersected-001.html" target="blank">Element Intersect 1</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-intersected-002.html" target="blank">Element Intersect 2</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
 
     <tr style="background-color: thistle ">
       <td align="center">Total</td>
-      <td align="center">21/21</td>
-      <td align="center">12/21</td>
-      <td align="center">12/21</td>
-      <td align="center">12/21</td>
+      <td align="center">16 / 16</td>
+      <td align="center">12 / 16</td>
+      <td align="center">12 / 16</td>
     </tr>
   </tbody>
 </table>
@@ -450,7 +426,6 @@ For investigating the proper result about selecting the best candidate, the dist
   <tr style="background-color:purple; font-weight: bold; color: white;">
     <td align="center" rowspan="2">Method</td>
     <td align="center" rowspan="2">Expected</td>
-    <td align="center" rowspan="2">Blink</td>
     <td align="center" colspan="2">Spec</td>
   </tr>
   <tr style="background-color: plum;">
@@ -463,99 +438,88 @@ For investigating the proper result about selecting the best candidate, the dist
       <td align="center">
         <a href="spatnav-distance-function-grid-001.html" target="blank">Grid Layout 1</a>
       </td>
-      <td align="center">3/3</td>
-      <td align="center">3/3</td>
-      <td align="center">3/3</td>
-      <td align="center">3/3</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-002.html" target="blank">Grid Layout 2</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-003.html" target="blank">Grid Layout 3</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">2 / 2</td>
+      <td align="center">0 / 2</td>
+      <td align="center">2 / 2</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-004.html" target="blank">Grid Layout 4</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">4 / 4</td>
+      <td align="center">4 / 4</td>
+      <td align="center">4 / 4</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-align-001.html" target="blank">Grid Align 1</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-align-002.html" target="blank">Grid Align 2</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">0 / 1</td>
+      <td align="center">0 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-align-003.html" target="blank">Grid Align 3</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-grid-align-004.html" target="blank">Grid Align 4</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
-      <td align="center">0/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-intersected-001.html" target="blank">Element Intersect 1</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
     <tr>
       <td align="center">
         <a href="spatnav-distance-function-intersected-002.html" target="blank">Element Intersect 2</a>
       </td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
-      <td align="center">1/1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
+      <td align="center">1 / 1</td>
     </tr>
 
     <tr style="background-color: thistle ">
       <td align="center">Total</td>
-      <td align="center">21/21</td>
-      <td align="center">12/21</td>
-      <td align="center">12/21</td>
-      <td align="center">12/21</td>
+      <td align="center">16 / 16</td>
+      <td align="center">12 / 16</td>
+      <td align="center">16 / 16</td>
     </tr>
   </tbody>
 </table>
