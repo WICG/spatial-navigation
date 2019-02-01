@@ -31,39 +31,45 @@ To select the element which will gain the focus from the search origin, the dist
 
 When the spatial navigation is used for the real pages, there are unexpected behavior in UX point of view because of the distance function above.
 
-#### Case 1: The focus moves to the unexpected element with the smallest Euclidean distance but not aligned with the search origin in the navigation direction.
+### Case 1
+#### The focus moves to the unexpected element with the smallest Euclidean distance but not aligned with the search origin in the navigation direction.
 
-e.g.) [Related test case](https://jihyerish.github.io/spatial-navigation/tests/ux/spatnav-distance-function-grid-001.html)
+e.g.) [Related test case](spatnav-distance-function-grid-001.html)
 
-#### Case 2: The focus moves to the unexpected candidate when there are multiple candidates which have the same Euclidean distance.
+### Case 2
+#### The focus moves to the unexpected candidate when there are multiple candidates which have the same Euclidean distance.
 
-e.g.) [Related test case](https://jihyerish.github.io/spatial-navigation/tests/ux/spatnav-distance-function-grid-003.html)
+e.g.) [Related test case](spatnav-distance-function-grid-003.html)
 
-#### Case 3: The focus moves to the unexpected candidate when the Euclidean distances of candidates are slightly different (about 1px), but the degrees of alignment with the search origin are significantly different.
+### Case 3
+#### The focus moves to the unexpected candidate when the Euclidean distances of candidates are slightly different (about 1px), but the degree of alignment with the search origin are significantly different.
 
-e.g.) [Related test case](https://jihyerish.github.io/spatial-navigation/tests/ux/spatnav-distance-function-grid-align-002.html)
+e.g.) [Related test case](spatnav-distance-function-grid-align-002.html)
 
 ## Approach
 
 The distance formula needs to change as below:
 
-#### 1. Remove the factor about calculating the absolute distance in the navigation direction between the search origin and a candidate
+### 1. Remove the factor about calculating the absolute distance in the navigation direction between a candidate and the search origin.
 
 In Case 1, the aligned elements are more desirable element to gain the focus. But calculating the absolute distance in the navigation direction (B Factor of the distance formula in the spec) penalizes elements which are aligned, so it's the reason for the unexpected behavior.
 
 [See the test result](#2-remove-redundant-distance-value)
 
-#### 2. Add the factor about calculating the degree of alignment between the search origin and a candidate
+### 2. Add the factor about calculating the degree of alignment between a candidate and the search origin.
 
-As in Case 2, when there are multiple candidates which have the same Euclidean distance from the search origin, it's ambiguous to decide where the focus will move to.
-To solve the ambiguousity, the Factor for calculating degree of alignment in the navigation direction between a candidate and the search origin is suggested.
+This aims to deal with the issues of [Case 2](#case-2) and [Case 3](#case-3).
+
+As in [Case 2](#case-2), when there are multiple candidates which have the same Euclidean distance from the search origin, it's ambiguous to decide where the focus will move to.
+
+To avoid ambiguity, the factor for calculating degree of alignment in the navigation direction between a candidate and the search origin is suggested.
 It is calculated as
 
 > **Factor** = **degree of alignment** * **alignWeight**
 >
 > **degree of alignment** = (length of the edge of the area of intersection between a candidate and the search origin / length of the edge of the search origin)
 
-Also, considering Case 3, **alignWeight** is decided as 5.
+Also, considering [Case 3](#case-3), **alignWeight** is decided as `5`.
 
 [See the test result](#3-considering-the-degree-of-alignment)
 
@@ -87,10 +93,10 @@ Also, considering Case 3, **alignWeight** is decided as 5.
     <tr>
       <td align="center">Distance formula</td>
       <td>
-        <strong>Distance formula = A + B + C - D</strong>
+        <strong>Distance formula = A + <span style="color: blue;">B</span> + C - D</strong>
         <ul>
           <li>A: The Euclidean distance between points</li>
-          <li>B: The absolute distance in the navigation direction between points</li>
+          <li style="color: blue;">B: The absolute distance in the navigation direction between points</li>
           <li>C: The absolute distance in the direction which is orthogonal to the navigation direction between points</li>
             <ul>
               <li>Orthogonal weight for LEFT and RIGHT direction: 30</li>
@@ -100,17 +106,18 @@ Also, considering Case 3, **alignWeight** is decided as 5.
         </ul>
       </td>
       <td>
-        <strong>Distance formula = A + B - C - D</strong>
+        <strong>Distance formula
+         = A - <span style="color: blue;">B</span> + C - D</strong>
         <ul>
           <li>A: The Euclidean distance between points</li>
-          <li>B: The absolute distance in the direction which is orthogonal to the navigation direction between points</li>
+          <li style="color: blue;">B: The degree of alignment in the navigation direction between a candidate and the search origin</li>
+            <ul>
+              <li>Align weight: 5</li>
+            </ul>
+          <li>C: The absolute distance in the direction which is orthogonal to the navigation direction between points</li>
             <ul>
               <li>Orthogonal weight for LEFT and RIGHT direction: 30</li>
               <li>Orthogonal weight for UP and DOWN direction: 2</li>
-            </ul>
-          <li>C: The degree of alignment in the navigation direction between a candidate and the search origin</li>
-            <ul>
-              <li>Align weight: 5</li>
             </ul>
           <li>D: The square root of the area of intersection between the boundary box of a candidate and the search origin</li>
         </ul>
@@ -119,30 +126,33 @@ Also, considering Case 3, **alignWeight** is decided as 5.
   </tbody>
 </table>
 
-#### General Rules (of To-Be)
+### General Rules (of To-Be)
 
 - A Factor has a decisive effect on the final value of the distance formula.
-  e.g.) [Related test case](http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-grid-align-004.html)
 
-- If the values of D factor is 0, and the values of A Factor are the same, select the candidate which has the largest value of C Factor.
+  e.g.) [Related test case](spatnav-distance-function-grid-align-004.html)
 
-  e.g.) [Related test case](http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-grid-001.html)
+- If the values of D factor is 0, and the values of A Factor are the same, select the candidate which has the largest value of B Factor.
 
-- If the values of B factor is 0, and the values of A Factor are slightly different (1px), select the candidate which has the largest value of C Factor.
+  e.g.) [Related test case](spatnav-distance-function-grid-001.html)
 
-  e.g.) [Related test case](http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-grid-align-002.html)
+- If the values of C factor is 0, and the values of A Factor are slightly different (1px), select the candidate which has the largest value of B Factor.
+
+  e.g.) [Related test case](spatnav-distance-function-grid-align-002.html)
 
 - If the value of D Factor is more than 0, then the value of A Factor is always 0 and select the candidate which has the largest value of D Factor.
 
-  e.g.) [Related test case](http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-intersected-002.html)
+  e.g.) [Related test case](spatnav-distance-function-intersected-002.html)
 
 - If there are multiple candidates which have the final value of the distance formula, select the first element in the DOM order.
 
-  e.g.) [Related test case](http://10.177.242.47/jihye/spatial-navigation/tests/ux/spatnav-distance-function-grid-002.html)
+  e.g.) [Related test case](spatnav-distance-function-grid-002.html)
 
 ## Additional Experiment
 
 Also the most appropriate way to select the point from each element for measuring distance is considered.<br>
+Selecting the point from the center of an element was considerable, but it didn't solve the problem when candidates are aligned with the same Euclidean distance from the search origin. ([Case 2](#case-2) and [Case 3](#case-3))
+
 The conclusion is keeping the method in the spec, which is **choosing the point from each element's edges which is the closest point from another element.**
 
 [See the test result](#1-selection-of-points)
@@ -152,16 +162,14 @@ The conclusion is keeping the method in the spec, which is **choosing the point 
 We've collected the test cases which show the expected result of the spatial navigation behavior.<br>
 See the list of ux test cases [here](list.html).
 
-#### 1. Selection of points
+### 1. Selection of points
 
-For investigating the proper result about selecting the best candidate, the distance formula is tweaked as below:
-
-  <li>Point Selection</li>
+For investigating the proper result about selecting the best candidate, there are four ways to select the points for calculating the distance as below:
   <ul>
-    <li>Select P1 and P2 as the closest point along the boundary box of the starting point and a candidate element</li>
-    <li>Select P1 and P2 as the closest vertex of the starting point and a candidate element</li>
-    <li>Select P1 and P2 as the center point of the starting point and a candidate element</li>
-    <li>Select P1 and P2 as the center point on the closest edge of starting point and a candidate element</li>
+    <li><strong>Closest points on edges</strong>: <br>Select P1 and P2 as the closest point along the boundary box of the search origin and a candidate element</li>
+    <li><strong>Closest points among vertices</strong>: <br>Select P1 and P2 as the closest vertex of the search origin and a candidate element</li>
+    <li><strong>Center points</strong>: <br>Select P1 and P2 as the center point of the search origin and a candidate element</li>
+    <li><strong>Center points on edges</strong>: <br>Select P1 and P2 as the center point on the closest edge of search origin and a candidate element</li>
   </ul>
   NOTE: The distance formula is (A + B + C - D ) as in the spec.
 
@@ -173,10 +181,10 @@ For investigating the proper result about selecting the best candidate, the dist
     <td align="center" colspan="4">Spec</td>
   </tr>
   <tr style="background-color: plum;">
-    <td align="center">Closest Points</td>
-    <td align="center">Closest Vertices</td>
-    <td align="center">Center Points</td>
-    <td align="center">Center Points on Edges</td>
+    <td align="center">Closest points on edges</td>
+    <td align="center">Closest points among vertices</td>
+    <td align="center">Center points</td>
+    <td align="center">Center points on edges</td>
   </tr>
   </thead>
   <tbody>
@@ -302,12 +310,12 @@ For investigating the proper result about selecting the best candidate, the dist
   </tbody>
 </table>
 
-#### 2. Remove redundant distance value
+### 2. Remove redundant distance value
 
 <li>Distance function</li>
 <ul>
-  <li>As-is: Define the distance function as `(A + B + C - D)`</li>
-  <li>To-be: Define the distance function as `(A + C - D)`</li>
+  <li>`(A + B + C - D)`:  The formula in the current spec</li>
+  <li>`(A + C - D)`: The formula without "B Factor" in the current spec</li>
 </ul>
 
 <table style="font-family: 'Roboto';">
@@ -413,12 +421,12 @@ For investigating the proper result about selecting the best candidate, the dist
   </tbody>
 </table>
 
-#### 3. Considering the degree of alignment
+### 3. Considering the degree of alignment
 
 <li>Distance function</li>
 <ul>
-  <li>As-is: Define the distance function as `(A + C - D)`</li>
-  <li>To-be: Define the distance function as `(A + B - C - D)`</li>
+  <li>Formula in the current spec `(A + B + C - D)`</li>
+  <li>Proposed formula `(A - B + C - D)`</li>
 </ul>
 
 <table style="font-family: 'Roboto';">
@@ -429,8 +437,8 @@ For investigating the proper result about selecting the best candidate, the dist
     <td align="center" colspan="2">Spec</td>
   </tr>
   <tr style="background-color: plum;">
-    <td align="center">A + C - D</td>
-    <td align="center">A + B - C - D</td>
+    <td align="center">Original formula</td>
+    <td align="center">Proposed formula</td>
   </tr>
   </thead>
   <tbody>
