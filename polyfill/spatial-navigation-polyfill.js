@@ -793,7 +793,7 @@
    */
   function isVisible(element) {
     const elementStyle = window.getComputedStyle(element, null);
-    return (!element.parentElement) || (isVisibleStyleProperty(elementStyle) && hitTest(element, elementStyle));
+    return (!element.parentElement) || (isVisibleStyleProperty(elementStyle) && hitTest(element));
   }
 
   /**
@@ -833,15 +833,14 @@
    * Decide whether this element is entirely or partially visible within the viewport.
    * @function hitTest
    * @param element {Node}
-   * @param elementStyle {CSSStyleDeclaration}
    * @returns {boolean}
    */
-  function hitTest(element, elementStyle) {
-    let offsetX = parseInt(elementStyle.getPropertyValue('width')) / 10;
-    let offsetY = parseInt(elementStyle.getPropertyValue('height')) / 10;
+  function hitTest(element) {
+    let offsetX = parseInt(element.offsetWidth) / 10;
+    let offsetY = parseInt(element.offsetHeight) / 10;
 
-    offsetX = isNaN(offsetX) ? 0 : offsetX;
-    offsetY = isNaN(offsetY) ? 0 : offsetY;
+    offsetX = isNaN(offsetX) ? 1 : offsetX;
+    offsetY = isNaN(offsetY) ? 1 : offsetY;
 
     const elementRect = getBoundingClientRect(element);
 
