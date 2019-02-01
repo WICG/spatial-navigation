@@ -128,7 +128,7 @@ function getDistance(rect1, rect2, dir, options) {
   let kOrthogonalWeightForUpDown = 2;
 
   let orthogonalBias = 0;
-  let points = null;
+  let points = getPointsFromClosestPointsOnEdges(dir, rect1, rect2);
 
   let alignBias = 0;
   let alignWeight = 5.0;
