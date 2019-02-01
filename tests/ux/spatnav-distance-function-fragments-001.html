@@ -114,8 +114,10 @@
       e.preventDefault();
       const dir = ARROW_KEY_CODE[e.keyCode];
       const target = e.target;
-      const options = {point: document.getElementById('point_option').value, 
-                      function: document.getElementById('function_option').value};
+      const options = { point: document.getElementById('point_option').value,
+                    function: document.getElementById('function_option').value,
+                    orth_weight_x: document.getElementById('orth_wx_option').value,
+                    orth_weight_y: document.getElementById('orth_wy_option').value;
   
       navigateByOption(container, target, dir, options);      
     });
