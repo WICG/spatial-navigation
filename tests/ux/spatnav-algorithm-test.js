@@ -146,14 +146,25 @@ function getDistance(rect1, rect2, dir, options) {
   if (options.align_weight)
     alignWeight = options.align_weight;
 
-  points = getPointsFromClosestPointsOnEdges(dir, rect1, rect2);
+  if (options.point) {
+    if (options.point === 'closest_point')
+      points = getPointsFromClosestPointsOnEdges(dir, rect1, rect2);
+    else if (options.point === 'closest_vertex')
+      points = getPointsFromVertices(dir, rect1, rect2);
+    else if (options.point === 'center_point')
+      points = getPointsFromCenterPoints(dir, rect1, rect2);
+    else if (options.point === 'center_edge')
+      points = getPointsFromCenterPointsOnEdges(dir, rect1, rect2);
+  }
+
+  console.log(`Point selection : ${options.point}`);
 
   // Find the points P1 inside the border box of starting point and P2 inside the border box of candidate
   // that minimize the distance between these two points
   const P1 = Math.abs(points.entryPoint[0] - points.exitPoint[0]);
   const P2 = Math.abs(points.entryPoint[1] - points.exitPoint[1]);
 
-  // A = The euclidian distance between P1 and P2.
+  // A: The euclidian distance between P1 and P2.
   // B: The absolute distance in the dir direction between P1 and P2, or 0 if dir is null.
   // C: The absolute distance in the direction which is orthogonal to dir between P1 and P2, or 0 if dir is null.
   // D: The square root of the area of intersection between the border boxes of candidate and starting point
