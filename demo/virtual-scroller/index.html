@@ -1,0 +1,41 @@
+<!--
+  Copyright 2019 LG Electronics Inc. All rights reserved.
+
+  - Author: Jihye Hong (jh.hong@lge.com)
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual Scroller Demo</title>
+  <script src="scroller-utils.js"></script>
+  <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+</head>
+
+<body>
+  <div class="option">
+    Initial number of elements: <input id="itemNum" type="number" value=10></input>
+  </div>
+  <div class="wrapper">
+    
+    <!-- Feed Section starts -->
+    <div id="feed"></div>
+    <!-- Feed Section end -->
+
+  </div>
+</body>
+<script type="text/javascript">
+  let itemNum = document.getElementById('itemNum');
+  let container = document.getElementById('feed');
+
+  document.body.onload = addBoxes(container, itemNum.value);
+  
+  itemNum.addEventListener('change', function (e) {
+
+    console.log("boxNum: " + e.target.value);
+
+  });
+  
+</script>
+</html>
