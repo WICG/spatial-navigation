@@ -55,6 +55,20 @@
     }
 
     /*
+     * CSS.registerProperty() from the Properties and Values API
+     * Reference: https://drafts.css-houdini.org/css-properties-values-api/#the-registerproperty-function
+     */
+    if (window.CSS && CSS.registerProperty &&
+      window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-behavior') === '') {
+      CSS.registerProperty({
+        name: '--spatial-navigation-behavior',
+        syntax: 'auto | focus | scroll',
+        inherits: true,
+        initialValue: 'auto'
+      });
+    }
+
+    /*
      * keydown EventListener :
      * If arrow key pressed, get the next focusing element and send it to focusing controller
      */
@@ -143,7 +157,7 @@
     if ((isContainer(eventTarget) || eventTarget.nodeName === 'BODY') && !(eventTarget.nodeName === 'INPUT')) {
       if (eventTarget.nodeName === 'IFRAME')
         eventTarget = eventTarget.contentDocument.body;
-
+      
       // 5-2
       if (focusingController(eventTarget.spatialNavigationSearch(dir), dir)) return;
       if (scrollingController(eventTarget, dir)) return;
@@ -158,6 +172,9 @@
     if (!parentContainer && ( window.location !== window.parent.location)) {
       parentContainer = window.parent.document.documentElement;
     }
+
+    console.log(`Behavior on the spatnav container: ${getCSSSpatNavBehavior(container)}`);
+    setSpatNavBehavior(container, dir);
 
     // 7
     while (parentContainer) {
@@ -527,6 +544,125 @@
    */
   function isCSSSpatNavContain(element) {
     return readCssVar(element, 'spatial-navigation-contain') === 'contain';
+  }
+
+  /**
+   * Return the value of 'spatial-navigation-behavior' css property of an element
+   * @function getCSSSpatNavBehavior
+   * @param element {Node} - would be the spatial navigation container
+   * @returns {string} : auto | focus | scroll
+   */
+  function getCSSSpatNavBehavior(element) {
+    return readCssVar(element, 'spatial-navigation-behavior');
+  }
+
+  /**
+   * Return the value of 'spatial-navigation-behavior' css property of an element
+   * @function setSpatNavBehavior
+   * @param element {Node} - element; eventTarget
+   */
+  function setSpatNavBehavior(element, dir) {
+    let container = element.getSpatialNavigationContainer();
+
+    if (getCSSSpatNavBehavior(container) === 'focus') {
+      navigateOnly(element, container, dir);
+    }
+    else if (getCSSSpatNavBehavior(container) === 'scroll') {
+      scrollingController(container);
+      /*
+      element.addEventListener('keydown', function(e) {
+        window.__spatialNavigation__.keyMode = 'NONE';
+      });
+
+      element.addEventListener('blur', function(e) {
+        window.__spatialNavigation__.keyMode = 'ARROW';
+      });
+      */
+    }
+  }
+
+  /**
+   * Only move the focus with spatial navigation. Manually scrolling isn't available.
+   * @function navigateOnly
+   * @param element {SpatialNavigationContainer} - container
+   * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
+   */
+  function navigateOnly(element, container, dir) {
+    // spatial navigation steps
+
+    let eventTarget = element;
+    let parentContainer = (container.parentElement) ? container.parentElement.getSpatialNavigationContainer() : null;
+
+    // When the container is the viewport of a browsing context
+    if (!parentContainer && ( window.location !== window.parent.location)) {
+      parentContainer = window.parent.document.documentElement;
+    }
+
+    if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir)) {
+      return;
+    }
+    else {
+      // If there isn't any candidate and the best candidate among candidate: Find candidates of the ancestor container
+      createSpatNavEvents('notarget', container, dir);
+    }
+
+    // 7
+    while (parentContainer) {
+      if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas({'mode': 'all'}), container), dir)) {
+        return;
+      }
+      else {
+        // If there isn't any candidate and the best candidate among candidate: Find candidates of the ancestor container
+        
+        // [event] navnotarget : Fired when spatial navigation has failed to find any acceptable candidate to move the focus
+        // to in the current spatnav container and when that same spatnav container cannot be scrolled either,
+        // before going up the tree to search in the nearest ancestor spatnav container.
+
+        createSpatNavEvents('notarget', container, dir);
+
+        // find the container
+
+        if (container === document || container === document.documentElement) {
+          
+          if ( window.location !== window.parent.location ) {
+            // The page is in an iframe
+            // eventTarget needs to be reset because the position of the element in the IFRAME
+            // is unuseful when the focus moves out of the iframe
+            eventTarget = window.frameElement;
+            container = window.parent.document.documentElement;
+          
+            if (container.parentElement)
+              parentContainer = container.parentElement.getSpatialNavigationContainer();
+            else {
+              parentContainer = null;
+              break;
+            }
+          }
+        }
+        else {
+          // avoiding when spatnav container with tabindex=-1
+          if (isFocusable(container)) {
+            eventTarget = container;
+          }
+
+          container = parentContainer;
+
+          if (container.parentElement)
+            parentContainer = container.parentElement.getSpatialNavigationContainer();
+          else {
+            parentContainer = null;
+            break;
+          }
+        }
+        
+      }
+    }
+
+    // Behavior after 'navnotarget' - Getting out from the current spatnav container
+    if (!parentContainer && container) {
+      if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir))
+        return;
+    }
   }
 
   /**
