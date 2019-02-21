@@ -20,9 +20,9 @@
     Initial number of elements: <input id="itemNum" type="number" value=10></input>
   </div>
   <div class="wrapper">
-    
+
     <!-- Feed Section starts -->
-    <div id="feed" style="--spatial-navigation-behavior: scroll;"></div>
+    <div id="feed" tabindex="0" style="--spatial-navigation-behavior: focus;"></div>
     <!-- Feed Section end -->
 
   </div>
@@ -35,7 +35,7 @@
   let container = document.getElementById('feed');
 
   document.body.onload = addBoxes(container, itemNum.value);
-  
+
   itemNum.addEventListener('change', function (e) {
 
     console.log("boxNum: " + e.target.value);
@@ -53,6 +53,6 @@
   document.body.addEventListener('navnotarget', function(e) {
     console.log("%cnavnotarget event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target});
   });
-  
+
 </script>
 </html>

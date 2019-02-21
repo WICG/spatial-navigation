@@ -24,7 +24,6 @@ h1 {
   display: grid;
   overflow-x: scroll;
   grid-template-columns: repeat(2, 1fr);
-  grid-gap: 50px;
   background-color: #fff;
   color: #444;
   height: 500px;
@@ -36,7 +35,7 @@ h1 {
 .item {
   height: 150px;
   width: 150px;
-  margin: 20px;
+  margin: 60px 20px;
   justify-self: center;
 }
 
