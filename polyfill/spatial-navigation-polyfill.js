@@ -19,7 +19,7 @@
   // If spatial navigation is already enabled via browser engine or browser extensions, all the following code isn't executed.
   if (window.navigate !== undefined) {
     return;
-  } 
+  }
 
   const ARROW_KEY_CODE = {37: 'left', 38: 'up', 39: 'right', 40: 'down'};
   const TAB_KEY_CODE = 9;
@@ -157,10 +157,18 @@
     if ((isContainer(eventTarget) || eventTarget.nodeName === 'BODY') && !(eventTarget.nodeName === 'INPUT')) {
       if (eventTarget.nodeName === 'IFRAME')
         eventTarget = eventTarget.contentDocument.body;
-      
-      // 5-2
-      if (focusingController(eventTarget.spatialNavigationSearch(dir), dir)) return;
-      if (scrollingController(eventTarget, dir)) return;
+
+      // spatnav-behavior = scroll
+      if (getCSSSpatNavBehavior(eventTarget) === 'scroll') {
+        console.log(`Behavior on the spatnav container: ${getCSSSpatNavBehavior(eventTarget)}`);
+        if (scrollingController(eventTarget, dir)) return;
+      }
+
+      else {
+        // 5-2
+        if (focusingController(eventTarget.spatialNavigationSearch(dir), dir)) return;
+        if (scrollingController(eventTarget, dir)) return;
+      }
     }
 
     // 6
@@ -173,58 +181,61 @@
       parentContainer = window.parent.document.documentElement;
     }
 
-    console.log(`Behavior on the spatnav container: ${getCSSSpatNavBehavior(container)}`);
-    setSpatNavBehavior(container, dir);
+    if (getCSSSpatNavBehavior(container) === 'focus') {
+      console.log(`Behavior on the spatnav container: ${getCSSSpatNavBehavior(container)}`);
+      focusOnly(eventTarget, container, dir);
+    }
+    else if (getCSSSpatNavBehavior(container) === ('auto' || '')) {
+      // 7
+      while (parentContainer) {
+        if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir)) {
+          return;
+        } else {
+          // If there isn't any candidate and the best candidate among candidate:
+          // 1) Scroll or 2) Find candidates of the ancestor container
+          // 8 - if
+          if (scrollingController(container, dir)) return;
+          else {
+            // 8 - else
+            // [event] navnotarget : Fired when spatial navigation has failed to find any acceptable candidate to move the focus
+            // to in the current spatnav container and when that same spatnav container cannot be scrolled either,
+            // before going up the tree to search in the nearest ancestor spatnav container.
 
-    // 7
-    while (parentContainer) {
-      if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir)) {
-        return;
-      } else {
-        // If there isn't any candidate and the best candidate among candidate:
-        // 1) Scroll or 2) Find candidates of the ancestor container
-        // 8 - if
-        if (scrollingController(container, dir)) return;
-        else {
-          // 8 - else
-          // [event] navnotarget : Fired when spatial navigation has failed to find any acceptable candidate to move the focus
-          // to in the current spatnav container and when that same spatnav container cannot be scrolled either,
-          // before going up the tree to search in the nearest ancestor spatnav container.
+            createSpatNavEvents('notarget', container, dir);
 
-          createSpatNavEvents('notarget', container, dir);
+            // find the container
 
-          // find the container
+            if (container === document || container === document.documentElement) {
 
-          if (container === document || container === document.documentElement) {
-            
-            if ( window.location !== window.parent.location ) {
-              // The page is in an iframe
-              // eventTarget needs to be reset because the position of the element in the IFRAME
-              // is unuseful when the focus moves out of the iframe
-              eventTarget = window.frameElement;
-              container = window.parent.document.documentElement;
-           
+              if ( window.location !== window.parent.location ) {
+                // The page is in an iframe
+                // eventTarget needs to be reset because the position of the element in the IFRAME
+                // is unuseful when the focus moves out of the iframe
+                eventTarget = window.frameElement;
+                container = window.parent.document.documentElement;
+
+                if (container.parentElement)
+                  parentContainer = container.parentElement.getSpatialNavigationContainer();
+                else {
+                  parentContainer = null;
+                  break;
+                }
+              }
+            }
+            else {
+              // avoiding when spatnav container with tabindex=-1
+              if (isFocusable(container)) {
+                eventTarget = container;
+              }
+
+              container = parentContainer;
+
               if (container.parentElement)
                 parentContainer = container.parentElement.getSpatialNavigationContainer();
               else {
                 parentContainer = null;
                 break;
               }
-            }
-          }
-          else {
-            // avoiding when spatnav container with tabindex=-1
-            if (isFocusable(container)) {
-              eventTarget = container;
-            }
-
-            container = parentContainer;
-
-            if (container.parentElement)
-              parentContainer = container.parentElement.getSpatialNavigationContainer();
-            else {
-              parentContainer = null;
-              break;
             }
           }
         }
@@ -470,19 +481,19 @@
       if (!container.parentElement) {
         container = window.document.documentElement;
         break;
-      } 
+      }
       else {
         container = container.parentElement;
       }
-    }  
-    return container;    
+    }
+    return container;
   }
 
   /**
    * Find focusable elements within the spatial navigation container.
    * @see {@link https://wicg.github.io/spatial-navigation/#dom-element-focusableareas}
    * @function focusableAreas
-   * @param option {FocusableAreasOptions} - 'mode' attribute takes visible' or 'all' for searching the boundary of focosable elements. 
+   * @param option {FocusableAreasOptions} - 'mode' attribute takes visible' or 'all' for searching the boundary of focosable elements.
    *                                          Default value is 'visible'.
    * @returns {sequence<Node>} All focusable elements or only visible focusable elements within the container
    */
@@ -505,7 +516,7 @@
       relatedTarget: element,
       dir: direction
     };
-    
+
     let triggeredEvent = null;
 
     switch (option) {
@@ -557,54 +568,16 @@
   }
 
   /**
-   * Return the value of 'spatial-navigation-behavior' css property of an element
-   * @function setSpatNavBehavior
-   * @param element {Node} - element; eventTarget
-   */
-  function setSpatNavBehavior(element, dir) {
-    let container = element.getSpatialNavigationContainer();
-
-    if (getCSSSpatNavBehavior(container) === 'focus') {
-      navigateOnly(element, container, dir);
-    }
-    else if (getCSSSpatNavBehavior(container) === 'scroll') {
-      scrollingController(container);
-      /*
-      element.addEventListener('keydown', function(e) {
-        window.__spatialNavigation__.keyMode = 'NONE';
-      });
-
-      element.addEventListener('blur', function(e) {
-        window.__spatialNavigation__.keyMode = 'ARROW';
-      });
-      */
-    }
-  }
-
-  /**
    * Only move the focus with spatial navigation. Manually scrolling isn't available.
-   * @function navigateOnly
+   * @function focusOnly
    * @param element {SpatialNavigationContainer} - container
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
-  function navigateOnly(element, container, dir) {
+  function focusOnly(element, container, dir) {
     // spatial navigation steps
 
     let eventTarget = element;
     let parentContainer = (container.parentElement) ? container.parentElement.getSpatialNavigationContainer() : null;
-
-    // When the container is the viewport of a browsing context
-    if (!parentContainer && ( window.location !== window.parent.location)) {
-      parentContainer = window.parent.document.documentElement;
-    }
-
-    if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir)) {
-      return;
-    }
-    else {
-      // If there isn't any candidate and the best candidate among candidate: Find candidates of the ancestor container
-      createSpatNavEvents('notarget', container, dir);
-    }
 
     // 7
     while (parentContainer) {
@@ -613,7 +586,7 @@
       }
       else {
         // If there isn't any candidate and the best candidate among candidate: Find candidates of the ancestor container
-        
+
         // [event] navnotarget : Fired when spatial navigation has failed to find any acceptable candidate to move the focus
         // to in the current spatnav container and when that same spatnav container cannot be scrolled either,
         // before going up the tree to search in the nearest ancestor spatnav container.
@@ -623,14 +596,14 @@
         // find the container
 
         if (container === document || container === document.documentElement) {
-          
+
           if ( window.location !== window.parent.location ) {
             // The page is in an iframe
             // eventTarget needs to be reset because the position of the element in the IFRAME
             // is unuseful when the focus moves out of the iframe
             eventTarget = window.frameElement;
             container = window.parent.document.documentElement;
-          
+
             if (container.parentElement)
               parentContainer = container.parentElement.getSpatialNavigationContainer();
             else {
@@ -654,10 +627,8 @@
             break;
           }
         }
-        
       }
     }
-
     // Behavior after 'navnotarget' - Getting out from the current spatnav container
     if (!parentContainer && container) {
       if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir))
@@ -666,7 +637,7 @@
   }
 
   /**
-   * Find starting point. 
+   * Find starting point.
    * @todo Use terminology - 'search origin'
    * @see {@link https://wicg.github.io/spatial-navigation/#spatial-navigation-steps}
    * @function findStartingPoint
@@ -844,9 +815,9 @@
 
   /**
    * Decide whether an element is focusable for spatial navigation.
-   * 1. If element is the browsing context (document, iframe), then it's focusable, 
-   * 2. If the element is scrollable container (regardless of scrollable axis), then it's focusable, 
-   * 3. The value of tabIndex >= 0, then it's focusable, 
+   * 1. If element is the browsing context (document, iframe), then it's focusable,
+   * 2. If the element is scrollable container (regardless of scrollable axis), then it's focusable,
+   * 3. The value of tabIndex >= 0, then it's focusable,
    * 4. If the element is disabled, it isn't focusable,
    * 5. If the element is expressly inert, it isn't focusable,
    * 6. Whether the element is being rendered or not.
@@ -854,7 +825,7 @@
    * @function isFocusable
    * @param element {Node}
    * @returns {boolean}
-   * 
+   *
    * @see {@link https://html.spec.whatwg.org/multipage/interaction.html#focusable-area}
    */
   function isFocusable(element) {
@@ -877,11 +848,11 @@
 
   /**
    * Decide whether an element is actually disabled or not.
-   * 
+   *
    * @function isActuallyDisabled
    * @param element {Node}
    * @returns {boolean}
-   * 
+   *
    * @see {@link https://html.spec.whatwg.org/multipage/semantics-other.html#concept-element-disabled}
    */
   function isActuallyDisabled(element) {
@@ -907,7 +878,7 @@
    * 1. If an element has the style as "visibility: hidden | collapse" or "display: none", it is not being rendered.
    * 2. If an element has the style as "opacity: 0", it is not being rendered.(that is, invisible).
    * 3. If width and height of an element are explicitly set to 0, it is not being rendered.
-   * 4. If a parent element is hidden, an element itself is not being rendered. 
+   * 4. If a parent element is hidden, an element itself is not being rendered.
    * (CSS visibility property and display property are inherited.)
    * @see {@link https://html.spec.whatwg.org/multipage/rendering.html#being-rendered}
    * @function isBeingRendered
@@ -917,7 +888,7 @@
   function isBeingRendered(element) {
     if (!isVisibleStyleProperty(element.parentElement))
       return false;
-    return (isVisibleStyleProperty(element) || (element.style.opacity !== 0) || 
+    return (isVisibleStyleProperty(element) || (element.style.opacity !== 0) ||
             !((element.style.width === '0px' || element.style.width === 0) && (element.style.height === '0px' || element.style.height === 0)));
   }
 
@@ -1201,7 +1172,7 @@
       }
       break;
     }
-    
+
     return points;
   }
 
@@ -1212,7 +1183,7 @@
    * @param rect1 {DOMRect} - The search origin which contains the exit point
    * @param rect2 {DOMRect} - One of candidates which contains the entry point
    * @returns {IntersectionArea} The intersection area between two elements.
-   * 
+   *
    * @typeof {Object} IntersectionArea
    * @property {Number} IntersectionArea.width
    * @property {Number} IntersectionArea.height
