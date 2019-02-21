@@ -8,6 +8,7 @@
 body {
   margin: 20px;
   font-family: 'Roboto';
+  text-align: center;
 }
 
 h1 {
@@ -37,4 +38,8 @@ h1 {
   width: 150px;
   margin: 20px;
   justify-self: center;
+}
+
+:focus {
+  outline: 5px solid #428bca;
 }
