@@ -5,17 +5,22 @@ function addBoxes(root, amount) {
 }
 
 function updateBoxes(root, amount) {
-  const childNum = root.currentChildNum;
+  const childNum = root.childElementCount;
 
   if (childNum > amount) {
-    for (let i = 0; i < childNum-amount; i++) {
+    console.log("start to remove");
+
+    for (let i = 0; i < childNum - amount; i++) {
       root.removeChild(root.lastChild);
+
+      console.log("remove");
     }
   }
   else {
-    for (let i = 0; i < amount-childNum; i++) {
+    for (let i = 0; i < amount - childNum; i++) {
       let temp = document.createNode('div');
       temp.setAttribute('class', 'item');
+      temp.setAttribute('tabinxed', 0);
       temp.style.backGroundColor = `#${getRandomInt(100, 800)}`;
 
       root.appendChild(temp);

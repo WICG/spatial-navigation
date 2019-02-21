@@ -1,5 +1,22 @@
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://themes.googleusercontent.com/static/fonts/roboto/v11/2UX7WLTfW3W8TclTUvlFyQ.woff)
+}
+
 body {
   margin: 20px;
+  font-family: 'Roboto';
+}
+
+h1 {
+  text-align: center;
+}
+
+.option {
+  margin: 20px auto;
+  text-align: center;
 }
 
 #feed {
@@ -10,7 +27,8 @@ body {
   background-color: #fff;
   color: #444;
   height: 500px;
-  margin: 20px;
+  width: 500px;
+  margin: auto auto;
   border: 3px solid lightgrey;
 }
 
