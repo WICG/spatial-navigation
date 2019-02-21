@@ -1,10 +1,25 @@
-function addBoxes (root, amount) {
+function addBoxes(root, amount) {
   for (let i = 0; i < amount; i++) {
-    
-    let item = document.createElement('div');
-    item.setAttribute('class', 'item');
-    item.style.backgroundColor = '#'+ getRandomInt(0, 999);
-    root.appendChild(item);
+    root.innerHTML += `<div class= "item" tabindex="0" style="background-color: #${getRandomInt(100, 800)};"></div>`;
+  }
+}
+
+function updateBoxes(root, amount) {
+  const childNum = root.currentChildNum;
+
+  if (childNum > amount) {
+    for (let i = 0; i < childNum-amount; i++) {
+      root.removeChild(root.lastChild);
+    }
+  }
+  else {
+    for (let i = 0; i < amount-childNum; i++) {
+      let temp = document.createNode('div');
+      temp.setAttribute('class', 'item');
+      temp.style.backGroundColor = `#${getRandomInt(100, 800)}`;
+
+      root.appendChild(temp);
+    }
   }
 }
 

@@ -4,15 +4,19 @@ body {
 
 #feed {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  overflow-x: scroll;
+  grid-template-columns: repeat(2, 1fr);
   grid-gap: 50px;
   background-color: #fff;
   color: #444;
-  margin: 40px;
+  height: 500px;
+  margin: 20px;
+  border: 3px solid lightgrey;
 }
 
 .item {
-  padding: 20px;
   height: 150px;
-  weight: 150px;
+  width: 150px;
+  margin: 20px;
+  justify-self: center;
 }

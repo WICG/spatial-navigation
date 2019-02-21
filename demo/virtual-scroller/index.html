@@ -9,6 +9,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Virtual Scroller Demo</title>
+  <link rel="stylesheet" href="scroller-style.css"></link>
   <script src="scroller-utils.js"></script>
   <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
 </head>
@@ -34,7 +35,7 @@
   itemNum.addEventListener('change', function (e) {
 
     console.log("boxNum: " + e.target.value);
-
+    updateBoxes(container, e.target.value);
   });
   
 </script>
