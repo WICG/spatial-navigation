@@ -1,4 +1,4 @@
-function addBoxes(root, amount) {
+function initBoxes(root, amount) {
   for (let i = 0; i < amount; i++) {
     root.innerHTML += `<div class= "item" tabindex="0" style="background-color: #${getRandomInt(100, 800)};"></div>`;
   }

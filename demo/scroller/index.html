@@ -65,7 +65,7 @@
   let behaviorOption = document.getElementById('behavior');
   let container = document.getElementById('feed');
 
-  document.body.onload = addBoxes(container, itemNum.value);
+  document.body.onload = initBoxes(container, itemNum.value);
 
   itemNum.addEventListener('change', function (e) {
     console.log("boxNum: " + e.target.value);
