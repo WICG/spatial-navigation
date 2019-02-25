@@ -26,6 +26,9 @@
   let mapOfBoundRect = null;
   let startingPosition = null; // Indicates global variables for spatnav (starting position)
 
+  let navnotargetPrevented = false;   // Indicates the navnotarget event is prevented or not
+  let navbeforefocusPrevented = false; // Indicates the navbeforefocus event is prevented or not
+
   /**
    * Initiate the spatial navigation features of the polyfill.
    * This function defines which input methods trigger the spatial navigation behavior.
@@ -112,6 +115,24 @@
      */
     document.addEventListener('mouseup', function(e) {
       startingPosition = {xPosition: e.clientX, yPosition: e.clientY};
+    });
+
+    /*
+     * navbeforefocus EventListener :
+     * If the navbeforefocus event is triggered, then the navbeforefocusPrevented flag can be set 
+     * for define the prevented default behavior for the event
+     */
+    document.body.addEventListener('navbeforefocus', function(e) {
+      if (e.defaultPrevented) navbeforefocusPrevented = true;
+    });
+
+    /*
+     * navnotarget EventListener :
+     * If the navnotarget event is triggered, then the navnotargetPrevented flag can be set 
+     * for define the prevented default behavior for the event
+     */
+    document.body.addEventListener('navnotarget', function(e) {
+      if (e.defaultPrevented) navnotargetPrevented = true;
     });
   }
 
@@ -201,10 +222,11 @@
             // to in the current spatnav container and when that same spatnav container cannot be scrolled either,
             // before going up the tree to search in the nearest ancestor spatnav container.
 
-            createSpatNavEvents('notarget', container, dir);
+            createSpatNavEvents('notarget', container, eventTarget, dir);
 
+            if (navnotargetPrevented) break;
+         
             // find the container
-
             if (container === document || container === document.documentElement) {
 
               if ( window.location !== window.parent.location ) {
@@ -272,9 +294,14 @@
       /*
        * [event] navbeforefocus : Fired before spatial or sequential navigation changes the focus.
        */
-      createSpatNavEvents('beforefocus', bestCandidate, dir);
-      bestCandidate.focus();
-      return true;
+      createSpatNavEvents('beforefocus', bestCandidate, null, dir);
+      
+      if (!navbeforefocusPrevented) {
+        bestCandidate.focus();
+        return true;
+      }
+      else 
+        return false;
     }
 
     // When bestCandidate is not found within the scrollport of a container: Nothing
@@ -296,14 +323,14 @@
      */
     // If there is any scrollable area among parent elements and it can be manually scrolled, scroll the document
     if (isScrollable(container, dir) && !isScrollBoundary(container, dir)) {
-      createSpatNavEvents('beforescroll', container, dir);
+      createSpatNavEvents('beforescroll', container, null, dir);
       moveScroll(container, dir);
       return true;
     }
 
     // If the spatnav container is document and it can be scrolled, scroll the document
     if (!container.parentElement && !isHTMLScrollBoundary(container, dir)) {
-      createSpatNavEvents('beforescroll', container, dir);
+      createSpatNavEvents('beforescroll', container, null, dir);
       moveScroll(document.documentElement, dir);
       return true;
     }
@@ -511,9 +538,9 @@
    * @param element {Node} - The target element of the event
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
-  function createSpatNavEvents(option, element, direction) {
+  function createSpatNavEvents(option, element, elm, direction) {
     const data = {
-      relatedTarget: element,
+      causedTarget: elm,
       dir: direction
     };
 
@@ -591,7 +618,9 @@
         // to in the current spatnav container and when that same spatnav container cannot be scrolled either,
         // before going up the tree to search in the nearest ancestor spatnav container.
 
-        createSpatNavEvents('notarget', container, dir);
+        createSpatNavEvents('notarget', container, element, dir);
+
+        if (navnotargetPrevented) break;
 
         // find the container
 
