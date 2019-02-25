@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="application-name" content="Prevent 'navnotarget' Navigation Event">
+    <meta name="author" content="Jihye Hong">
+    <meta name="description" content="The 'navnotarget' event is fired when the focus reaches to the end of the scrollable element(container),
+     and the focus will move out of the container. If the event is prevented, the focus will remain in the container. 
+     The sample shows the <b>focus looping</b> in the scrollable spatial navigation container.">
+    <link rel="stylesheet" href="spatnav-style.css">
+    <script src="spatnav-utils.js"></script>
+    <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+    <link class="codestyle" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="container c1" id="scroller" style="width:200px; height: 400px; padding: 20px; overflow-y: scroll;">
+      <button class="box b2" style="left: 50px; width:50px; height:50px;"></button>
+      <button class="box b2" style="top: calc(300px * 1); left: 0px; width:50px; height:50px;"></button>
+      <button class="box b2" style="top: calc(300px * 2); left: -50px; width:50px; height:50px;"></button>
+      <button class="box b2" style="top: calc(300px * 3); left: 50px; width:50px; height:50px;"></button>
+      <button class="box b2" style="top: calc(300px * 4); left: 0px; width:50px; height:50px;"></button>
+    </div>
+    <button class="box b1" style="top: 20px; left: 100px; width:50px; height:50px;"></button>
+  </body>
+  <script type="text/javascript">
+    const container = document.getElementById('scroller');
+    let nextTarget = null;
+
+    container.addEventListener('navnotarget', function(e) {
+      e.preventDefault();
+
+      const candidates = e.target.focusableAreas({'mode': 'all'});
+
+      if (e.detail.dir === 'down') {
+        nextTarget = candidates[0];
+      }
+      else if (e.detail.dir === 'up') {
+        nextTarget = candidates[candidates.length-1];
+      }
+
+      nextTarget.focus();
+    });
+  </script>
+</html>
