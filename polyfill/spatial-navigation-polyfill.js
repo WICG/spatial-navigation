@@ -26,6 +26,10 @@
   let mapOfBoundRect = null;
   let startingPosition = null; // Indicates global variables for spatnav (starting position)
 
+  let navnotargetPrevented = false; // Indicates the navnotarget event is prevented or not
+  let navbeforescrollPrevented = false; // Indicates the navbeforescroll event is prevented or not
+  let navbeforefocusPrevented = false; // Indicates the navbeforefocus event is prevented or not
+
   /**
    * Initiate the spatial navigation features of the polyfill.
    * This function defines which input methods trigger the spatial navigation behavior.
@@ -98,6 +102,33 @@
      */
     document.addEventListener('mouseup', function(e) {
       startingPosition = {xPosition: e.clientX, yPosition: e.clientY};
+    });
+
+    /*
+     * navbeforefocus EventListener :
+     * If the navbeforefocus event is triggered, then the navbeforefocusPrevented flag can be set
+     * for define the prevented default behavior for the event
+     */
+    document.body.addEventListener('navbeforefocus', function(e) {
+      if (e.defaultPrevented) navbeforefocusPrevented = true;
+    });
+
+    /*
+     * navbeforescroll EventListener :
+     * If the navbeforescroll event is triggered, then the navbeforescrollPrevented flag can be set
+     * for define the prevented default behavior for the event
+     */
+    document.body.addEventListener('navbeforescroll', function(e) {
+      if (e.defaultPrevented) navbeforescrollPrevented = true;
+    });
+
+    /*
+     * navnotarget EventListener :
+     * If the navnotarget event is triggered, then the navnotargetPrevented flag can be set
+     * for define the prevented default behavior for the event
+     */
+    document.body.addEventListener('navnotarget', function(e) {
+      if (e.defaultPrevented) navnotargetPrevented = true;
     });
   }
 
@@ -174,32 +205,33 @@
           // to in the current spatnav container and when that same spatnav container cannot be scrolled either,
           // before going up the tree to search in the nearest ancestor spatnav container.
 
-          createSpatNavEvents('notarget', container, dir);
+            createSpatNavEvents('notarget', container, eventTarget, dir);
 
-          // find the container
+            if (navnotargetPrevented) break;
 
-          if (container === document || container === document.documentElement) {
-            
-            if ( window.location !== window.parent.location ) {
-              // The page is in an iframe
-              // eventTarget needs to be reset because the position of the element in the IFRAME
-              // is unuseful when the focus moves out of the iframe
-              eventTarget = window.frameElement;
-              container = window.parent.document.documentElement;
-           
-              if (container.parentElement)
-                parentContainer = container.parentElement.getSpatialNavigationContainer();
-              else {
-                parentContainer = null;
-                break;
+            // find the container
+            if (container === document || container === document.documentElement) {
+
+              if ( window.location !== window.parent.location ) {
+                // The page is in an iframe
+                // eventTarget needs to be reset because the position of the element in the IFRAME
+                // is unuseful when the focus moves out of the iframe
+                eventTarget = window.frameElement;
+                container = window.parent.document.documentElement;
+
+                if (container.parentElement)
+                  parentContainer = container.parentElement.getSpatialNavigationContainer();
+                else {
+                  parentContainer = null;
+                  break;
+                }
               }
             }
-          }
-          else {
-            // avoiding when spatnav container with tabindex=-1
-            if (isFocusable(container)) {
-              eventTarget = container;
-            }
+            else {
+              // avoiding when spatnav container with tabindex=-1
+              if (isFocusable(container)) {
+                eventTarget = container;
+              }
 
             container = parentContainer;
 
@@ -244,15 +276,16 @@
       /*
        * [event] navbeforefocus : Fired before spatial or sequential navigation changes the focus.
        */
-      createSpatNavEvents('beforefocus', bestCandidate, dir);
-      bestCandidate.focus();
-      return true;
+      createSpatNavEvents('beforefocus', bestCandidate, null, dir);
+
+      if (!navbeforefocusPrevented) {
+        bestCandidate.focus();
+        return true;
+      }
     }
 
     // When bestCandidate is not found within the scrollport of a container: Nothing
-    else {
-      return false;
-    }
+    return false;
   }
 
   /**
@@ -268,16 +301,22 @@
      */
     // If there is any scrollable area among parent elements and it can be manually scrolled, scroll the document
     if (isScrollable(container, dir) && !isScrollBoundary(container, dir)) {
-      createSpatNavEvents('beforescroll', container, dir);
-      moveScroll(container, dir);
-      return true;
+      createSpatNavEvents('beforescroll', container, null, dir);
+
+      if (!navbeforescrollPrevented) {
+        moveScroll(container, dir);
+        return true;
+      }
     }
 
     // If the spatnav container is document and it can be scrolled, scroll the document
     if (!container.parentElement && !isHTMLScrollBoundary(container, dir)) {
-      createSpatNavEvents('beforescroll', container, dir);
-      moveScroll(document.documentElement, dir);
-      return true;
+      createSpatNavEvents('beforescroll', container, null, dir);
+      
+      if (!navbeforescrollPrevented) {
+        moveScroll(container, dir);
+        return true;
+      }
     }
     return false;
   }
@@ -483,12 +522,12 @@
    * @param element {Node} - The target element of the event
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
-  function createSpatNavEvents(option, element, direction) {
+  function createSpatNavEvents(option, element, elm, direction) {
     const data = {
-      relatedTarget: element,
+      causedTarget: elm,
       dir: direction
     };
-    
+
     let triggeredEvent = null;
 
     switch (option) {
