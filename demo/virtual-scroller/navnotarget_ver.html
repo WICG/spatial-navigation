@@ -1,7 +1,6 @@
 <!--
   Copyright 2019 LG Electronics Inc. All rights reserved.
-
-  - Author: Jihye Hong (jh.hong@lge.com)
+  Author: Jihye Hong (jh.hong@lge.com)
 -->
 <!DOCTYPE html>
 <html>
@@ -16,8 +15,21 @@
 
 <body>
   <h1>Virtual Scroller in Spatial Navigation</h1>
-  <div class="option">
-    Initial number of elements: <input id="itemNum" type="number" value=10></input>
+  <div class="description">
+    <h3>Demo</h3>
+    <p>This demo shows the virtual scroll in Spatial Navigation. </p>
+  </div>
+  
+  <form class="option">
+    <fieldset>
+      <div>
+        <p><strong>Initial number of elements</strong> : <input id="itemNum" type="number" value=10></input></p>
+        <p><strong>Current number of elements</strong> : <span id="currentItemNum"></span></p>
+      </div>
+    </fieldset>
+  </form>
+  <div >
+    
   </div>
   <div class="wrapper">
 
@@ -32,40 +44,37 @@
 </body>
 <script type="text/javascript">
   let itemNum = document.getElementById('itemNum');
+  let currItemNum = document.getElementById('currentItemNum');
   let container = document.getElementById('feed');
 
-  document.body.onload = initBoxes(container, itemNum.value);
+  document.body.onload = addBoxes(container, itemNum.value);
+  currItemNum.innerText = itemNum.value;
 
   itemNum.addEventListener('change', function (e) {
-
-    console.log("boxNum: " + e.target.value);
     updateBoxes(container, e.target.value);
+    currItemNum.innerText = itemNum.value;
   });
 
   document.body.addEventListener('navbeforefocus', function(e) {
     console.log("%cnavbeforefocus event: \n%o, %o", "background: lightcoral", {currentTarget: e.currentTarget}, {target: e.target});
   });
 
-  document.body.addEventListener('navnotarget', function(e) {
-    console.log("%cnavnotarget event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target}, {dir: e.detail.dir});
-
-    // last focus
-    let lastFocus = e.target.lastElementChild;
-    addBoxes(container, 2);
-
-    let nextFocus = lastFocus.spatialNavigationSearch(e.detail.dir, container.focusableAreas({'mode': 'all'}), container);
-    nextFocus.focus();
+  document.body.addEventListener('navbeforescroll', function(e) {
+    console.log("%cnavbeforescroll event: \n%o, %o", "background: lightblue", {currentTarget: e.currentTarget}, {target: e.target});
   });
 
-  function addBoxes(root, amount) {
-    for (let i = 0; i < amount; i++) {
-      let temp = document.createElement('div');
-      temp.setAttribute('class', 'item');
-      temp.setAttribute('tabindex', 0);
-      temp.style.backGroundColor = `#${getRandomInt(100, 800)}`;
+  document.body.addEventListener('navnotarget', function(e) {
+    console.log("%cnavnotarget event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target}, {causedTarget: e.detail.causedTarget});
+    e.preventDefault();
 
-      root.appendChild(temp);
-    }
+    setTimeout(addBoxes, 50, e.target, 2);
+    currItemNum.innerText = parseInt(currItemNum.innerText) + 2;
+    setTimeout(moveFocusMore, 100, e.detail.dir, e.detail.causedTarget, e.target);
+  });
+
+  function moveFocusMore (dir, lastTarget, container) {
+    let nextFocus = lastTarget.spatialNavigationSearch(dir, container.focusableAreas({'mode': 'all'}), container);
+    nextFocus.focus();
   }
 
 </script>
