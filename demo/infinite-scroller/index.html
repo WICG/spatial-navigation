@@ -67,7 +67,7 @@
     console.log("%cnavnotarget event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target}, {causedTarget: e.detail.causedTarget});
     e.preventDefault();
 
-    setTimeout(addBoxes, 50, e.target, 2);
+    setTimeout(addBoxes, 50, e.target, 2, e.detail.dir);
     currItemNum.innerText = parseInt(currItemNum.innerText) + 2;
     setTimeout(moveFocusMore, 100, e.detail.dir, e.detail.causedTarget, e.target);
   });

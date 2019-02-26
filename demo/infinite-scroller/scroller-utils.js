@@ -1,13 +1,28 @@
-function addBoxes(root, amount) {
-  let cnt = root.childElementCount;
-  for (let i = 0; i < amount; i++) {
+function addBoxes(root, amount, dir) {
+  const cnt = root.childElementCount;
+  let initCnt = 0;
+  let endCnt = 0;
+
+  if (cnt) {
+    initCnt = parseInt(root.firstChild.innerText);
+    endCnt = parseInt(root.lastChild.innerText);
+  }
+
+  for (let i = 1; i <= amount; i++) {
     let temp = document.createElement('div');
     temp.setAttribute('class', 'item');
     temp.setAttribute('tabindex', 0);
     let para = document.createElement('p');
-    para.appendChild(document.createTextNode(`${i + 1 + cnt}`));
     temp.appendChild(para);
-    root.appendChild(temp);
+
+    if (dir === 'up') {
+      para.appendChild(document.createTextNode(`${initCnt - i}`));
+      root.prepend(temp);
+    } 
+    else {
+      para.appendChild(document.createTextNode(`${endCnt + i}`));
+      root.appendChild(temp);
+    }   
   }
 }
 
