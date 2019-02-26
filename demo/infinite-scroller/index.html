@@ -72,7 +72,8 @@
     let nextFocus = lastTarget.spatialNavigationSearch(dir, container.focusableAreas({'mode': 'all'}), container);
     
     nextFocus.scrollIntoView();
-    nextFocus.focus();
+    nextFocus.focus({preventScroll:true});
+    
   }
 
 </script>
