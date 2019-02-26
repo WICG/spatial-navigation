@@ -3,47 +3,18 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="application-name" content="Navigation Event - navbeforescroll">
+    <meta name="application-name" content="Navigation Event">
     <meta name="author" content="Jihye Hong">
-    <meta name="description" content="There are three types of Navigation Event: 'navbeforefocus', 'navbeforescroll' and 'navnotarget'.">
+    <meta name="description" content="There are three types of Navigation Event: 'navbeforefocus', 'navbeforescroll' and 'navnotarget'.
+      This shows when each event is triggered.">
     <link rel="stylesheet" href="spatnav-style.css">
     <script src="spatnav-utils.js"></script>
     <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
     <link class="codestyle" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script type="text/javascript">
-      let previousAreas;
-      const init = function(e) {
-        console.log('========init=======');
-        const containers = document.getElementsByClassName('container');
-        for(container of containers) {
-          container.addEventListener('navbeforescroll', function(e) {
-            console.log("%cnavbeforescroll event: \n%o, %o", "background: lightblue", {currentTarget: e.currentTarget}, {target: e.target});
-
-            if (e.target == document.getElementById('textContainer')){
-              console.log("target is the text container");
-
-              let container = e.target.parentElement.parentElement.getSpatialNavigationContainer();
-              let candidates = container.focusableAreas({'mode': 'visible'});
-
-              candidates = candidates.filter(item => (item !== (e.target || e.target.parentElement)));          
-
-              let nextTarget = e.target.spatialNavigationSearch(e.dir, candidates, container);
-              // 여기서 document.getElementById('textContainer') 다음의 요소로 focus 보내고 싶으면?
-
-              nextTarget.focus();
-            }
-          });
-
-          container.addEventListener('scroll', function(e) {
-            console.log("%cscroll event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target});
-          });
-        }
-      };
-    </script>
   </head>
-  <body onload="init()">
+  <body>
     <div style="width:600px; height: 400px; padding: 20px;">
       <h4>
         <span>Document</span> >
@@ -51,7 +22,7 @@
         <span class="c2">Scroll container</span> >
         <span class="c3">Scroll container</span>
       </h4>
-      <div class="container c1" tabindex="0" style="position: relative; left:110px; width:600px; height:400px; overflow-y: scroll;">
+      <div class="container c1" tabindex="0" style="position: relative; left:110px; width:600px; height:400px; overflow-y: scroll; ">
         <div class="container c2" tabindex="0" style="position: relative; left:50px; width:500px; height:300px; overflow-y: scroll;">
           <div class="container c3" tabindex="0" style="position: relative; left:50px; width:200px; height:150px; overflow-y: scroll;">
             <button class="box b3" style="left: 50px; width:50px; height:50px; background-color: #00b176b0"></button>
@@ -64,15 +35,33 @@
           <button class="box b3" style="top: calc(150px * 2); left: -10px; width:50px; height:50px;"></button>
         </div>
       </div>
-
-      <div class="container c1" tabindex="0" style="position: relative; left:110px; width:600px; height:250px; overflow-y: scroll;">
-        <div class="container c3" id="textContainer" tabindex="0" style="position: relative; left:50px; width:200px; height:150px; overflow-y: scroll;">
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Num quid tale Democritus? Ne amores quidem sanctos a sapiente alienos esse arbitrantur. In quibus doctissimi illi veteres inesse quiddam caeleste et divinum putaverunt. Quis est, qui non oderit libidinosam, protervam adolescentiam?
-            Utrum igitur tibi litteram videor an totas paginas commovere? In his igitur partibus duabus nihil erat, quod Zeno commutare gestiret. Nos vero, inquit ille; Urgent tamen et nihil remittunt. </p>
-        </div>
-      </div>
-
       <button class="box b3" style="left: 250px; width:50px; height:50px; background-color: #00b176b0"></button>
     </div>
   </body>
+  <script type="text/javascript">
+    let previousAreas;
+   
+    const containers = document.getElementsByClassName('container');
+    for(container of containers) {
+      container.addEventListener('navbeforescroll', function(e) {
+        console.log("%cnavbeforescroll event: \n%o, %o", "background: lightblue", {currentTarget: e.currentTarget}, {target: e.target});
+
+      });
+
+      container.addEventListener('scroll', function(e) {
+        console.log("%cscroll event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target});
+      });
+    }
+    document.body.addEventListener('navbeforefocus', function(e) {
+      console.log("%cnavbeforefocus event: \n%o, %o", "background: lightcoral", {currentTarget: e.currentTarget}, {target: e.target});
+    });
+
+    document.body.addEventListener('navbeforescroll', function(e) {
+      console.log("%cnavbeforescroll event: \n%o, %o", "background: lightblue", {currentTarget: e.currentTarget}, {target: e.target});
+    });
+
+    document.body.addEventListener('navnotarget', function(e) {
+      console.log("%cnavnotarget event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target});
+    });
+  </script>
 </html>
