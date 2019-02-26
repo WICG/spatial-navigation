@@ -21,7 +21,7 @@ function addBoxes(root, amount, dir) {
     } 
     else {
       para.appendChild(document.createTextNode(`${endCnt + i}`));
-      root.appendChild(temp);
+      root.append(temp);
     }   
   }
 }
