@@ -34,7 +34,7 @@
   <div class="wrapper">
 
     <!-- Feed Section starts -->
-    <div id="feed" tabindex="0" style="--spatial-navigation-behavior: focus;"></div>
+    <div id="feed" tabindex="0" style="--spatial-navigation-action: focus;"></div>
     <!-- Feed Section end -->
 
   </div>
@@ -70,6 +70,8 @@
 
   function moveFocusMore (dir, lastTarget, container) {
     let nextFocus = lastTarget.spatialNavigationSearch(dir, container.focusableAreas({'mode': 'all'}), container);
+    
+    nextFocus.scrollIntoView();
     nextFocus.focus();
   }
 
