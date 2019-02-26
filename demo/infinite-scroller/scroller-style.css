@@ -53,6 +53,11 @@ h1 {
   background-color: mediumseagreen;
 }
 
+.item p {
+  vertical-align: middle;
+  font-size: 36px;
+}
+
 :focus {
   outline: 5px solid #428bca;
 }
