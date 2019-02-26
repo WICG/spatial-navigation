@@ -59,10 +59,6 @@
     console.log("%cnavbeforefocus event: \n%o, %o", "background: lightcoral", {currentTarget: e.currentTarget}, {target: e.target});
   });
 
-  document.body.addEventListener('navbeforescroll', function(e) {
-    console.log("%cnavbeforescroll event: \n%o, %o", "background: lightblue", {currentTarget: e.currentTarget}, {target: e.target});
-  });
-
   document.body.addEventListener('navnotarget', function(e) {
     console.log("%cnavnotarget event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target}, {causedTarget: e.detail.causedTarget});
     e.preventDefault();
