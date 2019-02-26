@@ -37,7 +37,7 @@
         <span>Initial number of elements: <input id="itemNum" type="number" value=10></input></span>
         <span style="margin-left: 10px;">
           spatial-navigation-action :
-          <select id="behavior" style="margin:0px 20px">
+          <select id="behavior" style="margin:0px 20px;">
             <option value="auto">auto</option>
             <option value="focus" selected>focus</option>
             <option value="scroll">scroll</option>
@@ -52,7 +52,7 @@
   <div class="wrapper">
 
     <!-- Feed Section starts -->
-    <div id="feed" tabindex="0" style="--spatial-navigation-behavior: focus;"></div>
+    <div id="feed" tabindex="0" style="--spatial-navigation-action: focus;"></div>
     <!-- Feed Section end -->
 
   </div>
@@ -73,7 +73,7 @@
   });
 
   behaviorOption.addEventListener('change', function (e) {
-    container.style.setProperty("--spatial-navigation-behavior", behaviorOption.value);
+    container.style.setProperty("--spatial-navigation-action", behaviorOption.value);
   });
 
   document.body.addEventListener('navbeforefocus', function(e) {
