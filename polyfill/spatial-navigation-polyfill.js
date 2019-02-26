@@ -206,7 +206,7 @@
       console.log(`Behavior on the spatnav container: ${getCSSSpatNavBehavior(container)}`);
       focusOnly(eventTarget, container, dir);
     }
-    else if (getCSSSpatNavBehavior(container) === ('auto' || '')) {
+    else if (getCSSSpatNavBehavior(container) === ('auto')) {
       // 7
       while (parentContainer) {
         if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir)) {
@@ -591,7 +591,9 @@
    * @returns {string} : auto | focus | scroll
    */
   function getCSSSpatNavBehavior(element) {
-    return readCssVar(element, 'spatial-navigation-behavior');
+    if (readCssVar(element, 'spatial-navigation-action') === '')
+      return 'auto';
+    return readCssVar(element, 'spatial-navigation-action');
   }
 
   /**
