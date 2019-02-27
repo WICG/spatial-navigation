@@ -270,7 +270,8 @@
         return;
     }
 
-    if (scrollingController(container, dir)) return;
+    if (getCSSSpatNavBehavior(container) === ('auto'))
+      if (scrollingController(container, dir)) return;
   }
 
   /**
