@@ -269,8 +269,13 @@
       const container = bestCandidate.getSpatialNavigationContainer();
 
       // Scrolling container or document when the next focusing element isn't entirely visible
-      if (isScrollContainer(container) && !isEntirelyVisible(bestCandidate))
-        bestCandidate.scrollIntoView();
+      if (isScrollContainer(container) && !isEntirelyVisible(bestCandidate)) {
+        createSpatNavEvents('beforescroll', bestCandidate, null, dir);
+
+        if (!navbeforescrollPrevented) {
+          bestCandidate.scrollIntoView();
+        }
+      }
 
       // When bestCandidate is a focusable element and not a container : move focus
       /*
