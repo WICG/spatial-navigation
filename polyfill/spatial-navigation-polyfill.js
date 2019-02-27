@@ -110,7 +110,7 @@
      * for define the prevented default behavior for the event
      */
     document.body.addEventListener('navbeforefocus', function(e) {
-      if (e.defaultPrevented) navbeforefocusPrevented = true;
+      navbeforefocusPrevented = e.defaultPrevented;
     });
 
     /*
@@ -119,7 +119,7 @@
      * for define the prevented default behavior for the event
      */
     document.body.addEventListener('navbeforescroll', function(e) {
-      if (e.defaultPrevented) navbeforescrollPrevented = true;
+      navbeforescrollPrevented = e.defaultPrevented;
     });
 
     /*
@@ -128,7 +128,7 @@
      * for define the prevented default behavior for the event
      */
     document.body.addEventListener('navnotarget', function(e) {
-      if (e.defaultPrevented) navnotargetPrevented = true;
+      navnotargetPrevented = e.defaultPrevented;
     });
   }
 
