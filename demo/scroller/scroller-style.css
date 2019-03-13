@@ -35,21 +35,27 @@ h1 {
 
 #feed {
   display: grid;
-  overflow-x: scroll;
-  grid-template-columns: repeat(2, 1fr);
+  overflow-y: scroll;
+  grid-template-columns: repeat(1, 1fr);
   background-color: #fff;
   color: #444;
-  height: 500px;
-  width: 500px;
+  height: 300px;
+  width: 200px;
   margin: auto auto;
   border: 3px solid lightgrey;
 }
 
 .item {
-  height: 150px;
-  width: 150px;
-  margin: 60px 20px;
+  height: 100px;
+  width: 100px;
+  margin: 50px auto;
   justify-self: center;
+  background-color: mediumseagreen;
+}
+
+.item p {
+  vertical-align: middle;
+  font-size: 36px;
 }
 
 :focus {
