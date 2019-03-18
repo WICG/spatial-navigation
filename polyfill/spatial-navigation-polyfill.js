@@ -333,7 +333,7 @@
    * @returns {Node} The candidates for spatial navigation considering the directional information
    */
   function spatNavCandidates (element, dir, candidates, container, outsideOnly) {
-    let targetElement = element;
+    const targetElement = (element.nodeName === 'IFRAME') ? element.contentDocument.body : element;
     // If the container is unknown, get the closest container from the element
     container = container || targetElement.getSpatialNavigationContainer();
 
@@ -354,7 +354,7 @@
    * @returns {Node} The best candidate which will gain the focus
    */
   function spatialNavigationSearch (dir, args) {
-    let {candidates, container, outsideOnly} = args ? args : {};
+    let {candidates, container, outsideOnly} = args || {};
     const targetElement = this;
     candidates = spatNavCandidates(targetElement, dir, candidates, container, outsideOnly);
 
