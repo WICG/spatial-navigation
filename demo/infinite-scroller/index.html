@@ -1,0 +1,80 @@
+<!--
+  Copyright 2019 LG Electronics Inc. All rights reserved.
+  Author: Jihye Hong (jh.hong@lge.com)
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infinite Scroller Demo</title>
+  <link rel="stylesheet" href="scroller-style.css"></link>
+  <script src="scroller-utils.js"></script>
+  <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+</head>
+
+<body>
+  <h1>Infinite Scroller in Spatial Navigation</h1>
+  <div class="description">
+    <h3>Demo</h3>
+    <p>This demo shows the infinite scroll in Spatial Navigation. </p></p>
+  </div>
+  
+  <form class="option">
+    <fieldset>
+      <div>
+        <p><strong>Initial number of elements</strong> : <input id="itemNum" type="number" value=10></input></p>
+        <p><strong>Current number of elements</strong> : <span id="currentItemNum"></span></p>
+      </div>
+    </fieldset>
+  </form>
+  <div >
+    
+  </div>
+  <div class="wrapper">
+
+    <!-- Feed Section starts -->
+    <div id="feed" tabindex="0" style="--spatial-navigation-action: focus;"></div>
+    <!-- Feed Section end -->
+
+  </div>
+  <p>
+    <a href="https://github.com/w3c/csswg-drafts/issues/3401" target="blank">Related Github Issue</a>
+  </p>
+</body>
+<script type="text/javascript">
+  let itemNum = document.getElementById('itemNum');
+  let currItemNum = document.getElementById('currentItemNum');
+  let container = document.getElementById('feed');
+
+  document.body.onload = addBoxes(container, itemNum.value);
+  currItemNum.innerText = itemNum.value;
+
+  itemNum.addEventListener('change', function (e) {
+    updateBoxes(container, e.target.value);
+    currItemNum.innerText = itemNum.value;
+  });
+
+  document.body.addEventListener('navbeforefocus', function(e) {
+    console.log("%cnavbeforefocus event: \n%o, %o", "background: lightcoral", {currentTarget: e.currentTarget}, {target: e.target});
+  });
+
+  document.body.addEventListener('navnotarget', function(e) {
+    console.log("%cnavnotarget event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target}, {causedTarget: e.detail.causedTarget});
+    e.preventDefault();
+
+    setTimeout(addBoxes, 50, e.target, 2, e.detail.dir);
+    currItemNum.innerText = parseInt(currItemNum.innerText) + 2;
+    setTimeout(moveFocusMore, 100, e.detail.dir, e.detail.causedTarget, e.target);
+  });
+
+  function moveFocusMore (dir, lastTarget, container) {
+    let nextFocus = lastTarget.spatialNavigationSearch(dir, container.focusableAreas({'mode': 'all'}), container);
+    
+    nextFocus.scrollIntoView();
+    nextFocus.focus({preventScroll:true});
+
+  }
+
+</script>
+</html>

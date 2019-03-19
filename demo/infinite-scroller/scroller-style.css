@@ -1,0 +1,63 @@
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://themes.googleusercontent.com/static/fonts/roboto/v11/2UX7WLTfW3W8TclTUvlFyQ.woff)
+}
+
+body {
+  margin: 20px;
+  font-family: 'Roboto';
+  text-align: center;
+}
+
+h1 {
+  text-align: center;
+}
+
+.description, .option {
+  margin: 20px auto;
+  text-align: justify;
+}
+.description {
+  width: 80%;
+}
+.option {
+  width: 750px;
+}
+
+.cssSyntax {
+  background-color: lightsteelblue;
+  border: 2px solid steelblue;
+  padding: 20px;
+  width: 500px;
+}
+
+#feed {
+  display: grid;
+  overflow-y: scroll;
+  grid-template-columns: repeat(2, 1fr);
+  background-color: #fff;
+  color: #444;
+  height: 500px;
+  width: 500px;
+  margin: auto auto;
+  border: 3px solid lightgrey;
+}
+
+.item {
+  height: 150px;
+  width: 150px;
+  margin: 60px 20px;
+  justify-self: center;
+  background-color: mediumseagreen;
+}
+
+.item p {
+  vertical-align: middle;
+  font-size: 36px;
+}
+
+:focus {
+  outline: 5px solid #428bca;
+}

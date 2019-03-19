@@ -187,3 +187,35 @@ a {
 button {
   padding: 0;
 }
+
+.cssSyntax {
+  background-color: lightsteelblue;
+  border: 2px solid steelblue;
+  padding: 20px;
+  width: 500px;
+}
+
+#feed {
+  display: grid;
+  overflow-y: scroll;
+  grid-template-columns: repeat(1, 1fr);
+  background-color: #fff;
+  color: #444;
+  height: 300px;
+  width: 200px;
+  margin: auto auto;
+  border: 3px solid lightgrey;
+}
+
+.item {
+  height: 100px;
+  width: 100px;
+  margin: 70px auto;
+  justify-self: center;
+  background-color: mediumseagreen;
+}
+
+.item p {
+  vertical-align: middle;
+  font-size: 36px;
+}
