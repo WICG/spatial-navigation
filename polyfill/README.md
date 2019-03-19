@@ -178,3 +178,9 @@ but does not yet follow it closely,
 and has a number of known issues.
 
 See [the list of open bugs](https://github.com/wicg/spatial-navigation/issues?q=is%3Aissue+is%3Aopen+label%3Atopic%3Apolyfill) in github.
+
+## FYI
+### Types of branches
+* `master`: Sync with the current spec of Spatial Navigation
+* `develop`: Container the features which have been considered in standard
+* `experimental`: Contains the experimenting features for spatial navigation
