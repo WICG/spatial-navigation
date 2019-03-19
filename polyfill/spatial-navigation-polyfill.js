@@ -180,8 +180,8 @@
         eventTarget = eventTarget.contentDocument.body;
 
       // spatnav-behavior = scroll
-      if (getCSSSpatNavBehavior(eventTarget) === 'scroll') {
-        console.log(`Behavior on the spatnav container: ${getCSSSpatNavBehavior(eventTarget)}`);
+      if (getCSSSpatNavAction(eventTarget) === 'scroll') {
+        console.log(`Behavior on the spatnav container: ${getCSSSpatNavAction(eventTarget)}`);
         if (scrollingController(eventTarget, dir)) return;
       }
 
@@ -202,11 +202,11 @@
       parentContainer = window.parent.document.documentElement;
     }
 
-    if (getCSSSpatNavBehavior(container) === 'focus') {
-      console.log(`Behavior on the spatnav container: ${getCSSSpatNavBehavior(container)}`);
+    if (getCSSSpatNavAction(container) === 'focus') {
+      console.log(`Behavior on the spatnav container: ${getCSSSpatNavAction(container)}`);
       focusOnly(eventTarget, container, dir);
     }
-    else if (getCSSSpatNavBehavior(container) === ('auto')) {
+    else if (getCSSSpatNavAction(container) === ('auto')) {
       // 7
       while (parentContainer) {
         if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir)) {
@@ -270,7 +270,7 @@
         return;
     }
 
-    if (getCSSSpatNavBehavior(container) === ('auto'))
+    if (getCSSSpatNavAction(container) === ('auto'))
       if (scrollingController(container, dir)) return;
   }
 
@@ -582,11 +582,11 @@
 
   /**
    * Return the value of 'spatial-navigation-behavior' css property of an element
-   * @function getCSSSpatNavBehavior
+   * @function getCSSSpatNavAction
    * @param element {Node} - would be the spatial navigation container
    * @returns {string} : auto | focus | scroll
    */
-  function getCSSSpatNavBehavior(element) {
+  function getCSSSpatNavAction(element) {
     if (readCssVar(element, 'spatial-navigation-action') === '')
       return 'auto';
     return readCssVar(element, 'spatial-navigation-action');
