@@ -119,20 +119,20 @@
 
     /*
      * navbeforefocus EventListener :
-     * If the navbeforefocus event is triggered, then the navbeforefocusPrevented flag can be set 
+     * If the navbeforefocus event is triggered, then the navbeforefocusPrevented flag can be set
      * for define the prevented default behavior for the event
      */
     document.body.addEventListener('navbeforefocus', function(e) {
-      if (e.defaultPrevented) navbeforefocusPrevented = true;
+      navbeforefocusPrevented = e.defaultPrevented;
     });
 
     /*
      * navnotarget EventListener :
-     * If the navnotarget event is triggered, then the navnotargetPrevented flag can be set 
+     * If the navnotarget event is triggered, then the navnotargetPrevented flag can be set
      * for define the prevented default behavior for the event
      */
     document.body.addEventListener('navnotarget', function(e) {
-      if (e.defaultPrevented) navnotargetPrevented = true;
+      navnotargetPrevented = e.defaultPrevented;
     });
   }
 
@@ -225,7 +225,7 @@
             createSpatNavEvents('notarget', container, eventTarget, dir);
 
             if (navnotargetPrevented) break;
-         
+
             // find the container
             if (container === document || container === document.documentElement) {
 
@@ -296,19 +296,14 @@
        * [event] navbeforefocus : Fired before spatial or sequential navigation changes the focus.
        */
       createSpatNavEvents('beforefocus', bestCandidate, null, dir);
-      
       if (!navbeforefocusPrevented) {
         bestCandidate.focus();
         return true;
       }
-      else 
-        return false;
     }
 
     // When bestCandidate is not found within the scrollport of a container: Nothing
-    else {
-      return false;
-    }
+    return false;
   }
 
   /**

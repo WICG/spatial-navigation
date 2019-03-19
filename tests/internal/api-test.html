@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang=en>
+  <meta charset="utf-8">
+  <title>Spatnav sanity check</title>
+  <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+  <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
+  <link rel="stylesheet" href="test.css">
+  <script src="test.js"></script>
+  <style>
+  #d {
+    width: 100px;
+    height: 100px;
+    overflow: scroll;
+  }
+  </style>
+  <body onload="onload()">
+    <div style="padding: 20px;">
+      <button id="b1" class="box" style="top:100px; left:20px;"></button>
+      <button id="b2" class="box" style="top:98px; left:180px;"></button>
+      <div id="c1" class="container c1" tabindex="-1" style="position: relative; left:110px; width:500px; height:200px; overflow-x: scroll;">
+        <button id="c1b1" class="box b2" style="top:78px; left:25px;"></button>
+          <div id="c2" class="container c2" style="position: relative; left:110px; width:250px; height:100px; --spatial-navigation-contain: contain;">
+            <button id="c2b1" class="box b3" style="top:40px; left:60px;"></button>
+            <button id="c2b2" class="box b3" style="top:30px; left:200px;"></button>
+          </div>
+        <button id="c1b2" class="box b2" style="top:-80px; left:300px;"></button>
+        <button id="c1b3" class="box b2" style="top:-90px; left:420px;"></button>
+      </div>
+      <button id="b3" class="box" style="top:-119px; left:400px;"></button>
+      <button id="b4" class="box" style="top:-120px; left:650px;"></button>
+      <button id="b5" class="box" style="top:-120px; left:750px; visibility: hidden;"></button>
+    </div>
+
+    <div style="padding-left: 100px;">
+      <div id="c3" class="container" tabindex="0" style="width:600px; height:100px; overflow-y: scroll;">
+          <button id="c3b1" class="box" style="top: 70px; left: 200px;"></button>
+          <button id="c3b2" class="box" style="top: 550px; left: 200px;"></button>
+      </div>
+      <div id="c4" class="container" style="width:600px; height:100px;">
+          <button id="c4b1" class="box" style="top: 0px; left: 100px;"></button>
+          <button id="c4b2" class="box" style="top: 0px; left: 200px;"></button>
+          <button id="c4b3" class="box" style="top: 0px; left: 300px;"></button>
+
+          <button id="c4b4" class="box" style="top: 80px; left: 100px;"></button>
+          <button id="c4b5" class="box" style="top: 80px; left: 200px;"></button>
+      </div>
+    </div>
+  </body>
+  <script>
+  var onload = () => {
+    testInit();
+
+    // navigate() test
+    testRun(function() {
+      document.querySelector('#b1').focus();
+      window.navigate('right');
+      assert_equals(document.activeElement, document.querySelector('#c1b1'));
+    }, "navigate() TC1. #b1 button -> navigate('right') -> next Target should be #c1b1 button");
+
+    testRun(function() {
+      document.querySelector('#c1b1').focus();
+      window.navigate('right');
+      assert_equals(document.activeElement, document.querySelector('#c2b1'));
+    }, "navigate() TC2. #c1b1 button -> navigate('right') -> next Target should be #c2b1 button");
+
+    testRun(function() {
+      document.querySelector('#c2b1').focus();
+      window.navigate('right');
+      assert_equals(document.activeElement, document.querySelector('#c2b2'));
+    }, "navigate() TC3. #c1b1 button -> navigate('right') -> next Target should be #c2b2 button")
+
+    testRun(function() {
+      document.querySelector('#c2b1').focus();
+      window.navigate('right');
+      assert_equals(document.activeElement, document.querySelector('#c2b2'));
+    }, "navigate() TC4. #c1b1 button -> navigate('right') -> next Target should be #c2b2 button")
+
+    testRun(function() {
+      document.querySelector('#c2b2').focus();
+      window.navigate('right');
+      assert_equals(document.activeElement, document.querySelector('#c1b3'));
+    }, "navigate() TC5. #c2b2 button -> navigate('right') -> next Target should be #c1b3 button")
+
+    testRun(function() {
+      document.querySelector('#c1b3').focus();
+      window.navigate('right');
+      assert_equals(document.activeElement, document.querySelector('#b4'));
+    }, "navigate() TC6. #c1b3 button -> navigate('right') -> next Target should be #b4 button")
+
+    testRun(function() {
+      document.querySelector('#c1b2').focus();
+      window.navigate('right');
+      assert_equals(document.activeElement, document.querySelector('#c2b2'));
+    }, "navigate() TC7. #c1b2 button -> navigate('right') -> next Target should be #c2b2 button")
+
+    testRun(function() {
+      document.querySelector('#b4').focus();
+      window.navigate('left');
+      assert_equals(document.activeElement, document.querySelector('#c1b3'));
+    }, "navigate() TC8. #b4 button -> navigate('left') -> next Target should be #c1b3 button")
+
+    testRun(function() {
+      document.querySelector('#c1b3').focus();
+      window.navigate('left');
+      assert_equals(document.activeElement, document.querySelector('#c2b2'));
+    }, "navigate() TC9. #c1b3 button -> navigate('left') -> next Target should be #c2b2 button")
+
+    testRun(function() {
+      document.querySelector('#c2b2').focus();
+      window.navigate('left');
+      assert_equals(document.activeElement, document.querySelector('#c2b1'));
+    }, "navigate() TC10. #c2b2 button -> navigate('left') -> next Target should be #c2b1 button")
+
+    testRun(function() {
+      document.querySelector('#c1b2').focus();
+      window.navigate('left');
+      assert_equals(document.activeElement, document.querySelector('#c2b1'));
+    }, "navigate() TC11. #c1b2 button -> navigate('left') -> next Target should be #c2b1 button")
+
+    testRun(function() {
+      document.querySelector('#c2b1').focus();
+      window.navigate('left');
+      assert_equals(document.activeElement, document.querySelector('#c1b1'));
+    }, "navigate() TC12. #c2b1 button -> navigate('left') -> next Target should be #c1b1 button")
+
+
+    const c3Container = document.querySelector('#c3');
+    testRun(function() {
+      c3Container.scrollTop = 460;
+      document.querySelector('#c3b2').focus();
+      window.navigate('down');
+      assert_equals(document.activeElement, document.querySelector('#c4b2'));
+    }, "navigate() TC13. #c3b2 button -> navigate('down') -> next Target should be #c4b2 button")
+
+
+    // spatialNavigationSearch() test
+    const c1Container = document.querySelector('#c1');
+    const c2Container = document.querySelector('#c2');
+    const c1Candidates = c1Container.focusableAreas();
+    const c2Candidates = c2Container.focusableAreas();
+
+    testRun(function() {
+      let result = c1Container.spatialNavigationSearch('right');
+      assert_equals(result, document.querySelector('#c1b1'));
+    }, "spatialNavigationSearch() TC1. c1Container.spatialNavigationSearch('right'); -> return element should be #c1b1 button")
+
+    testRun(function() {
+      let result = c1Container.spatialNavigationSearch('left');
+      assert_equals(result, document.querySelector('#c1b3'));
+    }, "spatialNavigationSearch() TC2. c1Container.spatialNavigationSearch('left'); -> return element should be #c1b3 button")
+
+    testRun(function() {
+      let result = c2Container.spatialNavigationSearch('right');
+      assert_equals(result, document.querySelector('#c2b1'));
+    }, "spatialNavigationSearch() TC3. c2Container.spatialNavigationSearch('right'); -> return element should be #c2b1 button")
+
+    testRun(function() {
+      let result = c2Container.spatialNavigationSearch('left');
+      assert_equals(result, document.querySelector('#c2b2'));
+    }, "spatialNavigationSearch() TC4. c2Container.spatialNavigationSearch('left'); -> return element should be #c2b2 button")
+
+
+    testRun(function() {
+      let result = document.querySelector('#b1').spatialNavigationSearch('right', [document.querySelector('#b2')]);
+      assert_equals(result, document.querySelector('#b2'));
+    }, "spatialNavigationSearch() TC5. (#b1).spatialNavigationSearch('right', [#b2]); -> return element should be #b2 button")
+
+    testRun(function() {
+      let result = document.querySelector('#b1').spatialNavigationSearch('right', null, c2Container);
+      assert_equals(result, document.querySelector('#c2b1'));
+    }, "spatialNavigationSearch() TC6. c2Container.spatialNavigationSearch('right', null, #c2); -> return element should be #c2b1 button")
+
+    testRun(function() {
+      let result = document.querySelector('#c2b2').spatialNavigationSearch('right');
+      assert_equals(result, null);
+    }, "spatialNavigationSearch() TC7. c2Container.spatialNavigationSearch('right'); -> return element should be null")
+
+    testRun(function() {
+      let result = document.querySelector('#c2b2').spatialNavigationSearch('right', c1Candidates);
+      assert_equals(result, null);
+    }, "spatialNavigationSearch() TC8. c2Container.spatialNavigationSearch('right', c1Candidates); -> return element should be null")
+
+    testRun(function() {
+      let result = c2Container.spatialNavigationSearch('left', c1Candidates, c2Container);
+      assert_equals(result, document.querySelector('#c2b2'));
+    }, "spatialNavigationSearch() TC9. c2Container.spatialNavigationSearch('left', c1Candidates, #c2); -> return element should be #c2b2 button")
+
+    testRun(function() {
+      let result = document.body.focusableAreas({mode:'all'});
+      assert_equals(result.includes(document.querySelector('#c2b2')), false);
+    }, "focusableAreas() TC1. focusableAreas({mode:'all'}); -> result should not include visibility hidden elements");
+  }
+  </script>
+</html>

@@ -1,0 +1,22 @@
+#result {
+  margin: 20px;
+}
+
+#result div span {
+  margin: 10px;
+  display: inline-block;
+}
+#result div span.error {
+  display: block;
+  margin-top: 0;
+  margin-left: 110px;
+  color: gray;
+}
+#result div span:first-child {
+  width: 80px;
+  font-weight: bold;
+  color: blue;
+}
+#result div span:first-child.fail {
+  color: red;
+}
