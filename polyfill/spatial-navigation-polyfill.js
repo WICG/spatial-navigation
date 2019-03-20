@@ -209,7 +209,7 @@
     else if (getCSSSpatNavAction(container) === ('auto')) {
       // 7
       while (parentContainer) {
-        if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir)) {
+        if (focusingController(eventTarget.spatialNavigationSearch(dir, {candidates: container.focusableAreas(), container, outsideOnly:true}), dir)) {
           return;
         } else {
           // If there isn't any candidate and the best candidate among candidate:
@@ -221,7 +221,6 @@
             // [event] navnotarget : Fired when spatial navigation has failed to find any acceptable candidate to move the focus
             // to in the current spatnav container and when that same spatnav container cannot be scrolled either,
             // before going up the tree to search in the nearest ancestor spatnav container.
-
             createSpatNavEvents('notarget', container, eventTarget, dir);
 
             if (navnotargetPrevented) break;
@@ -266,7 +265,7 @@
 
     // Behavior after 'navnotarget' - Getting out from the current spatnav container
     if (!parentContainer && container) {
-      if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir))
+      if (focusingController(eventTarget.spatialNavigationSearch(dir, {candidates: container.focusableAreas(), container, outsideOnly: true}), dir))
         return;
     }
 
@@ -341,30 +340,18 @@
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @param candidates {sequence<Node>} - The candidates for spatial navigation without the directional information
    * @param container {Node} - The spatial navigation container
+   * @param outsideOnly {boolean} - Whether candidates should be elements outside of the target element or not.
    * @returns {Node} The candidates for spatial navigation considering the directional information
    */
-  function spatNavCandidates (element, dir, candidates, container) {
-    let targetElement = element;
+  function spatNavCandidates (element, dir, candidates, container, outsideOnly) {
+    const targetElement = (element.nodeName === 'IFRAME') ? element.contentDocument.body : element;
     // If the container is unknown, get the closest container from the element
     container = container || targetElement.getSpatialNavigationContainer();
 
     // If the candidates is unknown, find candidates
     // 5-1
-    if (!candidates || candidates.length <= 0) {
-      if ((isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
-        if (targetElement.nodeName === 'IFRAME')
-          targetElement = targetElement.contentDocument.body;
-
-        candidates = targetElement.focusableAreas();
-      }
-      else {
-        candidates = filteredCandidates(targetElement, container.focusableAreas(), dir, container);
-      }
-    }
-    else {
-      candidates = filteredCandidates(targetElement, candidates, dir, container);
-    }
-    return candidates;
+    candidates = (!candidates || candidates.length <= 0) ? container.focusableAreas() : candidates;
+    return filteredCandidates(targetElement, candidates, dir, container, outsideOnly);
   }
 
   /**
@@ -374,12 +361,13 @@
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @param candidates {sequence<Node>} - The candidates for spatial navigation
    * @param container {Node} - The spatial navigation container
+   * @param outsideOnly {boolean} - Whether candidates should be elements outside of the target element or not.
    * @returns {Node} The best candidate which will gain the focus
    */
-  function spatialNavigationSearch (dir, candidates, container) {
-    // Let container be the nearest ancestor of eventTarget that is a spatnav container.
+  function spatialNavigationSearch (dir, args) {
+    let {candidates, container, outsideOnly} = args || {};
     const targetElement = this;
-    candidates = spatNavCandidates(targetElement, dir, candidates, container);
+    candidates = spatNavCandidates(targetElement, dir, candidates, container, outsideOnly);
 
     // Find the best candidate
     // 5
@@ -387,11 +375,14 @@
     // find the best candidate within startingPoint
     if (candidates && candidates.length > 0) {
       if ((isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
-        const targetElementInTarget = targetElement.focusableAreas();
-        if (candidates.every(x => targetElementInTarget.includes(x))) {
-          // if candidates are contained in the targetElement, then the focus moves inside the targetElement
-          return selectBestCandidateFromEdge(targetElement, candidates, dir);
-        }
+        const insideCandidates = [];
+        const outsideCandidates = [];
+
+        // if candidates are contained in the targetElement, then the focus moves inside the targetElement
+        candidates.forEach(candidate => {
+          (targetElement.contains(candidate) ? insideCandidates : outsideCandidates).push(candidate);
+        });
+        return selectBestCandidateFromEdge(targetElement, insideCandidates, dir) || selectBestCandidate(targetElement, outsideCandidates, dir);
       }
       return selectBestCandidate(targetElement, candidates, dir);
     }
@@ -407,9 +398,10 @@
    * @param candidates {sequence<Node>} - The candidates for spatial navigation
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @param container {Node} - The spatial navigation container
+   * @param outsideOnly {boolean} - Whether candidates should be elements outside of the target element or not.
    * @returns {sequence<Node>} The filtered candidates which are not the search origin and not in the given spatial navigation direction from the search origin
    */
-  function filteredCandidates(currentElm, candidates, dir, container) {
+  function filteredCandidates(currentElm, candidates, dir, container, outsideOnly) {
     const originalContainer = currentElm.getSpatialNavigationContainer();
     let eventTargetRect;
 
@@ -428,10 +420,16 @@
      * whose principal box’s geometric center is within the closed half plane
      * whose boundary goes through the geometric center of starting point and is perpendicular to D.
      */
-    return candidates.filter(candidate =>
-      container.contains(candidate) &&
-      isOutside(getBoundingClientRect(candidate), eventTargetRect, dir)
-    );
+    if (!outsideOnly && (isContainer(currentElm) || currentElm.nodeName === 'BODY') && !(currentElm.nodeName === 'INPUT')) {
+      return candidates.filter(candidate => container.contains(candidate) &&
+          ((currentElm.contains(candidate) && candidate !== currentElm) ||
+          isOutside(getBoundingClientRect(candidate), eventTargetRect, dir)));
+    } else {
+      return candidates.filter(candidate =>
+        container.contains(candidate) &&
+        isOutside(getBoundingClientRect(candidate), eventTargetRect, dir)
+      );
+    }
   }
 
   /**
@@ -1327,7 +1325,7 @@
 
         // 5-2
         if (Array.isArray(candidates) && candidates.length > 0) {
-          return findCandidate ? spatNavCandidates(eventTarget, dir, candidates) : eventTarget.spatialNavigationSearch(dir, candidates);
+          return findCandidate ? spatNavCandidates(eventTarget, dir, candidates) : eventTarget.spatialNavigationSearch(dir, {candidates});
         }
         if (canScroll(eventTarget, dir)) {
           return findCandidate ? [] : eventTarget;
@@ -1349,7 +1347,7 @@
         const candidates = filteredCandidates(eventTarget, container.focusableAreas(option), dir, container);
 
         if (Array.isArray(candidates) && candidates.length > 0) {
-          bestNextTarget = eventTarget.spatialNavigationSearch(dir, candidates, container);
+          bestNextTarget = eventTarget.spatialNavigationSearch(dir, {candidates, container});
           if (bestNextTarget) {
             return findCandidate ? candidates : bestNextTarget;
           }
@@ -1399,7 +1397,7 @@
 
         // 9
         if (Array.isArray(candidates) && candidates.length > 0) {
-          bestNextTarget = eventTarget.spatialNavigationSearch(dir, candidates, container);
+          bestNextTarget = eventTarget.spatialNavigationSearch(dir, {candidates, container});
           if (bestNextTarget) {
             return findCandidate ? candidates : bestNextTarget;
           }
