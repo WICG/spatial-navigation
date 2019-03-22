@@ -424,7 +424,6 @@
       } else {
         bestTarget = selectBestCandidate(targetElement, candidates, dir);
       }
-      console.log(bestTarget);
       if (isDelegableContainer(bestTarget)) {
 
         // if best target is delegable container, then find descendants candidate inside delegable container.
