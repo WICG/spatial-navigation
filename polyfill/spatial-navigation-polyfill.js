@@ -209,7 +209,7 @@
     else if (getCSSSpatNavAction(container) === ('auto')) {
       // 7
       while (parentContainer) {
-        if (focusingController(eventTarget.spatialNavigationSearch(dir, {container, outsideOnly:true}), dir)) {
+        if (focusingController(eventTarget.spatialNavigationSearch(dir, {container, outsideOnly: true}), dir)) {
           return;
         } else {
           // If there isn't any candidate and the best candidate among candidate:
@@ -404,7 +404,6 @@
     let {candidates, container, outsideOnly} = args || {};
     const targetElement = this;
     let bestTarget;
-    let selectBestFunction = selectBestCandidate;
     candidates = getFilteredSpatialNavigationCandidates(targetElement, dir, candidates, container, outsideOnly);
 
     // Find the best candidate
@@ -475,9 +474,12 @@
      * whose boundary goes through the geometric center of starting point and is perpendicular to D.
      */
     if (!outsideOnly && (isContainer(currentElm) || currentElm.nodeName === 'BODY') && !(currentElm.nodeName === 'INPUT')) {
-      return candidates.filter(candidate => container.contains(candidate) &&
-          ((currentElm.contains(candidate) && candidate !== currentElm) ||
-          isOutside(getBoundingClientRect(candidate), eventTargetRect, dir)));
+      return candidates.filter(candidate => {
+        const candidateRect = getBoundingClientRect(candidate);
+        return container.contains(candidate) &&
+          ((currentElm.contains(candidate) && isInside(eventTargetRect, candidateRect) && candidate !== currentElm) ||
+          isOutside(candidateRect, eventTargetRect, dir));
+        });
     } else {
       return candidates.filter(candidate =>
         container.contains(candidate) &&
@@ -1067,6 +1069,21 @@
     }
 
     return false;
+  }
+
+  /**
+   * Decide whether a child element is entirely or partially Included within container visually.
+   * @function isInside
+   * @param containerRect {DOMRect}
+   * @param childRect {DOMRect}
+   * @returns {boolean}
+   */
+  function isInside(containerRect, childRect) {
+    const rightEdgeCheck = (containerRect.left <= childRect.right && containerRect.right >= childRect.right);
+    const leftEdgeCheck = (containerRect.left <= childRect.left && containerRect.right >= childRect.left);
+    const topEdgeCheck = (containerRect.top <= childRect.top && containerRect.bottom >= childRect.top);
+    const bottomEdgeCheck = (containerRect.top <= childRect.bottom && containerRect.bottom >= childRect.bottom);
+    return (rightEdgeCheck || leftEdgeCheck) && (topEdgeCheck || bottomEdgeCheck);
   }
 
   /**
