@@ -921,7 +921,7 @@
    * @see {@link https://html.spec.whatwg.org/multipage/interaction.html#focusable-area}
    */
   function isFocusable(element) {
-    if ((element.tabIndex < 0) || isAtagWithoutHref(element) || (isActuallyDisabled(element) && isExpresslyInert(element) && !isBeingRendered(element)))
+    if (element.tabIndex < 0 || isAtagWithoutHref(element) || isActuallyDisabled(element) || isExpresslyInert(element) || !isBeingRendered(element))
       return false;
     else if ((!element.parentElement) || (isScrollable(element) && isOverflow(element)) || (element.tabIndex >= 0))
       return true;
@@ -991,8 +991,7 @@
    * @returns {boolean}
    */
   function isVisible(element) {
-    const elementStyle = window.getComputedStyle(element, null);
-    return (!element.parentElement) || (isVisibleStyleProperty(elementStyle) && hitTest(element));
+    return (!element.parentElement) || (isVisibleStyleProperty(element) && hitTest(element));
   }
 
   /**
@@ -1017,10 +1016,11 @@
   /**
    * Decide the style property of this element is specified whether it's visible or not.
    * @function isVisibleStyleProperty
-   * @param elementStyle {CSSStyleDeclaration}
+   * @param {<Node>} element
    * @returns {boolean}
    */
-  function isVisibleStyleProperty(elementStyle) {
+  function isVisibleStyleProperty(element) {
+    const elementStyle = window.getComputedStyle(element, null);
     const thisVisibility = elementStyle.getPropertyValue('visibility');
     const thisDisplay = elementStyle.getPropertyValue('display');
     const invisibleStyle = ['hidden', 'collapse'];
