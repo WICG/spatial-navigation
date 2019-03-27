@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang=en>
+  <meta charset="utf-8">
+  <title>Spatnav sanity check</title>
+  <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+  <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
+  <link rel="stylesheet" href="test.css">
+  <script src="test.js"></script>
+  <style>
+  #d {
+    width: 100px;
+    height: 100px;
+    overflow: scroll;
+  }
+  </style>
+  <body onload="onload()">
+    <div style="padding: 20px;">
+      <button id="b1" class="box" style="top:100px; left:20px;"></button>
+      <button id="b2" class="box" style="top:98px; left:180px;"></button>
+      <div id="c1" class="container c1" tabindex="-1" style="position: relative; left:110px; width:500px; height:200px; overflow-x: scroll;">
+          <div id="c2" class="container c2" style="position: relative; left:110px; width:250px; height:100px; --spatial-navigation-contain: contain;">
+            <button id="c2b1" class="box b3" style="top:40px; left:60px;"></button>
+            <button id="c2b2" class="box b3" style="top:30px; left:200px;"></button>
+          </div>
+        <button id="c1b2" class="box b2" style="top:-80px; left:300px;"></button>
+        <button id="c1b3" class="box b2" style="top:-90px; left:420px;"></button>
+      </div>
+      <button id="b3" class="box" style="top:-119px; left:400px;"></button>
+      <button id="b4" class="box" style="top:-120px; left:650px;"></button>
+      <button id="b5" class="box" style="top:-120px; left:750px; visibility: hidden;"></button>
+    </div>
+  </body>
+  <script>
+  var onload = () => {
+    testInit();
+    let testNum = 1;
+    let eventOccured = false;
+    let targetElement;
+    let causedTarget;
+    let dir;
+
+    const navEventHandler = (e) => {
+      console.log("navEventHandler")
+      eventOccured = true;
+      targetElement = e.target;
+      causedTarget = e.detail.causedTarget;
+      dir = e.detail.dir;
+      e.preventDefault();
+    }
+
+    (function () {
+      document.body.addEventListener('navnotarget', navEventHandler);
+      document.querySelector('#c2b2').focus();
+      window.navigate('right');
+      document.body.removeEventListener("navnotarget", navEventHandler);
+
+      setTimeout(
+        testRun(function() {
+          assert_equals(eventOccured, true);
+        }, `navnotarget Event TC${testNum++}. #c2b2 button -> navigate('right') -> 'navnotarget' should be occured`),
+        1000)
+    })();
+
+    (function () {
+      document.body.addEventListener('navnotarget', navEventHandler);
+      document.querySelector('#c2b2').focus();
+      window.navigate('right');
+      document.body.removeEventListener("navnotarget", navEventHandler);
+
+      setTimeout(
+        testRun(function() {
+          assert_equals(targetElement, document.querySelector('#c2'));
+          assert_equals(causedTarget, document.querySelector('#c2b2'));
+          assert_equals(dir, 'right');
+        }, `navnotarget Event TC${testNum++}. #c2b2 button -> navigate('right') -> 'navnotarget' event should have target information`),
+        1000)
+    })();
+
+    testRun(function() {
+      document.body.addEventListener('navnotarget', navEventHandler);
+      document.querySelector('#c1b3').focus();
+      window.navigate('right');
+      document.body.removeEventListener("navnotarget", navEventHandler);
+
+      assert_equals(document.activeElement, document.querySelector('#c1b3'));
+    }, `navnotarget Event TC${testNum++}. 'navnotarget' event should allow prevent defalut.`);
+
+
+    testNum = 1;
+
+    (function () {
+      eventOccured = false;
+      document.body.addEventListener('navbeforefocus', navEventHandler);
+      document.querySelector('#c2b2').focus();
+      window.navigate('right');
+      document.body.removeEventListener("navbeforefocus", navEventHandler);
+
+      setTimeout(
+        testRun(function() {
+          assert_equals(eventOccured, true);
+        }, `navbeforefocus Event TC${testNum++}. #c2b2 button -> navigate('right') -> 'navbeforefocus' should be occured`),
+        1000)
+    })();
+
+    (function () {
+      targetElement = null;
+      dir = null;
+      document.body.addEventListener('navbeforefocus', navEventHandler);
+      document.querySelector('#c2b2').focus();
+      window.navigate('right');
+      document.body.removeEventListener("navbeforefocus", navEventHandler);
+
+      setTimeout(
+        testRun(function() {
+          assert_equals(targetElement, document.querySelector('#c1b3'));
+          assert_equals(dir, 'right');
+        }, `navbeforefocus Event TC${testNum++}. #c2b2 button -> navigate('right') -> 'navbeforefocus' event should have target information`),
+        1000)
+    })();
+
+    testRun(function() {
+      document.body.addEventListener('navbeforefocus', navEventHandler);
+      document.querySelector('#c1b3').focus();
+      window.navigate('right');
+      document.body.removeEventListener("navbeforefocus", navEventHandler);
+
+      assert_equals(document.activeElement, document.querySelector('#c1b3'));
+    }, `navbeforefocus Event TC${testNum++}. 'navbeforefocus' event should allow prevent defalut.`);
+
+  }
+
+  </script>
+</html>
