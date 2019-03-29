@@ -1166,6 +1166,9 @@
 
     let orthogonalBias = 0;
 
+    let alignBias = 0;
+    const alignWeight = 5.0;
+
     // Get exit point, entry point
     const points = getEntryAndExitPoints(dir, rect1, rect2);
 
@@ -1174,31 +1177,46 @@
     const P1 = Math.abs(points.entryPoint[0] - points.exitPoint[0]);
     const P2 = Math.abs(points.entryPoint[1] - points.exitPoint[1]);
 
-    // A = The euclidian distance between P1 and P2.
+    // A: The euclidian distance between P1 and P2.
     const A = Math.sqrt(Math.pow(P1, 2) + Math.pow(P2, 2));
     let B, C;
 
-    // B: The absolute distance in the dir direction between P1 and P2, or 0 if dir is null.
-    // C: The absolute distance in the direction which is orthogonal to dir between P1 and P2, or 0 if dir is null.
+    // B: The absolute distance in the direction which is orthogonal to dir between P1 and P2, or 0 if dir is null.
+    // C: The intersection edges between a candidate and the starting point.
+
+    // D: The square root of the area of intersection between the border boxes of candidate and starting point
+    const intersectionRect = getIntersectionRect(rect1, rect2);
+    const D = intersectionRect.area;
+
     switch (dir) {
     case 'left':
       /* falls through */
     case 'right' :
-      B = P1;
-      // If not aligned => add bias
-      if (!isAligned(rect1, rect2, dir))
+      // If two elements are aligned, add align bias
+      if (isAligned(rect1, rect2, dir)) {
+        alignBias = intersectionRect.height / rect1.height;
+        if (alignBias > 1) align_bias = 1;
+      }
+      else  // else, add orthogonal bias
         orthogonalBias = (rect1.height / 2);
-      C = (P2 + orthogonalBias) * kOrthogonalWeightForLeftRight;
+
+      B = (P2 + orthogonalBias) * kOrthogonalWeightForLeftRight;
+
       break;
 
     case 'up' :
       /* falls through */
     case 'down' :
-      B = P2;
-      // If not aligned => add bias
-      if (!isAligned(rect1, rect2, dir))
+      // If two elements are aligned, add align bias
+      if (isAligned(rect1, rect2, dir)) {
+        alignBias = intersectionRect.width / rect1.width;
+        if (alignBias > 1) alignBias = 1;
+      }
+      else  // else, add orthogonal bias
         orthogonalBias = (rect1.width / 2);
-      C = (P1 + orthogonalBias) * kOrthogonalWeightForUpDown;
+
+      B = (P1 + orthogonalBias) * kOrthogonalWeightForUpDown;
+      C = alignWeight * alignBias;
       break;
 
     default:
@@ -1207,11 +1225,7 @@
       break;
     }
 
-    // D: The square root of the area of intersection between the border boxes of candidate and starting point
-    const intersectionRect = getIntersectionRect(rect1, rect2);
-    const D = (intersectionRect) ? Math.sqrt(intersectionRect.width * intersectionRect.height) : 0;
-
-    return (A + B + C - D);
+    return (A + B - C - D);
   }
 
   /**
@@ -1296,16 +1310,22 @@
    * @property {Number} IntersectionArea.height
    */
   function getIntersectionRect(rect1, rect2) {
-    const newLocation = [Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)];
-    const newMaxPoint = [Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom)];
+    let intersection_rect = {width: 0, height: 0, area: 0, wRatio: 0, hRatio:0};
+    const new_location = [Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)];
+    const new_max_point = [Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom)];
 
-    if (!(newLocation[0] >= newMaxPoint[0] || newLocation[1] >= newMaxPoint[1])) {
+    console.log(new_location);
+    console.log(new_max_point);
+
+    intersection_rect.width = Math.abs(new_location[0] - new_max_point[0]);
+    intersection_rect.height = Math.abs(new_location[1] - new_max_point[1]);
+
+    if (!(new_location[0] >= new_max_point[0] || new_location[1] >= new_max_point[1])) {
       // intersecting-cases
-      return {
-        width: Math.abs(newLocation[0] - newMaxPoint[0]),
-        height: Math.abs(newLocation[1] - newMaxPoint[1])
-      };
+      intersection_rect.area = Math.sqrt(intersection_rect.width * intersection_rect.height);
     }
+    
+    return intersection_rect;
   }
 
   /**
