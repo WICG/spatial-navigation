@@ -1314,9 +1314,6 @@
     const new_location = [Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)];
     const new_max_point = [Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom)];
 
-    console.log(new_location);
-    console.log(new_max_point);
-
     intersection_rect.width = Math.abs(new_location[0] - new_max_point[0]);
     intersection_rect.height = Math.abs(new_location[1] - new_max_point[1]);
 
@@ -1324,7 +1321,7 @@
       // intersecting-cases
       intersection_rect.area = Math.sqrt(intersection_rect.width * intersection_rect.height);
     }
-    
+
     return intersection_rect;
   }
 
