@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="application-name" content="Spatial Navigation with alignment and displacement">
+<meta name="author" content="Jihye Hong">
+<meta name="description" content="This sample shows how the focus moves considering the degree of alignment and displacement for each element">
+
+<link rel="stylesheet" href="spatnav-style.css">
+<script src="spatnav-utils.js"></script>
+<script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+
+<style>
+  #container {
+    margin: 10px;
+    position: relative;
+    border: 1px solid black;
+    height: 500px;
+  }
+
+  .box {
+    position: absolute;
+    box-sizing: border-box;
+    border: 1px black solid;
+    background: #6ac;
+    text-align: center;
+    margin: auto auto;
+  }
+</style>
+
+<body>
+
+<div id="container">
+  <div tabindex="0" class="box" id="initial_focus" style="width:640px; height: 76px; left: 60px; top: 145px;"></div>
+  <div tabindex="0" class="box" id="box1" style="width:360px; height: 80px; left: 60px; top: 260px;">Box 1</div>
+  <div tabindex="0" class="box" id="box2" style="width:100px; height: 20px; left: 385px; top: 230px;">Box 2</div>
+</div>
+</body>
+</html>
