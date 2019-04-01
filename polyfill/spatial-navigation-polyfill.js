@@ -1153,19 +1153,18 @@
 
   /**
    * Get the distance between the search origin and a candidate element considering the direction.
-   * @see {@link https://wicg.github.io/spatial-navigation/#select-the-best-candidate}
+   * @see {@link https://drafts.csswg.org/css-nav-1/#calculating-the-distance}
    * @function getDistance
    * @param rect1 {DOMRect} - The search origin
    * @param rect2 {DOMRect} - A candidate element
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
-   * @returns {Number} The euclidian distance between two elements
+   * @returns {Number} The distance scoring between two elements
    */
   function getDistance(rect1, rect2, dir) {
     const kOrthogonalWeightForLeftRight = 30;
     const kOrthogonalWeightForUpDown = 2;
 
     let orthogonalBias = 0;
-
     let alignBias = 0;
     const alignWeight = 5.0;
 
@@ -1195,7 +1194,7 @@
       // If two elements are aligned, add align bias
       // else, add orthogonal bias
       if (isAligned(rect1, rect2, dir))
-        alignBias = (alignBias > 1) ? 1 : (intersectionRect.width / rect1.width);
+        alignBias = Math.min(intersectionRect.height / rect1.height , 1);
       else
         orthogonalBias = (rect1.height / 2);
 
@@ -1209,7 +1208,7 @@
       // If two elements are aligned, add align bias
       // else, add orthogonal bias
       if (isAligned(rect1, rect2, dir))
-        alignBias = (alignBias > 1) ? 1 : (intersectionRect.width / rect1.width);
+        alignBias = Math.min(intersectionRect.width / rect1.width , 1);
       else
         orthogonalBias = (rect1.width / 2);
 
