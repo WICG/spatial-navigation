@@ -1,0 +1,37 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="application-name" content="Spatial Navigation in the Grid-like layout">
+<meta name="author" content="Jihye Hong">
+<meta name="description" content="This sample shows how the focus moves in the Grid-like layout if there is a non-focusable element.">
+
+<link rel="stylesheet" href="spatnav-style.css">
+<script src="spatnav-utils.js"></script>
+<script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+
+<style>
+  .box {
+    position: relative;
+    box-sizing: border-box;
+    width: 100px;
+    height: 100px;
+    border: 1px black solid;
+    background: #6ac;
+    text-align: center;
+  }
+</style>
+
+<body>
+  <div id="container" style="height: 500px;">
+    <div tabindex="0" class="box"></div>
+    <div tabindex="0" class="box" style="left: 100px; top: -100px;"></div>
+    <div tabindex="0" id="initial_focus" class="box" id="up_focus" style="left: calc(100px * 2); top: calc(-100px * 2);">Initial Focus</div>
+    <div tabindex="0" class="box" style="top: calc(-100px * 2);"></div>
+    <div tabindex="0" class="box" id="green" style="left: 100px; top: calc(-100px * 3); background-color: seagreen;"></div>
+    <div class="box" id="nonFocusable" style="left: calc(100px * 2); top: calc(-100px * 4); background-color: lightgray;">non-focusable</div>
+    <div tabindex="0" class="box" id="yellow" style="top: calc(-100px * 4); background-color: yellow;"></div>
+    <div tabindex="0" class="box" id="maroon" style="left: 100px; top: calc(-100px * 5); background-color: maroon;"></div>
+    <div tabindex="0" class="box" id="purple" style="left: calc(100px * 2); top: calc(-100px * 6); background-color: slateblue;"></div>
+  </div>
+</body>
+</html>

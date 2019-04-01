@@ -1193,26 +1193,24 @@
       /* falls through */
     case 'right' :
       // If two elements are aligned, add align bias
-      if (isAligned(rect1, rect2, dir)) {
-        alignBias = intersectionRect.height / rect1.height;
-        if (alignBias > 1) align_bias = 1;
-      }
-      else  // else, add orthogonal bias
+      // else, add orthogonal bias
+      if (isAligned(rect1, rect2, dir))
+        alignBias = (alignBias > 1) ? 1 : (intersectionRect.width / rect1.width);
+      else
         orthogonalBias = (rect1.height / 2);
 
       B = (P2 + orthogonalBias) * kOrthogonalWeightForLeftRight;
-
+      C = alignWeight * alignBias;
       break;
 
     case 'up' :
       /* falls through */
     case 'down' :
       // If two elements are aligned, add align bias
-      if (isAligned(rect1, rect2, dir)) {
-        alignBias = intersectionRect.width / rect1.width;
-        if (alignBias > 1) alignBias = 1;
-      }
-      else  // else, add orthogonal bias
+      // else, add orthogonal bias
+      if (isAligned(rect1, rect2, dir))
+        alignBias = (alignBias > 1) ? 1 : (intersectionRect.width / rect1.width);
+      else
         orthogonalBias = (rect1.width / 2);
 
       B = (P1 + orthogonalBias) * kOrthogonalWeightForUpDown;
@@ -1310,7 +1308,7 @@
    * @property {Number} IntersectionArea.height
    */
   function getIntersectionRect(rect1, rect2) {
-    let intersection_rect = {width: 0, height: 0, area: 0, wRatio: 0, hRatio:0};
+    const intersection_rect = {width: 0, height: 0, area: 0};
     const new_location = [Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)];
     const new_max_point = [Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom)];
 
