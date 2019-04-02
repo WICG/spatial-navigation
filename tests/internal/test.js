@@ -47,3 +47,8 @@ function assert_equals(actual, expected) {
   if (actual !== expected)
     throw `assert_equals: expected ${getString(expected)} but got  ${getString(actual)}`;
 }
+
+function assert_not_equals(actual, expected) {
+  if (actual === expected)
+    throw `assert_not_equals: dose not expected ${getString(expected)} but got  ${getString(actual)}`;
+}
