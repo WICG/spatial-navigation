@@ -253,7 +253,18 @@
         document.querySelector('#s3').focus();
         navigate('right');
         assert_equals(document.activeElement, document.querySelector('#s18'));
-        // TODO: add more..
+        navigate('down');
+        assert_equals(document.activeElement, document.querySelector('#s6'));
+        navigate('left');
+        assert_equals(document.activeElement, document.querySelector('#s10'));
+        navigate('right');
+        assert_equals(document.activeElement, document.querySelector('#s20'));
+        navigate('up');
+        assert_equals(document.activeElement, document.querySelector('#s3'));
+        navigate('up');
+        assert_equals(document.activeElement, document.querySelector('#s21'));
+        navigate('down');
+        assert_equals(document.activeElement, document.querySelector('#s3'));
       }, `--spatial-navigation-function TC${testNum++}. normal rule check`);
 
     };
