@@ -2,39 +2,14 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto:400,900" rel="stylesheet">
-    <title>Spnav Calendar</title>
+    <title>Spatnav sanity check</title>
+    <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+    <link rel="stylesheet" href="test.css">
+    <link rel="stylesheet" href="calendar.css">
+    <script src="test.js"></script>
   </head>
-  <script type="text/javascript">
-    function changeRule() {
-      const ruleType = document.getElementById("ruleType").value;
-      const wrapperElement = document.getElementById("wrapper");
-      wrapperElement.style.setProperty('--spatial-navigation-function', ruleType);
-    }
-  </script>
-  <body>
-    <div id="optionField">
-      <form>
-        <fieldset>
-          <legend>spatial-navigation-rule</legend>
-          <div>
-            <span>Navigation Rule: </span>
-            <select id="ruleType" onchange="changeRule()" name=rule>
-              <option value="auto" selected="selected">auto</option>
-              <option value="euclidean">euclidean</option>
-              <option value="grid">grid</option>
-            </select>
-<!--             <br>
-            <span>Navigation Loop: </span>
-            <input id="loopType" type="checkbox" name="loop" value="enable"> -->
-          </div>
-        </fieldset>
-      </form>
-    </div>
+  <body onload="onload()">
     <div class="wrapper" id="wrapper">
-      <div class="header"><span>2017</span><p class="month">November</p></div>
       <div class="sidebar">
         <div class="date"></div>
         <div class="time">note</div>
@@ -177,6 +152,7 @@
       <div class="weekly wed">
         <div class="date">Wed 8</div>
         <div class="schedule work" id="s4" tabindex="1">Breakout Session</div>
+        <div class="schedule work" id="s21" tabindex="1">ice breaking</div>
         <div class="schedule work" id="s20" tabindex="1">Team Meeting</div>
       </div>
       <div class="weekly thu">
@@ -198,5 +174,89 @@
       </div>
     </div>
   </body>
-  <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+
+  <script type="text/javascript">
+    function changeRule(ruleType) {
+      document.getElementById("wrapper").style.setProperty('--spatial-navigation-function', ruleType);
+    }
+    var onload = () => {
+      testInit();
+      let testNum = 1;
+      let container1 = document.querySelector('#c1');
+
+      testRun(function() {
+        changeRule('grid');
+        document.querySelector('#s1').focus();
+        navigate('right');
+        assert_equals(document.activeElement, document.querySelector('#s4'));
+        navigate('right');
+        assert_equals(document.activeElement, document.querySelector('#s17'));
+        navigate('down');
+        assert_equals(document.activeElement, document.querySelector('#s18'));
+        navigate('down');
+        assert_equals(document.activeElement, document.querySelector('#s6'));
+        navigate('down');
+        assert_equals(document.activeElement, document.querySelector('#s5'));
+        navigate('left');
+        assert_equals(document.activeElement, document.querySelector('#s20'));
+        navigate('left');
+        assert_equals(document.activeElement, document.querySelector('#s10'));
+        navigate('left');
+        assert_equals(document.activeElement, document.querySelector('#s9'));
+        navigate('left');
+        assert_equals(document.activeElement, document.querySelector('#s14'));
+        navigate('up');
+        assert_equals(document.activeElement, document.querySelector('#s15'));
+        navigate('up');
+        assert_equals(document.activeElement, document.querySelector('#s13'));
+        navigate('up');
+        assert_equals(document.activeElement, document.querySelector('#s18'));
+        navigate('up');
+        assert_equals(document.activeElement, document.querySelector('#s17'));
+        navigate('left');
+        assert_equals(document.activeElement, document.querySelector('#s4'));
+        navigate('down');
+        assert_equals(document.activeElement, document.querySelector('#s21'));
+        document.querySelector('#s3').focus();
+        navigate('right');
+        assert_equals(document.activeElement, document.querySelector('#s21'));
+
+      }, `--spatial-navigation-function TC${testNum++}. grid rule check`);
+
+      testRun(function() {
+        changeRule('euclidean');
+        document.querySelector('#s17').focus();
+        navigate('down');
+        assert_equals(document.activeElement, document.querySelector('#s16'));
+        navigate('down');
+        assert_equals(document.activeElement, document.querySelector('#s18'));
+        navigate('down');
+        assert_equals(document.activeElement, document.querySelector('#s6'));
+        navigate('left');
+        assert_equals(document.activeElement, document.querySelector('#s19'));
+        navigate('left');
+        assert_equals(document.activeElement, document.querySelector('#s5'));
+        navigate('left');
+        assert_equals(document.activeElement, document.querySelector('#s20'));
+        navigate('left');
+        assert_equals(document.activeElement, document.querySelector('#s10'));
+        navigate('left');
+        assert_equals(document.activeElement, document.querySelector('#s9'));
+        navigate('left');
+        assert_equals(document.activeElement, document.querySelector('#s14'));
+        navigate('up');
+        assert_equals(document.activeElement, document.querySelector('#s20'));
+      }, `--spatial-navigation-function TC${testNum++}. euclidean rule check`);
+
+      testRun(function() {
+        changeRule('normal');
+        document.querySelector('#s3').focus();
+        navigate('right');
+        assert_equals(document.activeElement, document.querySelector('#s18'));
+        // TODO: add more..
+      }, `--spatial-navigation-function TC${testNum++}. normal rule check`);
+
+    };
+  </script>
+
 </html>

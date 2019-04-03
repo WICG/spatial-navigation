@@ -69,6 +69,20 @@
     }
 
     /*
+     * CSS.registerProperty() from the Properties and Values API
+     * Reference: https://drafts.css-houdini.org/css-properties-values-api/#the-registerproperty-function
+     */
+    if (window.CSS && CSS.registerProperty &&
+      window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-function') === '') {
+      CSS.registerProperty({
+        name: '--spatial-navigation-function',
+        syntax: 'normal | euclidean | grid',
+        inherits: true,
+        initialValue: 'normal'
+      });
+    }
+
+    /*
      * keydown EventListener :
      * If arrow key pressed, get the next focusing element and send it to focusing controller
      */
@@ -457,7 +471,7 @@
         return container.contains(candidate) &&
           ((currentElm.contains(candidate) && isInside(eventTargetRect, candidateRect) && candidate !== currentElm) ||
           isOutside(candidateRect, eventTargetRect, dir));
-        });
+      });
     } else {
       return candidates.filter(candidate =>
         container.contains(candidate) &&
@@ -476,7 +490,27 @@
    * @returns {Node} The best candidate which will gain the focus
    */
   function selectBestCandidate(currentElm, candidates, dir) {
-    return getClosestElement(currentElm, candidates, dir, getDistance);
+    const spatialNavigationFunction = getComputedStyle(currentElm).getPropertyValue('--spatial-navigation-function');
+    const currentElmRect = getBoundingClientRect(currentElm);
+    let distanceFunction;
+    let alignedCandidates;
+
+    switch (spatialNavigationFunction) {
+    case 'grid':
+      alignedCandidates = candidates.filter((elm) => isAligned(currentElmRect, getBoundingClientRect(elm), dir));
+      if (alignedCandidates.length > 0) {
+        candidates = alignedCandidates;
+      }
+      distanceFunction = getAbsoluteDistance;
+      break;
+    case 'euclidean':
+      distanceFunction = getEuclideanDistance;
+      break;
+    default:
+      distanceFunction = getDistance;
+      break;
+    }
+    return getClosestElement(currentElm, candidates, dir, distanceFunction);
   }
 
   /**
@@ -505,7 +539,7 @@
   function getClosestElement(currentElm, candidates, dir, distanceFunction) {
     const eventTargetRect = getBoundingClientRect(currentElm);
     let minDistance = Number.POSITIVE_INFINITY;
-    let minDistanceElement = undefined;
+    let minDistanceElements = [];
 
     if (candidates) {
       for (let i = 0; i < candidates.length; i++) {
@@ -514,12 +548,15 @@
         // If the same distance, the candidate will be selected in the DOM order
         if (distance < minDistance) {
           minDistance = distance;
-          minDistanceElement = candidates[i];
+          minDistanceElements = [candidates[i]];
+        } else if (distance === minDistance) {
+          minDistanceElements.push(candidates[i]);
         }
       }
     }
 
-    return minDistanceElement;
+    return (minDistanceElements.length > 1 && distanceFunction === getAbsoluteDistance) ?
+      getClosestElement(currentElm, minDistanceElements, dir, getEuclideanDistance) : minDistanceElements[0];
   }
 
   /**
@@ -1118,7 +1155,7 @@
    * @param rect1 {DOMRect} - The search origin
    * @param rect2 {DOMRect} - A candidate element
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
-   * @returns {Number} The euclidian distance between the spatial navigation container and an element inside it
+   * @returns {Number} The euclidean distance between the spatial navigation container and an element inside it
    */
   function getInnerDistance(rect1, rect2, dir) {
     const baseEdgeForEachDirection = {left: 'right', right: 'left', up: 'bottom', down: 'top'};
@@ -1151,7 +1188,7 @@
     const P1 = Math.abs(points.entryPoint[0] - points.exitPoint[0]);
     const P2 = Math.abs(points.entryPoint[1] - points.exitPoint[1]);
 
-    // A: The euclidian distance between P1 and P2.
+    // A: The euclidean distance between P1 and P2.
     const A = Math.sqrt(Math.pow(P1, 2) + Math.pow(P2, 2));
     let B, C;
 
@@ -1198,6 +1235,44 @@
     }
 
     return (A + B - C - D);
+  }
+
+  /**
+   * Get the euclidean distance between the search origin and a candidate element considering the direction.
+   * @function getAbsoluteDistance
+   * @param rect1 {DOMRect} - The search origin
+   * @param rect2 {DOMRect} - A candidate element
+   * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
+   * @returns {Number} The distance scoring between two elements
+   */
+  function getEuclideanDistance(rect1, rect2, dir) {
+    // Get exit point, entry point
+    const points = getEntryAndExitPoints(dir, rect1, rect2);
+
+    // Find the points P1 inside the border box of starting point and P2 inside the border box of candidate
+    // that minimize the distance between these two points
+    const P1 = Math.abs(points.entryPoint[0] - points.exitPoint[0]);
+    const P2 = Math.abs(points.entryPoint[1] - points.exitPoint[1]);
+
+    // Return the euclidean distance between P1 and P2.
+    return Math.sqrt(Math.pow(P1, 2) + Math.pow(P2, 2));
+  }
+
+  /**
+   * Get the absolute distance between the search origin and a candidate element considering the direction.
+   * @function getAbsoluteDistance
+   * @param rect1 {DOMRect} - The search origin
+   * @param rect2 {DOMRect} - A candidate element
+   * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
+   * @returns {Number} The distance scoring between two elements
+   */
+  function getAbsoluteDistance(rect1, rect2, dir) {
+    // Get exit point, entry point
+    const points = getEntryAndExitPoints(dir, rect1, rect2);
+
+    // Return the absolute distance in the dir direction between P1 and P.
+    return ((dir === 'left') || (dir === 'right')) ?
+      Math.abs(points.entryPoint[0] - points.exitPoint[0]) : Math.abs(points.entryPoint[1] - points.exitPoint[1]);
   }
 
   /**
