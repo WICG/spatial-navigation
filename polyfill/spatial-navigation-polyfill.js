@@ -326,7 +326,7 @@
 
     if (container.childElementCount > 0) {
       if (!container.parentElement) {
-        container = document.body;
+        container = container.getElementsByTagName('body')[0] || document.body;
       }
       const children = container.children;
       for (const elem of children) {
@@ -459,10 +459,11 @@
           isOutside(candidateRect, eventTargetRect, dir));
         });
     } else {
-      return candidates.filter(candidate =>
-        container.contains(candidate) &&
-        isOutside(getBoundingClientRect(candidate), eventTargetRect, dir)
-      );
+      return candidates.filter(candidate => {
+        const candidateBody = (candidate.nodeName === 'IFRAME') ? candidate.contentDocument.body : null;
+        return container.contains(candidate) && candidate !== currentElm && candidateBody !== currentElm &&
+        isOutside(getBoundingClientRect(candidate), eventTargetRect, dir);
+      });
     }
   }
 
