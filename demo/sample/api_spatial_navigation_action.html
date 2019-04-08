@@ -11,8 +11,8 @@
     <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
   </head>
   <body>
-    <div style="width: 80%;">
-      <p class="cssSyntax">spatial-navigation-action: auto | focus | scroll</p>  
+    <div style="width: 80%; margin: 20px auto;" >
+      <p class="cssSyntax" style="margin: 20px auto;">spatial-navigation-action: auto | focus | scroll</p>
       <ul>
         <li>`auto`: The directional input will move the focus to the visible candidates inside the spatial navigation container. 
           If there isn't any visible candidate, the user can manually scroll the container. <br>(current spec)</li>
@@ -27,7 +27,7 @@
       <fieldset>
         <legend>Option</legend>
         <div>
-          <span>Initial number of elements: <input id="itemNum" type="number" value=10></input></span>
+          <span>Initial number of elements: <input id="itemNum" type="number" value="10" min="1" max="100"></input></span>
           <span style="margin-left: 10px;">
             spatial-navigation-action :
             <select id="behavior" style="margin:0px 20px;">
@@ -67,12 +67,21 @@
       }
     }
 
+    function updateBoxes(root, amount) {
+      root.innerHTML = '';
+      for (let i = 0; i < amount; i++) {
+        root.innerHTML += `<div class= "item" tabindex="0" style="background-color: #${getRandomInt(100, 800)};"></div>`;
+      }
+    }
+
     function getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min)) + min;
     } 
 
     itemNum.addEventListener('change', function (e) {
       console.log("boxNum: " + e.target.value);
+      e.target.value = Math.max(1, e.target.value);
+      e.target.value = Math.min(100, e.target.value);
       updateBoxes(container, e.target.value);
     });
     behaviorOption.addEventListener('change', function (e) {
