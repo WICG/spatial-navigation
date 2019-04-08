@@ -497,7 +497,7 @@
 
     switch (spatialNavigationFunction) {
     case 'grid':
-      alignedCandidates = candidates.filter((elm) => isAligned(currentElmRect, getBoundingClientRect(elm), dir));
+      alignedCandidates = candidates.filter(elm => isAligned(currentElmRect, getBoundingClientRect(elm), dir));
       if (alignedCandidates.length > 0) {
         candidates = alignedCandidates;
       }
@@ -555,8 +555,8 @@
       }
     }
 
-    return (minDistanceElements.length > 1 && distanceFunction === getAbsoluteDistance) ?
-      getClosestElement(currentElm, minDistanceElements, dir, getEuclideanDistance) : minDistanceElements[0];
+    return (minDistanceElements.length > 1 && distanceFunction === getAbsoluteDistance)
+      ? getClosestElement(currentElm, minDistanceElements, dir, getEuclideanDistance) : minDistanceElements[0];
   }
 
   /**
@@ -646,7 +646,7 @@
    * @returns {boolean}
    */
   function isCSSSpatNavContain(element) {
-    const spatialNavigationCSS =  readCssVar(element, 'spatial-navigation-contain');
+    const spatialNavigationCSS = readCssVar(element, 'spatial-navigation-contain');
     return spatialNavigationCSS === 'contain' || spatialNavigationCSS === 'delegable';
   }
 
@@ -1271,8 +1271,8 @@
     const points = getEntryAndExitPoints(dir, rect1, rect2);
 
     // Return the absolute distance in the dir direction between P1 and P.
-    return ((dir === 'left') || (dir === 'right')) ?
-      Math.abs(points.entryPoint[0] - points.exitPoint[0]) : Math.abs(points.entryPoint[1] - points.exitPoint[1]);
+    return ((dir === 'left') || (dir === 'right'))
+      ? Math.abs(points.entryPoint[0] - points.exitPoint[0]) : Math.abs(points.entryPoint[1] - points.exitPoint[1]);
   }
 
   /**
