@@ -444,7 +444,7 @@
    */
   function selectBestCandidateFromEdge(currentElm, candidates, dir) {
     if (startingPoint)
-      return getClosestElement(currentElm, candidates, dir, getFromPointDistance);
+      return getClosestElement(currentElm, candidates, dir, getDistanceFromPoint);
     else
       return getClosestElement(currentElm, candidates, dir, getInnerDistance);    
   }
@@ -964,22 +964,14 @@
   /**
    * Get distance between the search origin and a candidate element along the direction when candidate element is inside the search origin.
    * @see {@link https://wicg.github.io/spatial-navigation/#select-the-best-candidate}
-   * @function getFromPointDistance
+   * @function getDistanceFromPoint
    * @param point {Point} - The search origin
    * @param element {DOMRect} - A candidate element
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @returns {Number} The euclidian distance between the spatial navigation container and an element inside it
    */
-  function getFromPointDistance(point, element, dir) {
-    //getDistance(startingPoint, rect2, dir);
-
-    const kOrthogonalWeightForLeftRight = 30;
-    const kOrthogonalWeightForUpDown = 2;
-
-    let orthogonalBias = 0;
-    let alignBias = 0;
-    const alignWeight = 5.0;
-
+  function getDistanceFromPoint(point = startingPoint, element, dir) {
+    
     // Get exit point, entry point -> {x: '', y: ''};
     const points = getEntryAndExitPoints(dir, point, element);
 
@@ -988,49 +980,8 @@
     const P1 = Math.abs(points.entryPoint.x - points.exitPoint.x);
     const P2 = Math.abs(points.entryPoint.y - points.exitPoint.y);
 
-    // A: The euclidian distance between P1 and P2.
-    const A = Math.sqrt(Math.pow(P1, 2) + Math.pow(P2, 2));
-    let B, C;
-
-    // B: The absolute distance in the direction which is orthogonal to dir between P1 and P2, or 0 if dir is null.
-    // C: The intersection edges between a candidate and the starting point.
-
-    switch (dir) {
-    case 'left':
-      /* falls through */
-    case 'right' :
-      // If two elements are aligned, add align bias
-      // else, add orthogonal bias
-      if (isAligned(element1, element2, dir))
-        alignBias = Math.min(intersectionRect.height / element1.height , 1);
-      else
-        orthogonalBias = (element1.height / 2);
-
-      B = (P2 + orthogonalBias) * kOrthogonalWeightForLeftRight;
-      C = alignWeight * alignBias;
-      break;
-
-    case 'up' :
-      /* falls through */
-    case 'down' :
-      // If two elements are aligned, add align bias
-      // else, add orthogonal bias
-      if (isAligned(element1, element2, dir))
-        alignBias = Math.min(intersectionRect.width / element1.width , 1);
-      else
-        orthogonalBias = (element1.width / 2);
-
-      B = (P1 + orthogonalBias) * kOrthogonalWeightForUpDown;
-      C = alignWeight * alignBias;
-      break;
-
-    default:
-      B = 0;
-      C = 0;
-      break;
-    }
-
-    return (A + B - C);
+    // The result is euclidian distance between P1 and P2.
+    return Math.sqrt(Math.pow(P1, 2) + Math.pow(P2, 2));
   }
 
   /**
@@ -1135,9 +1086,6 @@
     const points = {entryPoint: {x: 0, y: 0}, exitPoint:{x: 0, y: 0}};
 
     if (startingPoint) {
-
-      console.log(`Navigate from Point: xPos = ${startingPoint.x}, yPos = ${startingPoint.y}`);
-
       points.exitPoint = startingPoint;
 
       switch (dir) {
