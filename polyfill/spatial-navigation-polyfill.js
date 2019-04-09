@@ -10,8 +10,8 @@
  /**
  * User type definition for Point
  * @typeof {Object} Points
- * @property {Array<x,y>} Points.entryPoint
- * @property {Array<x,y>} Points.exitPoint
+ * @property {Point} Points.entryPoint
+ * @property {Point} Points.exitPoint
  */
 
 (function () {
@@ -24,7 +24,7 @@
   const ARROW_KEY_CODE = {37: 'left', 38: 'up', 39: 'right', 40: 'down'};
   const TAB_KEY_CODE = 9;
   let mapOfBoundRect = null;
-  let startingPosition = null; // Indicates global variables for spatnav (starting position)
+  let startingPoint = null; // Indicates global variables for spatnav (starting position)
 
   let navnotargetPrevented = false; // Indicates the navnotarget event is prevented or not
   let navbeforescrollPrevented = false; // Indicates the navbeforescroll event is prevented or not
@@ -68,7 +68,7 @@
       const dir = ARROW_KEY_CODE[e.keyCode];
 
       if (e.keyCode === TAB_KEY_CODE)
-        startingPosition = null;
+        startingPoint = null;
 
       if (!currentKeyMode ||
           (currentKeyMode === 'NONE') ||
@@ -90,7 +90,7 @@
           navigate(dir);
 
           mapOfBoundRect = null;
-          startingPosition = null;
+          startingPoint = null;
         }
       }
     });
@@ -101,7 +101,7 @@
      * NOTE: Let UA set the spatial navigation starting point based on click
      */
     document.addEventListener('mouseup', function(e) {
-      startingPosition = {xPosition: e.clientX, yPosition: e.clientY};
+      startingPoint = {x: e.clientX, y: e.clientY};
     });
 
     /*
@@ -142,24 +142,20 @@
     // spatial navigation steps
 
     // 1
-    let startingPoint = findStartingPoint();
+    let searchOrigin = findSearchOrigin();
     let eventTarget = null;
     let elementFromPosition = null;
 
     // 2 Optional step, UA defined starting point
-    if (startingPosition) {
-      elementFromPosition = document.elementFromPoint(startingPosition.xPosition, startingPosition.yPosition);
+    if (startingPoint) {
+      elementFromPosition = (document.elementFromPoint(startingPoint.x, startingPoint.y)).getSpatialNavigationContainer();
     }
 
-    if (elementFromPosition && startingPoint.contains(elementFromPosition)) {
-      startingPoint = startingPosition;
-      startingPosition = null;
-
-      // 3
+    if (elementFromPosition && searchOrigin.contains(elementFromPosition)) {
       eventTarget = elementFromPosition;
     } else {
       // 3
-      eventTarget = startingPoint;
+      eventTarget = searchOrigin;
     }
 
     // 4
@@ -366,6 +362,8 @@
    */
   function spatialNavigationSearch (dir, candidates, container) {
     // Let container be the nearest ancestor of eventTarget that is a spatnav container.
+
+    // targetElement === eventTarget
     const targetElement = this;
     candidates = spatNavCandidates(targetElement, dir, candidates, container);
 
@@ -445,7 +443,10 @@
    * @returns {Node} The best candidate which will gain the focus
    */
   function selectBestCandidateFromEdge(currentElm, candidates, dir) {
-    return getClosestElement(currentElm, candidates, dir, getInnerDistance);
+    if (startingPoint)
+      return getClosestElement(currentElm, candidates, dir, getFromPointDistance);
+    else
+      return getClosestElement(currentElm, candidates, dir, getInnerDistance);    
   }
 
 
@@ -516,7 +517,7 @@
 
   /**
    * Create the NavigatoinEvent: navbeforefocus, navbeforescroll, navnotarget
-   * @see {@link https://wicg.github.io/spatial-navigation/#events-navigationevent}
+   * @see {@link https://drafts.csswg.org/css-nav-1/#events-navigationevent}
    * @function createSpatNavEvents
    * @param option {string} - Type of the navigation event (beforefocus, beforescroll, notarget)
    * @param element {Node} - The target element of the event
@@ -569,20 +570,19 @@
   }
 
   /**
-   * Find starting point. 
-   * @todo Use terminology - 'search origin'
-   * @see {@link https://wicg.github.io/spatial-navigation/#spatial-navigation-steps}
-   * @function findStartingPoint
-   * @returns {Node} The starting point for the spatial navigation
+   * Find search origin
+   * @see {@link https://drafts.csswg.org/css-nav-1/#nav}
+   * @function findSearchOrigin
+   * @returns {Node} The search origin for the spatial navigation
    */
-  function findStartingPoint() {
-    let startingPoint = document.activeElement;
-    if (!startingPoint ||
-      (startingPoint === document.body && !document.querySelector(':focus')) /* body isn't actually focused*/
+  function findSearchOrigin() {
+    let searchOrigin = document.activeElement;
+    if (!searchOrigin ||
+      (searchOrigin === document.body && !document.querySelector(':focus')) /* body isn't actually focused*/
     ) {
-      startingPoint = document;
+      searchOrigin = document;
     }
-    return startingPoint;
+    return searchOrigin;
   }
 
   /**
@@ -964,28 +964,15 @@
   /**
    * Get distance between the search origin and a candidate element along the direction when candidate element is inside the search origin.
    * @see {@link https://wicg.github.io/spatial-navigation/#select-the-best-candidate}
-   * @function getInnerDistance
-   * @param rect1 {DOMRect} - The search origin
-   * @param rect2 {DOMRect} - A candidate element
+   * @function getFromPointDistance
+   * @param point {Point} - The search origin
+   * @param element {DOMRect} - A candidate element
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @returns {Number} The euclidian distance between the spatial navigation container and an element inside it
    */
-  function getInnerDistance(rect1, rect2, dir) {
-    const baseEdgeForEachDirection = {left: 'right', right: 'left', up: 'bottom', down: 'top'};
-    const baseEdge = baseEdgeForEachDirection[dir];
-    return Math.abs(rect1[baseEdge] - rect2[baseEdge]);
-  }
+  function getFromPointDistance(point, element, dir) {
+    //getDistance(startingPoint, rect2, dir);
 
-  /**
-   * Get the distance between the search origin and a candidate element considering the direction.
-   * @see {@link https://drafts.csswg.org/css-nav-1/#calculating-the-distance}
-   * @function getDistance
-   * @param rect1 {DOMRect} - The search origin
-   * @param rect2 {DOMRect} - A candidate element
-   * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
-   * @returns {Number} The distance scoring between two elements
-   */
-  function getDistance(rect1, rect2, dir) {
     const kOrthogonalWeightForLeftRight = 30;
     const kOrthogonalWeightForUpDown = 2;
 
@@ -993,13 +980,13 @@
     let alignBias = 0;
     const alignWeight = 5.0;
 
-    // Get exit point, entry point
-    const points = getEntryAndExitPoints(dir, rect1, rect2);
+    // Get exit point, entry point -> {x: '', y: ''};
+    const points = getEntryAndExitPoints(dir, point, element);
 
     // Find the points P1 inside the border box of starting point and P2 inside the border box of candidate
     // that minimize the distance between these two points
-    const P1 = Math.abs(points.entryPoint[0] - points.exitPoint[0]);
-    const P2 = Math.abs(points.entryPoint[1] - points.exitPoint[1]);
+    const P1 = Math.abs(points.entryPoint.x - points.exitPoint.x);
+    const P2 = Math.abs(points.entryPoint.y - points.exitPoint.y);
 
     // A: The euclidian distance between P1 and P2.
     const A = Math.sqrt(Math.pow(P1, 2) + Math.pow(P2, 2));
@@ -1008,20 +995,16 @@
     // B: The absolute distance in the direction which is orthogonal to dir between P1 and P2, or 0 if dir is null.
     // C: The intersection edges between a candidate and the starting point.
 
-    // D: The square root of the area of intersection between the border boxes of candidate and starting point
-    const intersectionRect = getIntersectionRect(rect1, rect2);
-    const D = intersectionRect.area;
-
     switch (dir) {
     case 'left':
       /* falls through */
     case 'right' :
       // If two elements are aligned, add align bias
       // else, add orthogonal bias
-      if (isAligned(rect1, rect2, dir))
-        alignBias = Math.min(intersectionRect.height / rect1.height , 1);
+      if (isAligned(element1, element2, dir))
+        alignBias = Math.min(intersectionRect.height / element1.height , 1);
       else
-        orthogonalBias = (rect1.height / 2);
+        orthogonalBias = (element1.height / 2);
 
       B = (P2 + orthogonalBias) * kOrthogonalWeightForLeftRight;
       C = alignWeight * alignBias;
@@ -1032,10 +1015,100 @@
     case 'down' :
       // If two elements are aligned, add align bias
       // else, add orthogonal bias
-      if (isAligned(rect1, rect2, dir))
-        alignBias = Math.min(intersectionRect.width / rect1.width , 1);
+      if (isAligned(element1, element2, dir))
+        alignBias = Math.min(intersectionRect.width / element1.width , 1);
       else
-        orthogonalBias = (rect1.width / 2);
+        orthogonalBias = (element1.width / 2);
+
+      B = (P1 + orthogonalBias) * kOrthogonalWeightForUpDown;
+      C = alignWeight * alignBias;
+      break;
+
+    default:
+      B = 0;
+      C = 0;
+      break;
+    }
+
+    return (A + B - C);
+  }
+
+  /**
+   * Get distance between the search origin and a candidate element along the direction when candidate element is inside the search origin.
+   * @see {@link https://wicg.github.io/spatial-navigation/#select-the-best-candidate}
+   * @function getInnerDistance
+   * @param rect1 {DOMRect} - The search origin
+   * @param rect2 {DOMRect} - A candidate element
+   * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
+   * @returns {Number} The euclidian distance between the spatial navigation container and an element inside it
+   */
+  function getInnerDistance(rect1, rect2, dir) {
+    const baseEdgeForEachDirection = {left: 'right', right: 'left', up: 'bottom', down: 'top'};
+    const baseEdge = baseEdgeForEachDirection[dir];
+
+    return Math.abs(rect1[baseEdge] - rect2[baseEdge]);
+  }
+
+  /**
+   * Get the distance between the search origin and a candidate element considering the direction.
+   * @see {@link https://drafts.csswg.org/css-nav-1/#calculating-the-distance}
+   * @function getDistance
+   * @param element1 {DOMRect || Point} - The search origin
+   * @param element2 {DOMRect} - A candidate element
+   * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
+   * @returns {Number} The distance scoring between two elements
+   */
+  function getDistance(element1, element2, dir) {
+    const kOrthogonalWeightForLeftRight = 30;
+    const kOrthogonalWeightForUpDown = 2;
+
+    let orthogonalBias = 0;
+    let alignBias = 0;
+    const alignWeight = 5.0;
+
+    // Get exit point, entry point -> {x: '', y: ''};
+    const points = getEntryAndExitPoints(dir, element1, element2);
+
+    // Find the points P1 inside the border box of starting point and P2 inside the border box of candidate
+    // that minimize the distance between these two points
+    const P1 = Math.abs(points.entryPoint.x - points.exitPoint.x);
+    const P2 = Math.abs(points.entryPoint.y - points.exitPoint.y);
+
+    // A: The euclidian distance between P1 and P2.
+    const A = Math.sqrt(Math.pow(P1, 2) + Math.pow(P2, 2));
+    let B, C;
+
+    // B: The absolute distance in the direction which is orthogonal to dir between P1 and P2, or 0 if dir is null.
+    // C: The intersection edges between a candidate and the starting point.
+
+    // D: The square root of the area of intersection between the border boxes of candidate and starting point
+    const intersectionRect = getIntersectionRect(element1, element2);
+    const D = intersectionRect.area;
+
+    switch (dir) {
+    case 'left':
+      /* falls through */
+    case 'right' :
+      // If two elements are aligned, add align bias
+      // else, add orthogonal bias
+      if (isAligned(element1, element2, dir))
+        alignBias = Math.min(intersectionRect.height / element1.height , 1);
+      else
+        orthogonalBias = (element1.height / 2);
+
+      B = (P2 + orthogonalBias) * kOrthogonalWeightForLeftRight;
+      C = alignWeight * alignBias;
+      break;
+
+    case 'up' :
+      /* falls through */
+    case 'down' :
+      // If two elements are aligned, add align bias
+      // else, add orthogonal bias
+      if (isAligned(element1, element2, dir))
+        alignBias = Math.min(intersectionRect.width / element1.width , 1);
+      else
+        orthogonalBias = (element1.width / 2);
 
       B = (P1 + orthogonalBias) * kOrthogonalWeightForUpDown;
       C = alignWeight * alignBias;
@@ -1059,62 +1132,114 @@
    * @returns {Points} The exit point from the search origin and the entry point from a candidate
    */
   function getEntryAndExitPoints(dir = 'down', rect1, rect2) {
-    const points = {entryPoint:[0,0], exitPoint:[0,0]};
+    const points = {entryPoint: {x: 0, y: 0}, exitPoint:{x: 0, y: 0}};
 
-    // Set direction
-    switch (dir) {
-    case 'left':
-      points.exitPoint[0] = rect1.left;
-      points.entryPoint[0] = (rect2.right < rect1.left) ? rect2.right : rect1.left;
-      break;
-    case 'up':
-      points.exitPoint[1] = rect1.top;
-      points.entryPoint[1] = (rect2.bottom < rect1.top) ? rect2.bottom : rect1.top;
-      break;
-    case 'right':
-      points.exitPoint[0] = rect1.right;
-      points.entryPoint[0] = (rect2.left > rect1.right) ? rect2.left : rect1.right;
-      break;
-    case 'down':
-      points.exitPoint[1] = rect1.bottom;
-      points.entryPoint[1] = (rect2.top > rect1.bottom) ? rect2.top : rect1.bottom;
-      break;
+    if (startingPoint) {
+
+      console.log(`Navigate from Point: xPos = ${startingPoint.x}, yPos = ${startingPoint.y}`);
+
+      points.exitPoint = startingPoint;
+
+      switch (dir) {
+      case 'left':
+        points.entryPoint.x = (startingPoint.x > rect2.right) ? rect2.right : rect2.left;
+        break;
+      case 'up':
+        points.entryPoint.y = (startingPoint.y > rect2.bottom) ? rect2.bottom : rect2.top;
+        break;
+      case 'right':
+        points.entryPoint.x = (startingPoint.x < rect2.left) ? rect2.left : rect2.right;
+        break;
+      case 'down':
+        points.entryPoint.y = (startingPoint.y < rect2.top) ? rect2.top : rect2.bottom;
+        break;
+      }
+  
+      // Set orthogonal direction
+      switch (dir) {
+      case 'left':
+      case 'right':
+        if (startingPoint.y <= rect2.top) {
+          points.entryPoint.y = rect2.top;
+        }
+        else if (startingPoint.y < rect2.bottom) {
+          points.entryPoint.y = startingPoint.y;
+        }
+        else {
+          points.entryPoint.y = rect2.bottom;
+        }
+        break;
+  
+      case 'up':
+      case 'down':
+        if (startingPoint.x <= rect2.left) {
+          points.entryPoint.x = rect2.left;
+        }
+        else if (startingPoint.x < rect2.right) {
+          points.entryPoint.x = startingPoint.x;
+        }
+        else {
+          points.entryPoint.x = rect2.right;
+        }
+        break;
+      }
     }
-
-    // Set orthogonal direction
-    switch (dir) {
-    case 'left':
-    case 'right':
-      if (isBelow(rect1, rect2)) {
-        points.exitPoint[1] = rect1.top;
-        points.entryPoint[1] = (rect2.bottom < rect1.top) ? rect2.bottom : rect1.top;
+    else {
+      // Set direction
+      switch (dir) {
+      case 'left':
+        points.exitPoint.x = rect1.left;
+        points.entryPoint.x = (rect2.right < rect1.left) ? rect2.right : rect1.left;
+        break;
+      case 'up':
+        points.exitPoint.y = rect1.top;
+        points.entryPoint.y = (rect2.bottom < rect1.top) ? rect2.bottom : rect1.top;
+        break;
+      case 'right':
+        points.exitPoint.x = rect1.right;
+        points.entryPoint.x = (rect2.left > rect1.right) ? rect2.left : rect1.right;
+        break;
+      case 'down':
+        points.exitPoint.y = rect1.bottom;
+        points.entryPoint.y = (rect2.top > rect1.bottom) ? rect2.top : rect1.bottom;
+        break;
       }
-      else if (isBelow(rect2, rect1)) {
-        points.exitPoint[1] = rect1.bottom;
-        points.entryPoint[1] = (rect2.top > rect1.bottom) ? rect2.top : rect1.bottom;
+  
+      // Set orthogonal direction
+      switch (dir) {
+      case 'left':
+      case 'right':
+        if (isBelow(rect1, rect2)) {
+          points.exitPoint.y = rect1.top;
+          points.entryPoint.y = (rect2.bottom < rect1.top) ? rect2.bottom : rect1.top;
+        }
+        else if (isBelow(rect2, rect1)) {
+          points.exitPoint.y = rect1.bottom;
+          points.entryPoint.y = (rect2.top > rect1.bottom) ? rect2.top : rect1.bottom;
+        }
+        else {
+          points.exitPoint.y = Math.max(rect1.top, rect2.top);
+          points.entryPoint.y = points.exitPoint.y;
+        }
+        break;
+  
+      case 'up':
+      case 'down':
+        if (isRightSide(rect1, rect2)) {
+          points.exitPoint.x = rect1.left;
+          points.entryPoint.x = (rect2.right < rect1.left) ? rect2.right : rect1.left;
+        }
+        else if (isRightSide(rect2, rect1)) {
+          points.exitPoint.x = rect1.right;
+          points.entryPoint.x = (rect2.left > rect1.right) ? rect2.left : rect1.right;
+        }
+        else {
+          points.exitPoint.x = Math.max(rect1.left, rect2.left);
+          points.entryPoint.x = points.exitPoint.x;
+        }
+        break;
       }
-      else {
-        points.exitPoint[1] = Math.max(rect1.top, rect2.top);
-        points.entryPoint[1] = points.exitPoint[1];
-      }
-      break;
-
-    case 'up':
-    case 'down':
-      if (isRightSide(rect1, rect2)) {
-        points.exitPoint[0] = rect1.left;
-        points.entryPoint[0] = (rect2.right < rect1.left) ? rect2.right : rect1.left;
-      }
-      else if (isRightSide(rect2, rect1)) {
-        points.exitPoint[0] = rect1.right;
-        points.entryPoint[0] = (rect2.left > rect1.right) ? rect2.left : rect1.right;
-      }
-      else {
-        points.exitPoint[0] = Math.max(rect1.left, rect2.left);
-        points.entryPoint[0] = points.exitPoint[0];
-      }
-      break;
-    }
+    } 
     
     return points;
   }
@@ -1133,6 +1258,7 @@
    */
   function getIntersectionRect(rect1, rect2) {
     const intersection_rect = {width: 0, height: 0, area: 0};
+
     const new_location = [Math.max(rect1.left, rect2.left), Math.max(rect1.top, rect2.top)];
     const new_max_point = [Math.min(rect1.right, rect2.right), Math.min(rect1.bottom, rect2.bottom)];
 
@@ -1143,7 +1269,7 @@
       // intersecting-cases
       intersection_rect.area = Math.sqrt(intersection_rect.width * intersection_rect.height);
     }
-
+    
     return intersection_rect;
   }
 
