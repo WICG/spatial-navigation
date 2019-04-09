@@ -555,8 +555,8 @@
       }
     }
 
-    return (minDistanceElements.length > 1 && distanceFunction === getAbsoluteDistance)
-      ? getClosestElement(currentElm, minDistanceElements, dir, getEuclideanDistance) : minDistanceElements[0];
+    return (minDistanceElements.length > 1 && distanceFunction === getAbsoluteDistance) ?
+      getClosestElement(currentElm, minDistanceElements, dir, getEuclideanDistance) : minDistanceElements[0];
   }
 
   /**
@@ -1239,7 +1239,7 @@
 
   /**
    * Get the euclidean distance between the search origin and a candidate element considering the direction.
-   * @function getAbsoluteDistance
+   * @function getEuclideanDistance
    * @param rect1 {DOMRect} - The search origin
    * @param rect2 {DOMRect} - A candidate element
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
@@ -1271,8 +1271,8 @@
     const points = getEntryAndExitPoints(dir, rect1, rect2);
 
     // Return the absolute distance in the dir direction between P1 and P.
-    return ((dir === 'left') || (dir === 'right'))
-      ? Math.abs(points.entryPoint[0] - points.exitPoint[0]) : Math.abs(points.entryPoint[1] - points.exitPoint[1]);
+    return ((dir === 'left') || (dir === 'right')) ?
+      Math.abs(points.entryPoint[0] - points.exitPoint[0]) : Math.abs(points.entryPoint[1] - points.exitPoint[1]);
   }
 
   /**
