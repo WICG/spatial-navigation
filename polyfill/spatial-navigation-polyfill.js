@@ -66,7 +66,7 @@
       CSS.registerProperty({
         name: '--spatial-navigation-action',
         syntax: 'auto | focus | scroll',
-        inherits: true,
+        inherits: false,
         initialValue: 'auto'
       });
     }
