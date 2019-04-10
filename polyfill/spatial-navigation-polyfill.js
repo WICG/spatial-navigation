@@ -184,9 +184,14 @@
         console.log(`Behavior on the spatnav container: ${getCSSSpatNavAction(eventTarget)}`);
         if (scrollingController(eventTarget, dir)) return;
       }
-
-      else {
+      else if (getCSSSpatNavAction(eventTarget) === 'focus') {
         // 5-2
+        console.log(`Behavior on the spatnav container: ${getCSSSpatNavAction(eventTarget)}`);
+        focusOnly(eventTarget, eventTarget, dir);
+      }
+      else if (getCSSSpatNavAction(container) === 'auto') {
+        // 5-2
+        console.log(`Behavior on the spatnav container: ${getCSSSpatNavAction(eventTarget)}`);
         if (focusingController(eventTarget.spatialNavigationSearch(dir), dir)) return;
         if (scrollingController(eventTarget, dir)) return;
       }
