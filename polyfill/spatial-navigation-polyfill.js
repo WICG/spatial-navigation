@@ -26,9 +26,6 @@
   let mapOfBoundRect = null;
   let startingPosition = null; // Indicates global variables for spatnav (starting position)
 
-  let navnotargetPrevented = false; // Indicates the navnotarget event is prevented or not
-  let navbeforefocusPrevented = false; // Indicates the navbeforefocus event is prevented or not
-
   /**
    * Initiate the spatial navigation features of the polyfill.
    * This function defines which input methods trigger the spatial navigation behavior.
@@ -115,24 +112,6 @@
      */
     document.addEventListener('mouseup', function(e) {
       startingPosition = {xPosition: e.clientX, yPosition: e.clientY};
-    });
-
-    /*
-     * navbeforefocus EventListener :
-     * If the navbeforefocus event is triggered, then the navbeforefocusPrevented flag can be set
-     * for define the prevented default behavior for the event
-     */
-    document.body.addEventListener('navbeforefocus', function(e) {
-      navbeforefocusPrevented = e.defaultPrevented;
-    });
-
-    /*
-     * navnotarget EventListener :
-     * If the navnotarget event is triggered, then the navnotargetPrevented flag can be set
-     * for define the prevented default behavior for the event
-     */
-    document.body.addEventListener('navnotarget', function(e) {
-      navnotargetPrevented = e.defaultPrevented;
     });
   }
 
@@ -222,9 +201,7 @@
             // to in the current spatnav container and when that same spatnav container cannot be scrolled either,
             // before going up the tree to search in the nearest ancestor spatnav container.
 
-            createSpatNavEvents('notarget', container, eventTarget, dir);
-
-            if (navnotargetPrevented) break;
+            if (!createSpatNavEvents('notarget', container, eventTarget, dir)) return;
 
             // find the container
             if (container === document || container === document.documentElement) {
@@ -295,11 +272,8 @@
       /*
        * [event] navbeforefocus : Fired before spatial or sequential navigation changes the focus.
        */
-      createSpatNavEvents('beforefocus', bestCandidate, null, dir);
-      if (!navbeforefocusPrevented) {
-        bestCandidate.focus();
+      if (!createSpatNavEvents('beforefocus', bestCandidate, null, dir))
         return true;
-      }
     }
 
     // When bestCandidate is not found within the scrollport of a container: Nothing
@@ -616,9 +590,7 @@
         // to in the current spatnav container and when that same spatnav container cannot be scrolled either,
         // before going up the tree to search in the nearest ancestor spatnav container.
 
-        createSpatNavEvents('notarget', container, element, dir);
-
-        if (navnotargetPrevented) break;
+        if (!createSpatNavEvents('notarget', container, eventTarget, dir)) return;
 
         // find the container
 
