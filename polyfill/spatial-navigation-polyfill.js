@@ -75,7 +75,7 @@
      * keydown EventListener :
      * If arrow key pressed, get the next focusing element and send it to focusing controller
      */
-    window.addEventListener('keydown', function(e) {
+    window.addEventListener('keydown', e => {
       const currentKeyMode = (parent && parent.__spatialNavigation__.keyMode) || window.__spatialNavigation__.keyMode;
       const eventTarget = document.activeElement;
       const dir = ARROW_KEY_CODE[e.keyCode];
@@ -113,7 +113,7 @@
      * If the mouse click a point in the page, the point will be the starting point.
      * NOTE: Let UA set the spatial navigation starting point based on click
      */
-    document.addEventListener('mouseup', function(e) {
+    document.addEventListener('mouseup', e => {
       startingPoint = {x: e.clientX, y: e.clientY};
     });
 
@@ -122,7 +122,7 @@
      * If the navbeforefocus event is triggered, then the navbeforefocusPrevented flag can be set
      * for define the prevented default behavior for the event
      */
-    document.body.addEventListener('navbeforefocus', function(e) {
+    document.body.addEventListener('navbeforefocus', e => {
       navbeforefocusPrevented = e.defaultPrevented;
     });
 
@@ -131,7 +131,7 @@
      * If the navnotarget event is triggered, then the navnotargetPrevented flag can be set
      * for define the prevented default behavior for the event
      */
-    document.body.addEventListener('navnotarget', function(e) {
+    document.body.addEventListener('navnotarget', e => {
       navnotargetPrevented = e.defaultPrevented;
     });
   }
@@ -146,7 +146,7 @@
     // spatial navigation steps
 
     // 1
-    let searchOrigin = findSearchOrigin();
+    const searchOrigin = findSearchOrigin();
     let eventTarget = null;
     let elementFromPosition = null;
 
@@ -238,9 +238,8 @@
             }
             else {
               // avoiding when spatnav container with tabindex=-1
-              if (isFocusable(container)) {
+              if (isFocusable(container))
                 eventTarget = container;
-              }
 
               container = parentContainer;
 
@@ -1516,7 +1515,7 @@
     };
   }
 
-  window.addEventListener('load', function() {
+  window.addEventListener('load', () => {
     initiateSpatialNavigation();
     enableExperimentalAPIs(false);
   });
