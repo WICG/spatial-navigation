@@ -970,8 +970,8 @@
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @returns {Number} The euclidian distance between the spatial navigation container and an element inside it
    */
-  function getDistanceFromPoint(point = startingPoint, element, dir) {
-    
+  function getDistanceFromPoint(point, element, dir) {
+    point = startingPoint;
     // Get exit point, entry point -> {x: '', y: ''};
     const points = getEntryAndExitPoints(dir, point, element);
 
@@ -1004,12 +1004,12 @@
    * Get the distance between the search origin and a candidate element considering the direction.
    * @see {@link https://drafts.csswg.org/css-nav-1/#calculating-the-distance}
    * @function getDistance
-   * @param element1 {DOMRect || Point} - The search origin
+   * @param searchOrigin {DOMRect || Point} - The search origin
    * @param element2 {DOMRect} - A candidate element
-   * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
+   * @param candidateRect {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @returns {Number} The distance scoring between two elements
    */
-  function getDistance(element1, element2, dir) {
+  function getDistance(searchOrigin, candidateRect, dir) {
     const kOrthogonalWeightForLeftRight = 30;
     const kOrthogonalWeightForUpDown = 2;
 
@@ -1018,7 +1018,7 @@
     const alignWeight = 5.0;
 
     // Get exit point, entry point -> {x: '', y: ''};
-    const points = getEntryAndExitPoints(dir, element1, element2);
+    const points = getEntryAndExitPoints(dir, searchOrigin, candidateRect);
 
     // Find the points P1 inside the border box of starting point and P2 inside the border box of candidate
     // that minimize the distance between these two points
@@ -1033,7 +1033,7 @@
     // C: The intersection edges between a candidate and the starting point.
 
     // D: The square root of the area of intersection between the border boxes of candidate and starting point
-    const intersectionRect = getIntersectionRect(element1, element2);
+    const intersectionRect = getIntersectionRect(searchOrigin, candidateRect);
     const D = intersectionRect.area;
 
     switch (dir) {
@@ -1042,10 +1042,10 @@
     case 'right' :
       // If two elements are aligned, add align bias
       // else, add orthogonal bias
-      if (isAligned(element1, element2, dir))
-        alignBias = Math.min(intersectionRect.height / element1.height , 1);
+      if (isAligned(searchOrigin, candidateRect, dir))
+        alignBias = Math.min(intersectionRect.height / searchOrigin.height , 1);
       else
-        orthogonalBias = (element1.height / 2);
+        orthogonalBias = (searchOrigin.height / 2);
 
       B = (P2 + orthogonalBias) * kOrthogonalWeightForLeftRight;
       C = alignWeight * alignBias;
@@ -1056,10 +1056,10 @@
     case 'down' :
       // If two elements are aligned, add align bias
       // else, add orthogonal bias
-      if (isAligned(element1, element2, dir))
-        alignBias = Math.min(intersectionRect.width / element1.width , 1);
+      if (isAligned(searchOrigin, candidateRect, dir))
+        alignBias = Math.min(intersectionRect.width / searchOrigin.width , 1);
       else
-        orthogonalBias = (element1.width / 2);
+        orthogonalBias = (searchOrigin.width / 2);
 
       B = (P1 + orthogonalBias) * kOrthogonalWeightForUpDown;
       C = alignWeight * alignBias;
@@ -1078,28 +1078,28 @@
    * Get entry point and exit point of two elements considering the direction.
    * @function getEntryAndExitPoints
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD). Default value for dir is 'down'.
-   * @param rect1 {DOMRect} - The search origin which contains the exit point
-   * @param rect2 {DOMRect} - One of candidates which contains the entry point
+   * @param searchOrigin {DOMRect | Point} - The search origin which contains the exit point
+   * @param candidateRect {DOMRect} - One of candidates which contains the entry point
    * @returns {Points} The exit point from the search origin and the entry point from a candidate
    */
-  function getEntryAndExitPoints(dir = 'down', rect1, rect2) {
+  function getEntryAndExitPoints(dir = 'down', searchOrigin, candidateRect) {
     const points = {entryPoint: {x: 0, y: 0}, exitPoint:{x: 0, y: 0}};
 
     if (startingPoint) {
-      points.exitPoint = startingPoint;
+      points.exitPoint = searchOrigin;
 
       switch (dir) {
       case 'left':
-        points.entryPoint.x = (startingPoint.x > rect2.right) ? rect2.right : rect2.left;
+        points.entryPoint.x = candidateRect.right;
         break;
       case 'up':
-        points.entryPoint.y = (startingPoint.y > rect2.bottom) ? rect2.bottom : rect2.top;
+        points.entryPoint.y = candidateRect.bottom;
         break;
       case 'right':
-        points.entryPoint.x = (startingPoint.x < rect2.left) ? rect2.left : rect2.right;
+        points.entryPoint.x = candidateRect.left;
         break;
       case 'down':
-        points.entryPoint.y = (startingPoint.y < rect2.top) ? rect2.top : rect2.bottom;
+        points.entryPoint.y = candidateRect.top;
         break;
       }
   
@@ -1107,27 +1107,23 @@
       switch (dir) {
       case 'left':
       case 'right':
-        if (startingPoint.y <= rect2.top) {
-          points.entryPoint.y = rect2.top;
-        }
-        else if (startingPoint.y < rect2.bottom) {
+        if (startingPoint.y <= candidateRect.top) {
+          points.entryPoint.y = candidateRect.top;
+        } else if (startingPoint.y < candidateRect.bottom) {
           points.entryPoint.y = startingPoint.y;
-        }
-        else {
-          points.entryPoint.y = rect2.bottom;
+        } else {
+          points.entryPoint.y = candidateRect.bottom;
         }
         break;
   
       case 'up':
       case 'down':
-        if (startingPoint.x <= rect2.left) {
-          points.entryPoint.x = rect2.left;
-        }
-        else if (startingPoint.x < rect2.right) {
+        if (startingPoint.x <= candidateRect.left) {
+          points.entryPoint.x = candidateRect.left;
+        } else if (startingPoint.x < candidateRect.right) {
           points.entryPoint.x = startingPoint.x;
-        }
-        else {
-          points.entryPoint.x = rect2.right;
+        } else {
+          points.entryPoint.x = candidateRect.right;
         }
         break;
       }
@@ -1136,20 +1132,20 @@
       // Set direction
       switch (dir) {
       case 'left':
-        points.exitPoint.x = rect1.left;
-        points.entryPoint.x = (rect2.right < rect1.left) ? rect2.right : rect1.left;
+        points.exitPoint.x = searchOrigin.left;
+        points.entryPoint.x = (candidateRect.right < searchOrigin.left) ? candidateRect.right : searchOrigin.left;
         break;
       case 'up':
-        points.exitPoint.y = rect1.top;
-        points.entryPoint.y = (rect2.bottom < rect1.top) ? rect2.bottom : rect1.top;
+        points.exitPoint.y = searchOrigin.top;
+        points.entryPoint.y = (candidateRect.bottom < searchOrigin.top) ? candidateRect.bottom : searchOrigin.top;
         break;
       case 'right':
-        points.exitPoint.x = rect1.right;
-        points.entryPoint.x = (rect2.left > rect1.right) ? rect2.left : rect1.right;
+        points.exitPoint.x = searchOrigin.right;
+        points.entryPoint.x = (candidateRect.left > searchOrigin.right) ? candidateRect.left : searchOrigin.right;
         break;
       case 'down':
-        points.exitPoint.y = rect1.bottom;
-        points.entryPoint.y = (rect2.top > rect1.bottom) ? rect2.top : rect1.bottom;
+        points.exitPoint.y = searchOrigin.bottom;
+        points.entryPoint.y = (candidateRect.top > searchOrigin.bottom) ? candidateRect.top : searchOrigin.bottom;
         break;
       }
   
@@ -1157,32 +1153,28 @@
       switch (dir) {
       case 'left':
       case 'right':
-        if (isBelow(rect1, rect2)) {
-          points.exitPoint.y = rect1.top;
-          points.entryPoint.y = (rect2.bottom < rect1.top) ? rect2.bottom : rect1.top;
-        }
-        else if (isBelow(rect2, rect1)) {
-          points.exitPoint.y = rect1.bottom;
-          points.entryPoint.y = (rect2.top > rect1.bottom) ? rect2.top : rect1.bottom;
-        }
-        else {
-          points.exitPoint.y = Math.max(rect1.top, rect2.top);
+        if (isBelow(searchOrigin, candidateRect)) {
+          points.exitPoint.y = searchOrigin.top;
+          points.entryPoint.y = (candidateRect.bottom < searchOrigin.top) ? candidateRect.bottom : searchOrigin.top;
+        } else if (isBelow(candidateRect, searchOrigin)) {
+          points.exitPoint.y = searchOrigin.bottom;
+          points.entryPoint.y = (candidateRect.top > searchOrigin.bottom) ? candidateRect.top : searchOrigin.bottom;
+        } else {
+          points.exitPoint.y = Math.max(searchOrigin.top, candidateRect.top);
           points.entryPoint.y = points.exitPoint.y;
         }
         break;
   
       case 'up':
       case 'down':
-        if (isRightSide(rect1, rect2)) {
-          points.exitPoint.x = rect1.left;
-          points.entryPoint.x = (rect2.right < rect1.left) ? rect2.right : rect1.left;
-        }
-        else if (isRightSide(rect2, rect1)) {
-          points.exitPoint.x = rect1.right;
-          points.entryPoint.x = (rect2.left > rect1.right) ? rect2.left : rect1.right;
-        }
-        else {
-          points.exitPoint.x = Math.max(rect1.left, rect2.left);
+        if (isRightSide(searchOrigin, candidateRect)) {
+          points.exitPoint.x = searchOrigin.left;
+          points.entryPoint.x = (candidateRect.right < searchOrigin.left) ? candidateRect.right : searchOrigin.left;
+        } else if (isRightSide(candidateRect, searchOrigin)) {
+          points.exitPoint.x = searchOrigin.right;
+          points.entryPoint.x = (candidateRect.left > searchOrigin.right) ? candidateRect.left : searchOrigin.right;
+        } else {
+          points.exitPoint.x = Math.max(searchOrigin.left, candidateRect.left);
           points.entryPoint.x = points.exitPoint.x;
         }
         break;
