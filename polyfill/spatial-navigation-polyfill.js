@@ -528,7 +528,7 @@
    * Create the NavigatoinEvent: navbeforefocus, navbeforescroll, navnotarget
    * @see {@link https://drafts.csswg.org/css-nav-1/#events-navigationevent}
    * @function createSpatNavEvents
-   * @param option {string} - Type of the navigation event (beforefocus, beforescroll, notarget)
+   * @param option {string} - Type of the navigation event (beforefocus, notarget)
    * @param element {Node} - The target element of the event
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
@@ -543,10 +543,6 @@
     switch (option) {
     case 'beforefocus':
       triggeredEvent = new CustomEvent('navbeforefocus', {'bubbles': true, 'cancelable': true, detail: data});
-      break;
-
-    case 'beforescroll':
-      triggeredEvent = new CustomEvent('navbeforescroll', {'bubbles': true, 'cancelable': true, detail: data});
       break;
 
     case 'notarget':
