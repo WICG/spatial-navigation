@@ -588,7 +588,7 @@
    * Return the value of 'spatial-navigation-action' css property of an element
    * @function getCSSSpatNavAction
    * @param element {Node} - would be the spatial navigation container
-   * @returns {string} : auto | focus | scroll
+   * @returns {string} auto | focus | scroll
    */
   function getCSSSpatNavAction(element) {
     if (readCssVar(element, 'spatial-navigation-action') === '')
@@ -602,6 +602,7 @@
    * @param element {SpatialNavigationContainer} - container
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
+  // FIXME: optimization is needed
   function focusOnly(element, container, dir) {
     // spatial navigation steps
 
