@@ -263,7 +263,7 @@
         return;
     }
 
-    if (getCSSSpatNavAction(container) === ('auto'))
+    if (getCSSSpatNavAction(container) === 'auto')
       if (scrollingController(container, dir)) return;
   }
 
@@ -614,7 +614,6 @@
         if (navnotargetPrevented) break;
 
         // find the container
-
         if (container === document || container === document.documentElement) {
 
           if ( window.location !== window.parent.location ) {
@@ -634,9 +633,8 @@
         }
         else {
           // avoiding when spatnav container with tabindex=-1
-          if (isFocusable(container)) {
+          if (isFocusable(container))
             eventTarget = container;
-          }
 
           container = parentContainer;
 
