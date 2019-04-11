@@ -71,9 +71,10 @@
   function moveFocusMore (dir, lastTarget, container) {
     let nextFocus = lastTarget.spatialNavigationSearch(dir, container.focusableAreas({'mode': 'all'}), container);
     
-    nextFocus.scrollIntoView();
-    nextFocus.focus({preventScroll:true});
-
+    if (nextFocus) {
+      nextFocus.scrollIntoView();
+      nextFocus.focus({preventScroll:true});
+    }
   }
 
 </script>
