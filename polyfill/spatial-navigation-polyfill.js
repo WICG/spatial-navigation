@@ -306,19 +306,15 @@
    * @returns {boolean}
    */
   function scrollingController(container, dir) {
-    /*
-     * [event] navbeforescroll : Fired before spatial navigation triggers scrolling.
-     */
+
     // If there is any scrollable area among parent elements and it can be manually scrolled, scroll the document
     if (isScrollable(container, dir) && !isScrollBoundary(container, dir)) {
-      createSpatNavEvents('beforescroll', container, null, dir);
       moveScroll(container, dir);
       return true;
     }
 
     // If the spatnav container is document and it can be scrolled, scroll the document
     if (!container.parentElement && !isHTMLScrollBoundary(container, dir)) {
-      createSpatNavEvents('beforescroll', container, null, dir);
       moveScroll(document.documentElement, dir);
       return true;
     }
@@ -524,7 +520,7 @@
   }
 
   /**
-   * Create the NavigatoinEvent: navbeforefocus, navbeforescroll, navnotarget
+   * Create the NavigatoinEvent: navbeforefocus, navnotarget
    * @see {@link https://drafts.csswg.org/css-nav-1/#events-navigationevent}
    * @function createSpatNavEvents
    * @param option {string} - Type of the navigation event (beforefocus, notarget)
