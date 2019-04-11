@@ -175,7 +175,6 @@
       if (eventTarget.nodeName === 'IFRAME')
         eventTarget = eventTarget.contentDocument.body;
 
-      // spatnav-behavior = scroll
       // 5-2
       if (getCSSSpatNavAction(eventTarget) === 'scroll') {
         if (scrollingController(eventTarget, dir)) return;

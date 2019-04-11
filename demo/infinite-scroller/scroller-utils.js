@@ -18,12 +18,15 @@ function addBoxes(root, amount, dir) {
     if (dir === 'up') {
       para.appendChild(document.createTextNode(`${initCnt - i}`));
       root.prepend(temp);
-    } 
-    else {
+    } else {
       para.appendChild(document.createTextNode(`${endCnt + i}`));
       root.append(temp);
     }   
   }
+
+  return new Promise(function (resolve) {
+    resolve(cnt + amount);
+  });
 }
 
 function updateBoxes(root, amount) {
