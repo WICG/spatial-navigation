@@ -31,8 +31,8 @@
           <span style="margin-left: 10px;">
             spatial-navigation-action :
             <select id="behavior" style="margin:0px 20px;">
-              <option value="auto">auto</option>
-              <option value="focus" selected>focus</option>
+              <option value="auto" selected>auto</option>
+              <option value="focus">focus</option>
               <option value="scroll">scroll</option>
             </select>
           </span>
@@ -81,12 +81,11 @@
     });
     behaviorOption.addEventListener('change', function (e) {
       container.style.setProperty("--spatial-navigation-action", behaviorOption.value);
-    });
-    document.body.addEventListener('navbeforefocus', function(e) {
-      console.log("%cnavbeforefocus event: \n%o, %o", "background: lightcoral", {currentTarget: e.currentTarget}, {target: e.target});
-    });
-    document.body.addEventListener('navnotarget', function(e) {
-      console.log("%cnavnotarget event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target});
+
+      let boxes = document.getElementsByClassName('item');
+      for (let i = 0; i < boxes.length; i++) {
+        boxes[i].style.setProperty("--spatial-navigation-action", behaviorOption.value);
+      }
     });
   </script>
 </html>
