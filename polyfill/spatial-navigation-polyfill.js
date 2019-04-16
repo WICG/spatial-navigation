@@ -566,7 +566,7 @@
         }
         else {
           // avoiding when spatnav container with tabindex=-1
-          if (isFocusable(container))
+          if (isFocusable(container) && (eventTarget !== container))
             eventTarget = container;
 
           container = parentContainer;
