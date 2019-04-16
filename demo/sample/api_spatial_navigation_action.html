@@ -22,7 +22,6 @@
           Moving the focus inside the container doesn't work with the directional input.</li>
       </ul>
     </div>
-    
     <form style="width: 750px; margin: 20px auto;">
       <fieldset>
         <legend>Option</legend>
@@ -40,12 +39,15 @@
       </fieldset>
     </form>
     <div >
-      
     </div>
     <div class="wrapper">
 
       <!-- Feed Section starts -->
-      <div id="feed" tabindex="0" style="--spatial-navigation-action: focus;">
+      <div id="feed" tabindex="0" style="--spatial-navigation-action: auto;">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut 
+          labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+          nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit 
+          esse cillum dolore eu fugiat nulla pariatur.</p>
       </div>
       <!-- Feed Section end -->
 
@@ -76,7 +78,7 @@
 
     function getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min)) + min;
-    } 
+    }
 
     itemNum.addEventListener('change', function (e) {
       console.log("boxNum: " + e.target.value);
