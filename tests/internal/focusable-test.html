@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang=en>
+  <meta charset="utf-8">
+  <title>Spatnav focusablility check</title>
+  <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+  <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
+  <link rel="stylesheet" href="test.css">
+  <script src="test.js"></script>
+  <style data-label="style">
+    body :focus {
+      outline: 2px solid hotpink;
+    }
+
+    .flexbox {
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+    }
+
+    .flexbox > span {
+      display: block;
+    }
+
+    .manual-continuation {
+      border: 2px solid green;
+    }
+  </style>
+  <body onload="onload()">
+    <h1>What Elements Are Focusable?</h1>
+    <p>This document is a testing ground to identify what a browser deems focusables in Spatial Navigation.</p>
+    <p>The test cases are based on the <a href="https://allyjs.io/tests/focusable/test.html">focusable test document</a>.</p>
+   
+    <!-- https://www.w3.org/TR/html5/disabled-elements.html#concept-element-disabled -->
+    <article id="disabledformcontrol">
+      <h2>Disabled Form Control Elements</h2>  
+      <input disabled type="text" aria-label="input[type=text][disabled]">
+      <input disabled type="password" aria-label="input[type=password][disabled]">
+      <input disabled type="checkbox" aria-label="input[type=checkbox][disabled]">
+      <input disabled type="radio" aria-label="input[type=radio][disabled]">
+      <input disabled type="submit" aria-label="input[type=submit][disabled]">
+      <input disabled type="reset" aria-label="input[type=reset][disabled]">
+      <input disabled type="hidden" aria-label="input[type=hidden][disabled]">
+      <select disabled aria-label="select[disabled]"><option>option</option></select>
+      <textarea disabled rows="1" cols="10" aria-label="textarea[disabled]"></textarea>
+      <button disabled type="button" aria-label="button[type=button][disabled]">button</button>
+    </article>
+
+    <article id="formelements">
+      <h2>Form Element</h2>  
+      <form aria-label="form">
+        <input aria-label="form input">
+      </form>
+      <form aria-label="form[tabindex=-1]" tabindex="-1">
+        <input aria-label="form[tabindex=-1] input">
+      </form>
+      <form aria-label="form[tabindex=0]" tabindex="0">
+        <input aria-label="form[tabindex=0] input">
+      </form>
+      <form aria-label="form[disabled]" disabled>
+        <input aria-label="form[disabled] input">
+      </form>
+      <form aria-label="form[disabled][tabindex=-1]" tabindex="-1" disabled>
+        <input aria-label="form[disabled][tabindex=-1] input">
+      </form>
+      <form aria-label="form[disabled][tabindex=0]" tabindex="0" disabled>
+        <input aria-label="form[disabled][tabindex=0] input">
+      </form>
+    </article>
+
+    <article id="anchorelements">
+      <h2>Navigation Elements</h2>  
+      <a aria-label="a[name]">link</a>
+      <a href="#void" aria-label="a[href]">link</a>
+      <a href="" aria-label="a[href=]">link</a>
+      <a href="#void" aria-label="a[href][tabindex=-1]" tabindex="-1">link</a>
+    </article>
+
+    <!-- https://www.w3.org/TR/html5/browsers.html#browsing-context-container -->
+    <article id="browsingcontexts">
+      <h2>Browsing Contexts</h2>
+      <iframe src="https://wicg.github.io/spatial-navigation/" id="iframe1" width="200" height="100" aria-label="iframe{focusable}"></iframe>
+      <iframe src="https://wicg.github.io/spatial-navigation/" id="iframe2" width="200" height="100" aria-label="iframe{focusable}[tabindex=-1]" tabindex="-1"></iframe>
+      <iframe src="https://wicg.github.io/spatial-navigation/" id="iframe3" width="200" height="100" aria-label="iframe{hidden}" style="visibility:hidden;"></iframe>
+      <iframe src="https://wicg.github.io/spatial-navigation/" id="iframe4" width="200" height="100" aria-label="iframe{none}" style="display:none;"></iframe>
+
+    </article>
+
+    <article id="visibility">
+      <h2>CSS <code>visibility</code></h2>
+
+      <div style="visibility:hidden">
+        <a href="#void" aria-label="{hidden} > a">link</a>
+        <a href="#void" style="visibility:visible" aria-label="{hidden} > a{visible}">link</a>
+        </div>
+      </div>
+      <a href="#void" style="visibility:hidden" aria-label="{hidden}">link</a>
+    </article>
+
+    <article id="display">
+      <h2>CSS <code>display</code></h2>
+
+      <div style="display:none">
+        <a href="#void" aria-label="{none} > a">link</a>
+        <a href="#void" style="display:inline" aria-label="{none} > a{inline}">link</a>
+      </div>
+      <a href="#void" style="display:none" aria-label="{none}">link</a>
+
+      <div style="width:0; height:0" tabindex="0" aria-label="div{no-dimension}"></div>
+    </article>
+
+  </body>
+  <script>
+  var onload = () => {
+    testInit();
+
+    let focusables = document.body.focusableAreas({mode:'all'});
+
+    testRun(function() {
+      let disabledInputElements = document.querySelectorAll("[aria-label$='[disabled]']");
+      let div_array = Array.prototype.slice.call(disabledInputElements); // converts NodeList to Array
+
+      assert_equals(div_array.every(element => (!focusables.includes(element))), true);
+    }, "All disabled elements should not be focusable");
+
+    testRun(function() {
+      let negativeTabIndex = document.querySelectorAll("[aria-label$='[tabindex=-1]']");
+      let div_array = Array.prototype.slice.call(negativeTabIndex); // converts NodeList to Array
+
+      assert_equals(div_array.every(element => (!focusables.includes(element))), true);
+    }, "All elements with `tabindex=-1` should not be focusable");
+
+    testRun(function() {
+      let hiddenElements = document.querySelectorAll("[aria-label^='{hidden}']");
+      let div_array = Array.prototype.slice.call(hiddenElements); // converts NodeList to Array
+
+      assert_equals(div_array.every(element => (!focusables.includes(element))), true);
+    }, "All elements with `visibility: hidden` should not be focusable");
+
+    testRun(function() {
+      let insideHidden = document.querySelector("[aria-label='{hidden} > a']");
+      assert_equals(focusables.includes(insideHidden), false);
+    }, "The focusable element inside an element with `visibility: hidden` should not be focusable");
+    
+    testRun(function() {
+      let displaynones = document.querySelectorAll("[aria-label^='{none}']");
+      let div_array = Array.prototype.slice.call(displaynones); // converts NodeList to Array
+
+      assert_equals(div_array.every(element => (!focusables.includes(element))), true);
+    }, "All elements with `display: none` should not be focusable");
+
+    testRun(function() {
+      let insideDisplaynone = document.querySelector("[aria-label='{none} > a']");
+      assert_equals(focusables.includes(insideDisplaynone), false);
+    }, "The focusable element inside an element with `display: none` should not be focusable");
+
+    testRun(function() {
+      let elm = document.querySelector("[aria-label='div{no-dimension}']");
+      assert_equals(focusables.includes(elm), false);
+    }, "The focusable element which width and height is zero should not be focusable");
+  }
+  </script>
+</html>
