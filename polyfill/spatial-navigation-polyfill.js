@@ -1,22 +1,17 @@
-/* Spatial Navigation Polyfill v1.1.0
- * : common function for Spatial Navigation
+/* Spatial Navigation Polyfill
+ * 
+ * It follows W3C official specification
+ * https://drafts.csswg.org/css-nav-1/
  *
  * Copyright (c) 2018-2019 LG Electronics Inc.
- * https://github.com/WICG/spatial-navigation
+ * https://github.com/WICG/spatial-navigation/polyfill
  *
  * Licensed under the MIT license (MIT)
  */
 
- /**
- * User type definition for Point
- * @typeof {Object} Points
- * @property {Point} Points.entryPoint
- * @property {Point} Points.exitPoint
- */
-
 (function () {
 
-  // If spatial navigation is already enabled via browser engine or browser extensions, all the following code isn't executed.
+  // The polyfill must not be executed, if it's already enabled via browser engine or browser extensions.
   if (window.navigate !== undefined) {
     return;
   }
@@ -90,7 +85,7 @@
         return;
 
       if (!e.defaultPrevented) {
-        let focusNavigableArrowKey = {'left': true, 'up': true, 'right': true, 'down': true};
+        let focusNavigableArrowKey = {left: true, up: true, right: true, down: true};
 
         // Edge case (text input, area) : Don't move focus, just navigate cursor in text area
         if ((eventTarget.nodeName === 'INPUT') || eventTarget.nodeName === 'TEXTAREA')
@@ -179,7 +174,7 @@
       if (getCSSSpatNavAction(eventTarget) === 'scroll') {
         if (scrollingController(eventTarget, dir)) return;
       } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
-        if (focusingController(eventTarget.spatialNavigationSearch(dir, eventTarget.focusableAreas({'mode': 'all'})), dir)) return;
+        if (focusingController(eventTarget.spatialNavigationSearch(dir, eventTarget.focusableAreas({mode: 'all'})), dir)) return;
       } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
         if (focusingController(eventTarget.spatialNavigationSearch(dir), dir)) return;
         if (scrollingController(eventTarget, dir)) return;
@@ -451,7 +446,7 @@
    *                                          Default value is 'visible'.
    * @returns {sequence<Node>} All focusable elements or only visible focusable elements within the container
    */
-  function focusableAreas(option = {'mode': 'visible'}) {
+  function focusableAreas(option = {mode: 'visible'}) {
     const container = this.parentElement ? this : document.body;
     const focusables = Array.prototype.filter.call(container.getElementsByTagName('*'), isFocusable);
     return (option.mode === 'all') ? focusables : focusables.filter(isVisible);
@@ -465,25 +460,27 @@
    * @param element {Node} - The target element of the event
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
-  function createSpatNavEvents(option, element, elm, direction) {
+  function createSpatNavEvents(eventType, containerElement, currentElement, direction) {
     const data = {
-      causedTarget: elm,
+      causedTarget: currentElement,
       dir: direction
     };
 
     let triggeredEvent = null;
 
-    switch (option) {
+    switch (eventType) {
     case 'beforefocus':
-      triggeredEvent = new CustomEvent('navbeforefocus', {'bubbles': true, 'cancelable': true, detail: data});
+      triggeredEvent = new CustomEvent('navbeforefocus', {bubbles: true, cancelable: true, detail: data});
       break;
 
     case 'notarget':
-      triggeredEvent = new CustomEvent('navnotarget', {'bubbles': true, 'cancelable': true, detail: data});
+      triggeredEvent = new CustomEvent('navnotarget', {bubbles: true, cancelable: true, detail: data});
       break;
     }
 
-    element.dispatchEvent(triggeredEvent);
+    if (triggeredEvent !== null) {
+      containerElement.dispatchEvent(triggeredEvent);
+    }
   }
 
   /**
@@ -539,7 +536,7 @@
     // spatial navigation step
     // 7
     while (parentContainer) {
-      if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas({'mode': option}), container), dir)) {
+      if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas({mode: option}), container), dir)) {
         return;
       }
       else {
@@ -1099,6 +1096,12 @@
    * @returns {Points} The exit point from the search origin and the entry point from a candidate
    */
   function getEntryAndExitPoints(dir = 'down', searchOrigin, candidateRect) {
+    /**
+     * User type definition for Point
+     * @typeof {Object} Points
+     * @property {Point} Points.entryPoint
+     * @property {Point} Points.exitPoint
+     */
     const points = {entryPoint: {x: 0, y: 0}, exitPoint:{x: 0, y: 0}};
 
     if (startingPoint) {
@@ -1242,7 +1245,7 @@
     const eventTarget = document.activeElement;
     const startPosition = eventTarget.selectionStart;
     const endPosition = eventTarget.selectionEnd;
-    const focusNavigableArrowKey = {'left': false, 'up': false, 'right': false, 'down': false};
+    const focusNavigableArrowKey = {left: false, up: false, right: false, down: false};
 
     const dir = ARROW_KEY_CODE[e.keyCode];
     if (dir === undefined) {
@@ -1254,7 +1257,7 @@
       focusNavigableArrowKey[dir] = true;
     }
     else if (TEXT_INPUT_TYPES.includes(eventTarget.getAttribute('type')) || eventTarget.nodeName === 'TEXTAREA') {
-      if (startPosition == endPosition) { // if there isn't any selected text
+      if (startPosition === endPosition) { // if there isn't any selected text
         if (startPosition === 0) {
           focusNavigableArrowKey.left = true;
           focusNavigableArrowKey.up = true;
