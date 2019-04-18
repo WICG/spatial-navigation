@@ -12,6 +12,7 @@ function addBoxes(root, amount, dir) {
     let temp = document.createElement('div');
     temp.setAttribute('class', 'item');
     temp.setAttribute('tabindex', 0);
+    temp.style.setProperty('--spatial-navigation-action', 'focus');
     let para = document.createElement('p');
     temp.appendChild(para);
 
