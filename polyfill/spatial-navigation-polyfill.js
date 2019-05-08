@@ -1,5 +1,5 @@
 /* Spatial Navigation Polyfill
- * 
+ *
  * It follows W3C official specification
  * https://drafts.csswg.org/css-nav-1/
  *
@@ -184,7 +184,7 @@
     // 6
     // Let container be the nearest ancestor of eventTarget
     let container = eventTarget.getSpatialNavigationContainer();
-    
+
     if (getCSSSpatNavAction(eventTarget) === 'focus') {
       navigateChain(eventTarget, container, 'all', dir);
     }
@@ -193,7 +193,7 @@
 
       // Behavior before getting out from the current spatnav container
       if (scrollingController(container, dir)) return;
-    }    
+    }
   }
 
   /**
@@ -380,7 +380,7 @@
     if (startingPoint)
       return getClosestElement(currentElm, candidates, dir, getDistanceFromPoint);
     else
-      return getClosestElement(currentElm, candidates, dir, getInnerDistance);    
+      return getClosestElement(currentElm, candidates, dir, getInnerDistance);
   }
 
 
@@ -526,7 +526,6 @@
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
   function navigateChain(eventTarget, container, option, dir) {
-    
     let parentContainer = (container.parentElement) ? container.parentElement.getSpatialNavigationContainer() : null;
     // When the container is the viewport of a browsing context
     if (!parentContainer && ( window.location !== window.parent.location)) {
@@ -833,7 +832,7 @@
       return false;
     if (!isVisibleStyleProperty(element) || (element.style.opacity === 0) ||
         ((element.style.width === '0px' || element.style.width === 0) && (element.style.height === '0px' || element.style.height === 0)))
-      return false;    
+      return false;
     return true;
   }
 
@@ -1121,7 +1120,7 @@
         points.entryPoint.y = candidateRect.top;
         break;
       }
-  
+
       // Set orthogonal direction
       switch (dir) {
       case 'left':
@@ -1134,7 +1133,7 @@
           points.entryPoint.y = candidateRect.bottom;
         }
         break;
-  
+
       case 'up':
       case 'down':
         if (startingPoint.x <= candidateRect.left) {
@@ -1167,7 +1166,7 @@
         points.entryPoint.y = (candidateRect.top > searchOrigin.bottom) ? candidateRect.top : searchOrigin.bottom;
         break;
       }
-  
+
       // Set orthogonal direction
       switch (dir) {
       case 'left':
@@ -1183,7 +1182,7 @@
           points.entryPoint.y = points.exitPoint.y;
         }
         break;
-  
+
       case 'up':
       case 'down':
         if (isRightSide(searchOrigin, candidateRect)) {
@@ -1198,8 +1197,8 @@
         }
         break;
       }
-    } 
-    
+    }
+
     return points;
   }
 
@@ -1228,7 +1227,7 @@
       // intersecting-cases
       intersection_rect.area = Math.sqrt(intersection_rect.width * intersection_rect.height);
     }
-    
+
     return intersection_rect;
   }
 
