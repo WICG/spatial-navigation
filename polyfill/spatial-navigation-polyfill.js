@@ -132,7 +132,7 @@
   }
 
   /**
-   * Enable the author to trigger spatial navigation programatically, as if the user had done so manually.
+   * Enable the author to trigger spatial navigation programmatically, as if the user had done so manually.
    * @see {@link https://drafts.csswg.org/css-nav-1/#dom-window-navigate}
    * @function navigate
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
