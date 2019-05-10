@@ -155,7 +155,7 @@
       // 1) starting point is inside the spatnav container
       // 2) starting point is inside the non-focusable element
 
-      if (elementFromPosition && (searchOrigin === elementFromPosition) && !isContainer(searchOrigin)) {
+      if ((searchOrigin === elementFromPosition) && !isContainer(searchOrigin)) {
         startingPoint = null;
       } else {
         eventTarget = elementFromPosition;
