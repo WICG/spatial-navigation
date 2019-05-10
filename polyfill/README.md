@@ -125,7 +125,7 @@ NOTE: The APIs below are non-standard and experimental features of the spatial n
       - The FocusableAreasOptions to find candidates.
       - It should be <code>{'mode': 'visible'}</code> or <code>{ mode: 'all' }</code>.
 * <code>getDistanceFromTarget (element, candidateElement, dir)</code> :
-  * Calculates the distance between the currently focused element and a certain candiate element.
+  * Calculates the distance between the currently focused element and a certain candidate element.
   * Parameter
     * element : Required. 
       - The currently focused element to search for candidates.
