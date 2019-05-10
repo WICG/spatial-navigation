@@ -142,23 +142,24 @@
 
     // 1
     const searchOrigin = findSearchOrigin();
-    let eventTarget = null;
+    let eventTarget = searchOrigin;
+
     let elementFromPosition = null;
 
     // 2 Optional step, UA defined starting point
     if (startingPoint) {
       // if there is a starting point, set eventTarget as the element from position for getting the spatnav container
       elementFromPosition = document.elementFromPoint(startingPoint.x, startingPoint.y);
-    }
 
-    // 3 use starting point
-    // 1) starting point is inside the spatnav container
-    // 2) starting point is inside the non-focusable element
-    if ((searchOrigin === elementFromPosition) && !isContainer(searchOrigin)) {
-      eventTarget = searchOrigin;
-      startingPoint = null;
-    } else {
-      eventTarget = elementFromPosition;
+       // 3 use starting point
+      // 1) starting point is inside the spatnav container
+      // 2) starting point is inside the non-focusable element
+
+      if (elementFromPosition && (searchOrigin === elementFromPosition) && !isContainer(searchOrigin)) {
+        startingPoint = null;
+      } else {
+        eventTarget = elementFromPosition;
+      }
     }
 
     // 4
