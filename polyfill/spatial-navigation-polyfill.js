@@ -1,8 +1,10 @@
-/* Spatial Navigation Polyfill v1.1.0
- * : common function for Spatial Navigation
+/* Spatial Navigation Polyfill
+ *
+ * It follows W3C official specification
+ * https://drafts.csswg.org/css-nav-1/
  *
  * Copyright (c) 2018-2019 LG Electronics Inc.
- * https://github.com/WICG/spatial-navigation
+ * https://github.com/WICG/spatial-navigation/polyfill
  *
  * Licensed under the MIT license (MIT)
  */
@@ -16,7 +18,7 @@
 
 (function () {
 
-  // If spatial navigation is already enabled via browser engine or browser extensions, all the following code isn't executed.
+  // The polyfill must not be executed, if it's already enabled via browser engine or browser extensions.
   if (window.navigate !== undefined) {
     return;
   }
@@ -59,11 +61,11 @@
      * Reference: https://drafts.css-houdini.org/css-properties-values-api/#the-registerproperty-function
      */
     if (window.CSS && CSS.registerProperty &&
-      window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-behavior') === '') {
+      window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-action') === '') {
       CSS.registerProperty({
-        name: '--spatial-navigation-behavior',
+        name: '--spatial-navigation-action',
         syntax: 'auto | focus | scroll',
-        inherits: true,
+        inherits: false,
         initialValue: 'auto'
       });
     }
