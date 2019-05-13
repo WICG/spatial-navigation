@@ -151,14 +151,14 @@
       // if there is a starting point, set eventTarget as the element from position for getting the spatnav container
       elementFromPosition = document.elementFromPoint(startingPoint.x, startingPoint.y);
 
-       // 3 use starting point
+      // Use starting point if the starting point isn't inside the focusable element (but not container)
+      // * Starting point is meaningfull when:
       // 1) starting point is inside the spatnav container
       // 2) starting point is inside the non-focusable element
-
-      if ((searchOrigin === elementFromPosition) && !isContainer(searchOrigin)) {
+      if (isFocusable(elementFromPosition) && !isContainer(elementFromPosition)) {
         startingPoint = null;
       } else {
-        eventTarget = elementFromPosition;
+        eventTarget = elementFromPosition.getSpatialNavigationContainer();
       }
     }
 
