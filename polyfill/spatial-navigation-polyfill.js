@@ -88,7 +88,7 @@
      * keydown EventListener :
      * If arrow key pressed, get the next focusing element and send it to focusing controller
      */
-    window.addEventListener('keydown', function(e) {
+    window.addEventListener('keydown', e => {
       const currentKeyMode = (parent && parent.__spatialNavigation__.keyMode) || window.__spatialNavigation__.keyMode;
       const eventTarget = document.activeElement;
       const dir = ARROW_KEY_CODE[e.keyCode];
@@ -103,7 +103,7 @@
         return;
 
       if (!e.defaultPrevented) {
-        let focusNavigableArrowKey = {'left': true, 'up': true, 'right': true, 'down': true};
+        let focusNavigableArrowKey = {left: true, up: true, right: true, down: true};
 
         // Edge case (text input, area) : Don't move focus, just navigate cursor in text area
         if ((eventTarget.nodeName === 'INPUT') || eventTarget.nodeName === 'TEXTAREA')
@@ -1349,7 +1349,7 @@
 
   /**
    * Find focusable elements within the container
-   * @see {@link https://wicg.github.io/spatial-navigation/#dom-element-focusableareas}
+   * @see {@link https://drafts.csswg.org/css-nav-1/#find-the-shortest-distance}
    * @function getIntersectionRect
    * @param rect1 {DOMRect} - The search origin which contains the exit point
    * @param rect2 {DOMRect} - One of candidates which contains the entry point
@@ -1388,7 +1388,7 @@
     const eventTarget = document.activeElement;
     const startPosition = eventTarget.selectionStart;
     const endPosition = eventTarget.selectionEnd;
-    const focusNavigableArrowKey = {'left': false, 'up': false, 'right': false, 'down': false};
+    const focusNavigableArrowKey = {left: false, up: false, right: false, down: false};
 
     const dir = ARROW_KEY_CODE[e.keyCode];
     if (dir === undefined) {
@@ -1400,7 +1400,7 @@
       focusNavigableArrowKey[dir] = true;
     }
     else if (TEXT_INPUT_TYPES.includes(eventTarget.getAttribute('type')) || eventTarget.nodeName === 'TEXTAREA') {
-      if (startPosition == endPosition) { // if there isn't any selected text
+      if (startPosition === endPosition) { // if there isn't any selected text
         if (startPosition === 0) {
           focusNavigableArrowKey.left = true;
           focusNavigableArrowKey.up = true;
@@ -1598,7 +1598,7 @@
     };
   }
 
-  window.addEventListener('load', function() {
+  window.addEventListener('load', () => {
     initiateSpatialNavigation();
     enableExperimentalAPIs(false);
   });
