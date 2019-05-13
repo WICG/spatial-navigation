@@ -6,7 +6,7 @@
 
 This is a JavaScript implementation of the [Spatial Navigation Specification](https://wicg.github.io/spatial-navigation/).
 
-It enables users to navigate the page using the arrow keys of the keyboard (or remote control, or game pad…),
+It enables users to navigate the page using the arrow keys of the keyboard (or remote control, or gamepad…),
 instead of (or in addition to)
 the <code class="key">Tab</code> key,
 the mouse cursor,
@@ -14,8 +14,7 @@ or the touch screen.
 
 Depending on the content and layout of the page,
 pressing one of the directional keys
-will either move the focus in that direction,
-or scroll the page, as appropriate.
+will either move the focus in that direction or scroll the page, as appropriate.
 
 For more details, see [the specification](https://wicg.github.io/spatial-navigation/)
 or its [explainer document](https://drafts.csswg.org/css-nav-1/explainer).
@@ -29,7 +28,7 @@ Until then, authors who wish to experiment with providing this feature to their 
 can include this polyfill in their page.
 
 It can also be used for people interested in reviewing the specification
-it order to test the behavior it defines in various situations.
+in order to test the behavior it defines in various situations.
 
 ## How to Use
 
@@ -68,7 +67,7 @@ We recommend to use it with the polyfill as below:
    * attach the event handler on the children of window object
    or
    * call the event handler during the capturing phase of the event.
-* If you don't want those events work with the spatial navigation, call <code>preventDefault()</code>.
+* If you don't want those events to work with the spatial navigation, call <code>preventDefault()</code>.
 
 ### Using the APIs
 
@@ -81,7 +80,7 @@ See the specification for more details.
 #### Standard APIs
 | Standard APIs | Feature |
 |-|-|
-| [navigate()](https://drafts.csswg.org/css-nav-1/#dom-window-navigate) | Enables the author to trigger spatial navigation programatically |
+| [navigate()](https://drafts.csswg.org/css-nav-1/#dom-window-navigate) | Enables the author to trigger spatial navigation programmatically |
 | [spatialNavigationSearch()](https://drafts.csswg.org/css-nav-1/#dom-element-spatialnavigationsearch) | Finds the element which will gain the focus within the spatial navigation container from the currently focused element |
 | [getSpatialNavigationContainer()](https://drafts.csswg.org/css-nav-1/#dom-element-getspatialnavigationcontainer) | Gets the spatial navigation container of an element |
 | [focusableAreas()](https://drafts.csswg.org/css-nav-1/#dom-element-focusableareas) | Finds focusable elements within the spatial navigation container |
@@ -175,7 +174,7 @@ With the polyfill, the Spatial Navigation has been tested and known to work in t
 The polyfill is not yet complete.
 It roughly matches the specification
 but does not yet follow it closely,
-and has a number of known issues.
+and has several  known issues.
 
 See [the list of open bugs](https://github.com/wicg/spatial-navigation/issues?q=is%3Aissue+is%3Aopen+label%3Atopic%3Apolyfill) in github.
 
