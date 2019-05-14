@@ -27,8 +27,8 @@ body {
 nav {
   font-family:'LG Smart';
   font-size: 21px;
-  width: 230px;
-  min-width: 230px;
+  width: 270px;
+  min-width: 270px;
   border-right: 1px solid lightgray;
 }
 
@@ -40,7 +40,7 @@ nav .menu {
 
 nav .menu a {
   display: block;
-  padding: 12px 20px;
+  padding: 12px 6px 6px 10px;
   font-weight: 600;
   color: #2c366f;
 }
@@ -50,7 +50,7 @@ nav .menu a:hover {
 }
 
 nav .menu a.submenu {
-  padding: 10px 0 10px 30px;
+  padding: 6px 0 6px 30px;
   font-size: 15px;
   font-weight: 600;
 }

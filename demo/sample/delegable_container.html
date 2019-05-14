@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="application-name" content="Delegable Spatial Navigation Container">
+    <meta name="author" content="Jeonghee Ahn">
+    <meta name="description" content="<b>Spatial navigation delegable container</b> is the spatial navigation container which <b>give the focus to one of its focusable child elements.</b> Delegable conainers are included as candidates in the process of selecting the best candidate even if it is not focusable element. if the best candidate is one of delegable container, it can <b>delegate the focus inside it.</b>">
+    <link rel="stylesheet" href="spatnav-style.css">
+    <script src="spatnav-utils.js"></script>
+    <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+  </head>
+  <body>
+    <div>
+      <h4>
+        <span>Document</span> >
+        <span class="c1">'spatial-navigation-contain: delegable'</span> >
+        <span class="c2">'spatial-navigation-contain: delegable'</span> >
+        <span class="c3">'spatial-navigation-contain: delegable'</span>
+      </h4>
+      <div class="container c1" style="width: 500px; margin-left: 100px; margin-bottom: -30px; height: 250px; --spatial-navigation-contain: delegable;">
+        <div class="container c2" style="display: inline-block; width: 200px; --spatial-navigation-contain: delegable;">
+          <div class="container c3"  style="width:100px; height: 150px; --spatial-navigation-contain: delegable;"></div>
+        </div>
+        <div class="container c2" style="display: inline-block; width:200px; --spatial-navigation-contain: delegable;">
+          <div class="container c3"  style="width:100px; height: 150px; --spatial-navigation-contain: delegable;">
+            <button class="box b3" style="position: absolute; width:50px; height: 50px; background-color: #00b176b0">target element</button>
+          </div>
+        </div>
+      </div>
+      <button class="box b1" style="margin-left: 10px; left: 20px; width: 50px; height: 50px; ">Initial focus</button>
+      <button class="box b2" style="display: block; width: 50px; height: 50px; margin-left: 120px;"></button>
+    </div>
+  </body>
+</html>

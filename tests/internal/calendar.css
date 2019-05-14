@@ -1,6 +1,5 @@
 body {
   margin: 10px;
-  font-family: 'Roboto', sans-serif;
 }
 
 #optionField {
@@ -15,7 +14,7 @@ body {
 }
 
 .month {
-  padding: 0px;
+  paddig: 0px;
   margin-top: 5px;
 
   font-weight: 900;
@@ -145,7 +144,7 @@ body {
   grid-template-rows: repeat(17, 50px);
 }
 
-#s16 {
+#s16, #s21 {
   grid-row: 3;
 }
 

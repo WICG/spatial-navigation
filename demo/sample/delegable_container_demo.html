@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="application-name" content="Spatial Navigation Delegable Container Demo">
+    <meta name="author" content="Jeonghee Ahn">
+    <meta name="description" content="<b>Spatial navigation delegable container</b> is the spatial navigation container which <b>give the focus to one of its focusable child elements.</b> Delegable conainers are included as candidates in the process of selecting the best candidate even if it is not focusable element. if the best candidate is one of delegable container, it can <b>delegate the focus inside it.</b> In the actual website, <b>It allows moving the focus in the order of the content</b> instead of using the position of the individual elements.">
+    <link rel="stylesheet" href="spatnav-style.css">
+    <script src="spatnav-utils.js"></script>
+    <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+    <style>
+      .menu span {
+        display: inline-block;
+        padding: 10px;
+        background: #CCCCCC;
+      }
+      .menu span.active {
+        font-weight: bold;
+        background: #AAAAAA;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      .container {
+        padding: 20px;
+        width: 500px;
+        height: auto;
+      }
+      .note {
+        margin-top: 20px;
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="width:600px; height: 400px; padding: 20px;">
+      <div class="menu">
+        <span>Menu1</span>
+        <span>Menu2</span>
+        <span>Menu3</span>
+        <span>Menu4</span>
+        <span>Menu5</span>
+        <span class="active" ><a href="">Menu6</a></span>
+        <span>Menu7</span>
+        <span>Menu8</span>
+      </div>
+      <div class="note">
+        All container is not focusable container.
+      </div>
+      <div class="container c1" style="--spatial-navigation-contain: delegable;">
+        <h1>
+          <a href="">Content 1</a>
+        </h1>
+        <div>
+        This is <b>delegable container</b>.
+        <br>
+        When you press "down" key from "Menu6", this "Content 1" link will get focus.
+        </div>
+      </div>
+      <div class="container c2" style="text-align: right; --spatial-navigation-contain: contain;">
+        <h1>
+          <a href="">Content 2</a>
+        </h1>
+        <div>
+        This is <b>not delegable container</b>.
+        <br>
+        The "Content 2" link is closer than "Content 1" link to "Menu6". But the red container will first target because it is delegable container.
+        </div>
+      </div>
+      <div class="container c2" style="--spatial-navigation-contain: contain;">
+        <h1>
+          <a href="">Content 3</a>
+        </h1>
+        <div>
+        This is <b>not delegable container</b>.
+        <br>
+        When you press "down" key from "Content 1", this "Content 3" link will get focus. because second container is not delegable container.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

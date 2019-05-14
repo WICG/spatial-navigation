@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <title>Spatnav sanity check</title>
+  <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+
+  <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
+  <link rel="stylesheet" href="test.css">
+  <script src="test.js"></script>
+  <style>
+    .menu span {
+      display: inline-block;
+      padding: 10px;
+      background: #CCCCCC;
+    }
+    .menu span.active {
+      font-weight: bold;
+      background: #AAAAAA;
+    }
+    h1 {
+      font-size: 20px;
+    }
+    .container {
+      width: 700px;
+      height: auto;
+    }
+    .note {
+      margin-top: 20px;
+      color: red;
+    }
+  </style>
+  </head>
+  <body onload="onload()">
+    <div style="width:800px; height: auto; padding: 20px;">
+      <div class="menu">
+        <span>Menu1</span>
+        <span>Menu2</span>
+        <span>Menu3</span>
+        <span>Menu4</span>
+        <span>Menu5</span>
+        <span class="active" ><a href="" id="menu6" >Menu6</a></span>
+        <span>Menu7</span>
+        <span>Menu8</span>
+      </div>
+      <div class="note">
+        All container is not focusable container.
+      </div>
+      <div class="container c1" style="--spatial-navigation-contain: delegable;">
+        <h1>
+          <a id="content1" href="">Content 1</a>
+        </h1>
+        <div>
+        This is <b>delegable container</b>.
+        <br>
+        When you press "down" key from "Menu6", this "Content 1" link will get focus.
+        </div>
+      </div>
+      <div class="container c2" style="text-align: right; --spatial-navigation-contain: contain;">
+        <h1>
+          <a id="content2" href="">Content 2</a>
+        </h1>
+        <div>
+        This is <b>not delegable container</b>.
+        <br>
+        The "Content 2" link is closer than "Content 1" link to "Menu6". But the red container will first target because it is delegable container.
+        </div>
+      </div>
+      <div class="container c2" style="--spatial-navigation-contain: contain;">
+        <h1>
+          <a id="content3" href="">Content 3</a>
+        </h1>
+        <div>
+        This is <b>not delegable container</b>.
+        <br>
+        When you press "down" key from "Content 1", this "Content 3" link will get focus. because second container is not delegable container.
+        </div>
+      </div>
+      <div class="container c1" style="text-align: right; --spatial-navigation-contain: delegable;">
+        <h1>
+          <a id="content4" href="">Content 4</a>
+        </h1>
+        <div>
+        This is <b>not delegable container</b>.
+        <br>
+        The "Content 2" link is closer than "Content 1" link to "Menu6". But the red container will first target because it is delegable container.
+        </div>
+      </div>
+      <div class="container c1" style="--spatial-navigation-contain: delegable;">
+        <h1>
+          <a id="content5" href="">Content 5</a>
+        </h1>
+        <div>
+        This is <b>delegable container</b>.
+        <br>
+        When you press "down" key from "Menu6", this "Content 1" link will get focus.
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+  var onload = () => {
+    testInit();
+    // navigate() test
+    testRun(function() {
+      document.querySelector('#menu6').focus();
+      window.navigate('down');
+      assert_equals(document.activeElement, document.querySelector('#content1'));
+    }, "delegable container TC1. #menu6 button -> navigate('down') -> next Target should be #content1 button");
+
+    testRun(function() {
+      document.querySelector('#content1').focus();
+      window.navigate('down');
+      assert_equals(document.activeElement, document.querySelector('#content3'));
+    }, "delegable container TC2. #content1 button -> navigate('down') -> next Target should be #content3 button");
+
+    testRun(function() {
+      document.querySelector('#content3').focus();
+      window.navigate('down');
+      assert_equals(document.activeElement, document.querySelector('#content4'));
+    }, "delegable container TC3. #content3 button -> navigate('down') -> next Target should be #content4 button");
+
+    testRun(function() {
+      document.querySelector('#content4').focus();
+      window.navigate('down');
+      assert_equals(document.activeElement, document.querySelector('#content5'));
+    }, "delegable container TC4. #content4 button -> navigate('down') -> next Target should be #content5 button");
+
+  }
+  </script>
+</html>
