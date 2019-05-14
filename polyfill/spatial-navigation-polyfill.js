@@ -307,19 +307,15 @@
    * @returns {boolean}
    */
   function scrollingController(container, dir) {
-    /*
-     * [event] navbeforescroll : Fired before spatial navigation triggers scrolling.
-     */
+
     // If there is any scrollable area among parent elements and it can be manually scrolled, scroll the document
     if (isScrollable(container, dir) && !isScrollBoundary(container, dir)) {
-      createSpatNavEvents('beforescroll', container, null, dir);
       moveScroll(container, dir);
       return true;
     }
 
     // If the spatnav container is document and it can be scrolled, scroll the document
     if (!container.parentElement && !isHTMLScrollBoundary(container, dir)) {
-      createSpatNavEvents('beforescroll', container, null, dir);
       moveScroll(document.documentElement, dir);
       return true;
     }
@@ -592,43 +588,39 @@
    *                                          Default value is 'visible'.
    * @returns {sequence<Node>} All focusable elements or only visible focusable elements within the container
    */
-  function focusableAreas(option = {'mode': 'visible'}) {
+  function focusableAreas(option = {mode: 'visible'}) {
     const container = this.parentElement ? this : document.body;
     const focusables = Array.prototype.filter.call(container.getElementsByTagName('*'), isFocusable);
     return (option.mode === 'all') ? focusables : focusables.filter(isVisible);
   }
 
   /**
-   * Create the NavigatoinEvent: navbeforefocus, navbeforescroll, navnotarget
-   * @see {@link https://wicg.github.io/spatial-navigation/#events-navigationevent}
+   * Create the NavigatoinEvent: navbeforefocus, navnotarget
+   * @see {@link https://drafts.csswg.org/css-nav-1/#events-navigationevent}
    * @function createSpatNavEvents
-   * @param option {string} - Type of the navigation event (beforefocus, beforescroll, notarget)
+   * @param option {string} - Type of the navigation event (beforefocus, notarget)
    * @param element {Node} - The target element of the event
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
-  function createSpatNavEvents(option, element, elm, direction) {
+  function createSpatNavEvents(eventType, containerElement, currentElement, direction) {
     const data = {
-      causedTarget: elm,
+      causedTarget: currentElement,
       dir: direction
     };
 
     let triggeredEvent = null;
 
-    switch (option) {
+    switch (eventType) {
     case 'beforefocus':
-      triggeredEvent = new CustomEvent('navbeforefocus', {'bubbles': true, 'cancelable': true, detail: data});
-      break;
-
-    case 'beforescroll':
-      triggeredEvent = new CustomEvent('navbeforescroll', {'bubbles': true, 'cancelable': true, detail: data});
+      triggeredEvent = new CustomEvent('navbeforefocus', {bubbles: true, cancelable: true, detail: data});
       break;
 
     case 'notarget':
-      triggeredEvent = new CustomEvent('navnotarget', {'bubbles': true, 'cancelable': true, detail: data});
+      triggeredEvent = new CustomEvent('navnotarget', {bubbles: true, cancelable: true, detail: data});
       break;
     }
 
-    return element.dispatchEvent(triggeredEvent);
+    return containerElement.dispatchEvent(triggeredEvent);
   }
 
   /**
