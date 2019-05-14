@@ -1,6 +1,6 @@
 {
   "name": "spatial-navigation-polyfill",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A polyfill for the spatial navigation",
   "main": "polyfill/spatial-navigation-polyfill.js",
   "directories": {
@@ -20,6 +20,10 @@
     "web"
   ],
   "author": "Jihye Hong <jh.hong@lge.com>",
+  "contributors": [
+    "Hyojin Song <hyojin22.song@lge.com>",
+    "Jeonghee Ahn <jeonghee27.ahn@lge.com>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/WICG/spatial-navigation/issues"

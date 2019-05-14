@@ -12,18 +12,22 @@ function addBoxes(root, amount, dir) {
     let temp = document.createElement('div');
     temp.setAttribute('class', 'item');
     temp.setAttribute('tabindex', 0);
+    temp.style.setProperty('--spatial-navigation-action', 'focus');
     let para = document.createElement('p');
     temp.appendChild(para);
 
     if (dir === 'up') {
       para.appendChild(document.createTextNode(`${initCnt - i}`));
       root.prepend(temp);
-    } 
-    else {
+    } else {
       para.appendChild(document.createTextNode(`${endCnt + i}`));
       root.append(temp);
     }   
   }
+
+  return new Promise(function (resolve) {
+    resolve(cnt + amount);
+  });
 }
 
 function updateBoxes(root, amount) {
