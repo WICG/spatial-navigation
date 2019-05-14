@@ -172,7 +172,7 @@
       if (getCSSSpatNavAction(eventTarget) === 'scroll') {
         if (scrollingController(eventTarget, dir)) return;
       } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
-        if (focusingController(eventTarget.spatialNavigationSearch(dir, eventTarget.focusableAreas({mode: 'all'})), dir)) return;
+        if (focusingController(eventTarget.spatialNavigationSearch(dir, {candidates: getSpatialNavigationCandidates(eventTarget, {mode: 'all'})}), dir)) return;
       } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
         if (focusingController(eventTarget.spatialNavigationSearch(dir), dir)) return;
         if (scrollingController(eventTarget, dir)) return;

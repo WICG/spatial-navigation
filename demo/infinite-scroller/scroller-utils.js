@@ -22,7 +22,7 @@ function addBoxes(root, amount, dir) {
     } else {
       para.appendChild(document.createTextNode(`${endCnt + i}`));
       root.append(temp);
-    }   
+    }
   }
 
   return new Promise(function (resolve) {
