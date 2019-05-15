@@ -182,15 +182,21 @@
     // 6
     // Let container be the nearest ancestor of eventTarget
     let container = eventTarget.getSpatialNavigationContainer();
+    let parentContainer = (container.parentElement) ? container.parentElement.getSpatialNavigationContainer() : null;
 
-    if (getCSSSpatNavAction(eventTarget) === 'focus') {
-      navigateChain(eventTarget, container, 'all', dir);
+    // When the container is the viewport of a browsing context
+    if (!parentContainer && ( window.location !== window.parent.location)) {
+      parentContainer = window.parent.document.documentElement;
     }
-    else if (getCSSSpatNavAction(container) === 'auto') {
-      navigateChain(eventTarget, container, 'visible', dir);
 
-      // Behavior before getting out from the current spatnav container
+    if (getCSSSpatNavAction(eventTarget) === 'scroll') {
       if (scrollingController(container, dir)) return;
+    }
+    else if (getCSSSpatNavAction(eventTarget) === 'focus') {
+      navigateChain(eventTarget, container, parentContainer, dir, 'all');
+    }
+    else if (getCSSSpatNavAction(eventTarget) === 'auto') {
+      navigateChain(eventTarget, container, parentContainer, dir, 'visible');
     }
   }
 
@@ -260,7 +266,7 @@
    *                                          Default value is 'visible'.
    * @returns {sequence<Node>} candidate elements within the container
    */
-  function getSpatialNavigationCandidates(container, option = {'mode': 'visible'}) {
+  function getSpatialNavigationCandidates(container, option = {mode: 'visible'}) {
     let candidates = [];
 
     if (container.childElementCount > 0) {
@@ -309,7 +315,7 @@
 
   /**
    * Find the best candidate among the candidates within the container from the search origin (currently focused element)
-   * @see {@link https://drafts.csswg.org/css-nav-1/#dom-element-spatialnavigationsearch}
+   * @see {@link https://wicg.github.io/spatial-navigation/#js-api}
    * @function spatialNavigationSearch
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @param candidates {sequence<Node>} - The candidates for spatial navigation
@@ -596,60 +602,68 @@
    * @param eventTarget {Node} - currently focused element
    * @param container {SpatialNavigationContainer} - container
    * @param parentContainer {SpatialNavigationContainer} - parent container
-   * @param option - visiable || all
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
-  function navigateChain(eventTarget, container, option, dir) {
-    let parentContainer = (container.parentElement) ? container.parentElement.getSpatialNavigationContainer() : null;
-    // When the container is the viewport of a browsing context
-    if (!parentContainer && ( window.location !== window.parent.location)) {
-      parentContainer = window.parent.document.documentElement;
-    }
+  function navigateChain(eventTarget, container, parentContainer, dir, option) {
+    let currentOption = null;
+    if (option === 'all')
+      currentOption = {candidates: getSpatialNavigationCandidates(container, {mode: 'all'}), container};
+    else if (option === 'visible')
+      currentOption = {candidates: getSpatialNavigationCandidates(container), container, outsideOnly: true};
 
-    // spatial navigation step
-    // 7
     while (parentContainer) {
-      if (focusingController(eventTarget.spatialNavigationSearch(dir, {candidates: getSpatialNavigationCandidates(container, {mode: option}), container}), dir)) {
+      if (focusingController(eventTarget.spatialNavigationSearch(dir, currentOption), dir)) {
         return;
       }
       else {
-        // If there isn't any candidate and the best candidate among candidate: Find candidates of the ancestor container
-
-        // [event] navnotarget : Fired when spatial navigation has failed to find any acceptable candidate to move the focus
-        // to in the current spatnav container and when that same spatnav container cannot be scrolled either,
-        // before going up the tree to search in the nearest ancestor spatnav container.
-
         if ((option === 'visible') && scrollingController(container, dir)) return;
+        else {
+          if (!createSpatNavEvents('notarget', container, eventTarget, dir)) return;
 
-        if (!createSpatNavEvents('notarget', container, eventTarget, dir)) return;
+          // find the container
+          if (container === document || container === document.documentElement) {
+            if ( window.location !== window.parent.location ) {
+              // The page is in an iframe. eventTarget needs to be reset because the position of the element in the iframe
+              eventTarget = window.frameElement;
+              container = window.parent.document.documentElement;
 
-        // find the container
-        if (container === document || container === document.documentElement) {
-          if ( window.location !== window.parent.location ) {
-            // The page is in an iframe
-            // eventTarget needs to be reset because the position of the element in the IFRAME
-            // is unuseful when the focus moves out of the iframe
-            eventTarget = window.frameElement;
-            container = window.parent.document.documentElement;
+              if (container.parentElement)
+                parentContainer = container.parentElement.getSpatialNavigationContainer();
+              else {
+                parentContainer = null;
+                break;
+              }
+            }
+          }
+          else {
+            // avoiding when spatnav container with tabindex=-1
+            if (isFocusable(container)) {
+              eventTarget = container;
+            }
+
+            container = parentContainer;
+
+            if (container.parentElement)
+              parentContainer = container.parentElement.getSpatialNavigationContainer();
+            else {
+              parentContainer = null;
+              break;
+            }
           }
         }
-        else {
-          // avoiding when spatnav container with tabindex=-1
-          if (isFocusable(container) && (eventTarget !== container))
-            eventTarget = container;
-
-          container = parentContainer;
-        }
-
-        parentContainer = (container.parentElement) ? container.parentElement.getSpatialNavigationContainer() : null;
       }
     }
 
-    // Behavior after 'navnotarget' - Getting out of the current spatnav container
-    if (!parentContainer && container) {
-      if (focusingController(eventTarget.spatialNavigationSearch(dir, {candidates: getSpatialNavigationCandidates(container), container}), dir))
-        return;
-    }
+    if (option === 'all')
+      currentOption = {candidates: getSpatialNavigationCandidates(container), container};
+    else if (option === 'visible')
+      currentOption = {candidates: getSpatialNavigationCandidates(container), container, outsideOnly: true};
+
+     // Behavior after 'navnotarget' - Getting out from the current spatnav container
+    if ((!parentContainer && container) && focusingController(eventTarget.spatialNavigationSearch(dir, currentOption), dir)) return;
+
+    if ((getCSSSpatNavAction(container) === 'auto') && (option === 'visible'))
+      if (scrollingController(container, dir)) return;
   }
 
   /**
