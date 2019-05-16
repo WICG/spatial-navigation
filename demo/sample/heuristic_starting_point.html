@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="application-name" content="Spatial Navigatin Starting Point">
+	<meta name="author" content="Jihye Hong">
+	<meta name="description" content="<b>Navigate from the point where user clicked. The clicked point is called `Spatial Navigation Starting Point` and it is specified by User Agent.">
+
+  <link rel="stylesheet" href="spatnav-style.css">
+  <script src="spatnav-utils.js"></script>
+	<script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+
+  <style>
+    body {
+      width: 500px;
+      height: 500px;
+    }
+
+    button {
+      width: 60px;
+      height: 60px;
+      border: 1px black solid;
+      margin: 40px;
+      text-align: center;
+    }
+
+    .activePoint {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: red;
+    }
+
+    .inactivePoint {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: lightgray;
+    }
+
+    :focus {
+      outline: 3px solid royalblue;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('mouseup', function(e) {
+      let prev = document.getElementsByClassName('activePoint');
+      if (prev.length > 0) {
+        prev[0].classList.add('inactivePoint');
+        prev[0].classList.remove('activePoint');
+      }
+      
+      let dot = document.createElement('div');
+      dot.style.top = e.clientY + 'px';
+      dot.style.left = e.clientX + 'px';
+      dot.className = 'activePoint';    
+
+      document.body.appendChild(dot);
+    });
+  </script>
+  <body>
+    <table>
+      <tr><td><button id=b1>b1</button><td><button id=b2>b2</button>
+      <tr><td><button id=b3>b3</button><td><button id=b4>b4</button>
+    </table>
+  </body>
+</html>

@@ -22,7 +22,6 @@
           Moving the focus inside the container doesn't work with the directional input.</li>
       </ul>
     </div>
-    
     <form style="width: 750px; margin: 20px auto;">
       <fieldset>
         <legend>Option</legend>
@@ -31,8 +30,8 @@
           <span style="margin-left: 10px;">
             spatial-navigation-action :
             <select id="behavior" style="margin:0px 20px;">
-              <option value="auto">auto</option>
-              <option value="focus" selected>focus</option>
+              <option value="auto" selected>auto</option>
+              <option value="focus">focus</option>
               <option value="scroll">scroll</option>
             </select>
           </span>
@@ -40,12 +39,15 @@
       </fieldset>
     </form>
     <div >
-      
     </div>
     <div class="wrapper">
 
       <!-- Feed Section starts -->
-      <div id="feed" tabindex="0" style="--spatial-navigation-action: focus;">
+      <div id="feed" tabindex="0" style="--spatial-navigation-action: auto;">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+          labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+          nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+          esse cillum dolore eu fugiat nulla pariatur.</p>
       </div>
       <!-- Feed Section end -->
 
@@ -76,7 +78,7 @@
 
     function getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min)) + min;
-    } 
+    }
 
     itemNum.addEventListener('change', function (e) {
       console.log("boxNum: " + e.target.value);
@@ -86,12 +88,11 @@
     });
     behaviorOption.addEventListener('change', function (e) {
       container.style.setProperty("--spatial-navigation-action", behaviorOption.value);
-    });
-    document.body.addEventListener('navbeforefocus', function(e) {
-      console.log("%cnavbeforefocus event: \n%o, %o", "background: lightcoral", {currentTarget: e.currentTarget}, {target: e.target});
-    });
-    document.body.addEventListener('navnotarget', function(e) {
-      console.log("%cnavnotarget event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target});
+
+      let boxes = document.getElementsByClassName('item');
+      for (let i = 0; i < boxes.length; i++) {
+        boxes[i].style.setProperty("--spatial-navigation-action", behaviorOption.value);
+      }
     });
   </script>
 </html>
