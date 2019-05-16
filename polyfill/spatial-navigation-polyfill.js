@@ -39,42 +39,33 @@
      * CSS.registerProperty() from the Properties and Values API
      * Reference: https://drafts.css-houdini.org/css-properties-values-api/#the-registerproperty-function
      */
-    if (window.CSS && CSS.registerProperty &&
-      window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-contain') === '') {
-      CSS.registerProperty({
-        name: '--spatial-navigation-contain',
-        syntax: 'auto | contain | delegable',
-        inherits: false,
-        initialValue: 'auto'
-      });
-    }
+    if (window.CSS && CSS.registerProperty) {
+      if (window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-contain') === '') {
+        CSS.registerProperty({
+          name: '--spatial-navigation-contain',
+          syntax: 'auto | contain | delegable',
+          inherits: false,
+          initialValue: 'auto'
+        });
+      }
 
-    /*
-     * CSS.registerProperty() from the Properties and Values API
-     * Reference: https://drafts.css-houdini.org/css-properties-values-api/#the-registerproperty-function
-     */
-    if (window.CSS && CSS.registerProperty &&
-      window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-action') === '') {
-      CSS.registerProperty({
-        name: '--spatial-navigation-action',
-        syntax: 'auto | focus | scroll',
-        inherits: false,
-        initialValue: 'auto'
-      });
-    }
+      if (window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-action') === '') {
+        CSS.registerProperty({
+          name: '--spatial-navigation-action',
+          syntax: 'auto | focus | scroll',
+          inherits: false,
+          initialValue: 'auto'
+        });
+      }
 
-    /*
-     * CSS.registerProperty() from the Properties and Values API
-     * Reference: https://drafts.css-houdini.org/css-properties-values-api/#the-registerproperty-function
-     */
-    if (window.CSS && CSS.registerProperty &&
-      window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-function') === '') {
-      CSS.registerProperty({
-        name: '--spatial-navigation-function',
-        syntax: 'normal | euclidean | grid',
-        inherits: true,
-        initialValue: 'normal'
-      });
+      if (window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-function') === '') {
+        CSS.registerProperty({
+          name: '--spatial-navigation-function',
+          syntax: 'normal | euclidean | grid',
+          inherits: true,
+          initialValue: 'normal'
+        });
+      }
     }
 
     /*
@@ -181,7 +172,7 @@
 
     // 6
     // Let container be the nearest ancestor of eventTarget
-    let container = eventTarget.getSpatialNavigationContainer();
+    const container = eventTarget.getSpatialNavigationContainer();
     let parentContainer = (container.parentElement) ? container.parentElement.getSpatialNavigationContainer() : null;
 
     // When the container is the viewport of a browsing context
@@ -346,6 +337,7 @@
       } else {
         bestTarget = selectBestCandidate(targetElement, candidates, dir);
       }
+
       if (isDelegableContainer(bestTarget)) {
 
         // if best target is delegable container, then find descendants candidate inside delegable container.
@@ -461,7 +453,6 @@
       return getClosestElement(currentElm, candidates, dir, getInnerDistance);
   }
 
-
   /**
    * Select the closest candidate from the currently focused element (search origin) among candidates by using the distance function.
    * @function getClosestElement
@@ -542,24 +533,14 @@
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
   function createSpatNavEvents(eventType, containerElement, currentElement, direction) {
-    const data = {
-      causedTarget: currentElement,
-      dir: direction
-    };
-
-    let triggeredEvent = null;
-
-    switch (eventType) {
-    case 'beforefocus':
-      triggeredEvent = new CustomEvent('navbeforefocus', {bubbles: true, cancelable: true, detail: data});
-      break;
-
-    case 'notarget':
-      triggeredEvent = new CustomEvent('navnotarget', {bubbles: true, cancelable: true, detail: data});
-      break;
+    if(['beforefocus', 'notarget'].includes(eventType)) {
+      const data = {
+        causedTarget: currentElement,
+        dir: direction
+      };
+      const triggeredEvent = new CustomEvent('nav' + eventType, {bubbles: true, cancelable: true, detail: data});
+      return containerElement.dispatchEvent(triggeredEvent);
     }
-
-    return containerElement.dispatchEvent(triggeredEvent);
   }
 
   /**
@@ -591,9 +572,7 @@
    * @returns {string} auto | focus | scroll
    */
   function getCSSSpatNavAction(element) {
-    if (readCssVar(element, 'spatial-navigation-action') === '')
-      return 'auto';
-    return readCssVar(element, 'spatial-navigation-action');
+    return readCssVar(element, 'spatial-navigation-action') || 'auto';
   }
 
   /**
@@ -659,7 +638,7 @@
     else if (option === 'visible')
       currentOption = {candidates: getSpatialNavigationCandidates(container), container, outsideOnly: true};
 
-     // Behavior after 'navnotarget' - Getting out from the current spatnav container
+    // Behavior after 'navnotarget' - Getting out from the current spatnav container
     if ((!parentContainer && container) && focusingController(eventTarget.spatialNavigationSearch(dir, currentOption), dir)) return;
 
     if ((getCSSSpatNavAction(container) === 'auto') && (option === 'visible'))
@@ -991,32 +970,20 @@
     offsetY = isNaN(offsetY) ? 1 : offsetY;
 
     const elementRect = getBoundingClientRect(element);
+    const hitTestPoint = {
+      middle: [(elementRect.left + elementRect.right) / 2, (elementRect.top + elementRect.bottom) / 2],
+      leftTop: [elementRect.left + offsetX, elementRect.top + offsetY],
+      leftBoottom: [elementRect.left + offsetX, elementRect.bottom - offsetY],
+      rightTop: [elementRect.right - offsetX, elementRect.top + offsetY],
+      rightBottom: [elementRect.right - offsetX, elementRect.bottom - offsetY]
+    };
 
-    const middleElem = document.elementFromPoint((elementRect.left + elementRect.right) / 2, (elementRect.top + elementRect.bottom) / 2);
-    if (element === middleElem || element.contains(middleElem)) {
-      return true;
+    for(const point in hitTestPoint) {
+      const elemFromPoint = document.elementFromPoint(...hitTestPoint[point]);
+      if (element === elemFromPoint || element.contains(elemFromPoint)) {
+        return true;
+      }
     }
-
-    const leftTopElem = document.elementFromPoint(elementRect.left + offsetX, elementRect.top + offsetY);
-    if (element === leftTopElem || element.contains(leftTopElem)) {
-      return true;
-    }
-
-    const leftBottomElem = document.elementFromPoint(elementRect.left + offsetX, elementRect.bottom - offsetY);
-    if (element === leftBottomElem || element.contains(leftBottomElem)) {
-      return true;
-    }
-
-    const rightTopElem = document.elementFromPoint(elementRect.right - offsetX, elementRect.top + offsetY);
-    if (element === rightTopElem || element.contains(rightTopElem)) {
-      return true;
-    }
-
-    const rightBottomElem = document.elementFromPoint(elementRect.right - offsetX, elementRect.bottom - offsetY);
-    if (element === rightBottomElem || element.contains(rightBottomElem)) {
-      return true;
-    }
-
     return false;
   }
 
@@ -1404,8 +1371,7 @@
     if (SPINNABLE_INPUT_TYPES.includes(eventTarget.getAttribute('type')) &&
       (dir === 'up' || dir === 'down')) {
       focusNavigableArrowKey[dir] = true;
-    }
-    else if (TEXT_INPUT_TYPES.includes(eventTarget.getAttribute('type')) || eventTarget.nodeName === 'TEXTAREA') {
+    } else if (TEXT_INPUT_TYPES.includes(eventTarget.getAttribute('type')) || eventTarget.nodeName === 'TEXTAREA') {
       if (startPosition === endPosition) { // if there isn't any selected text
         if (startPosition === 0) {
           focusNavigableArrowKey.left = true;
@@ -1416,8 +1382,7 @@
           focusNavigableArrowKey.down = true;
         }
       }
-    }
-    else { // HTMLDataListElement, HTMLSelectElement, HTMLOptGroup
+    } else { // HTMLDataListElement, HTMLSelectElement, HTMLOptGroup
       focusNavigableArrowKey[dir] = true;
     }
 
@@ -1457,7 +1422,6 @@
       return (isScrollable(container, dir) && !isScrollBoundary(container, dir)) ||
              (!container.parentElement && !isHTMLScrollBoundary(container, dir));
     }
-
 
     function findTarget(findCandidate, element, dir, option) {
       let eventTarget = element;
