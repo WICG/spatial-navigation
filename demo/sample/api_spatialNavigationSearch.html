@@ -49,9 +49,9 @@
           if (selectedOption === 'dir') {
             nextTarget = currentElement.spatialNavigationSearch(dir);
           } else if (selectedOption === 'candidates') {
-            nextTarget = currentElement.spatialNavigationSearch(dir, redBoxes);
+            nextTarget = currentElement.spatialNavigationSearch(dir, {candidates: redBoxes});
           } else if (selectedOption === 'container') {
-            nextTarget = currentElement.spatialNavigationSearch(dir, redBoxes, redContainer);
+            nextTarget = currentElement.spatialNavigationSearch(dir, {candidates: redBoxes, container: redContainer});
           }
 
           if(nextTarget && nextTarget.nodeName === 'BUTTON') {
@@ -66,11 +66,11 @@
           let selectedOptionString = {};
             for(dir of DIRECTION) {
               if (selectedOption === 'dir') {
-                selectedOptionString[dir] = `{dir: '${dir}'`;
+                selectedOptionString[dir] = `'${dir}'`;
               } else if (selectedOption === 'candidates') {
-                selectedOptionString[dir] = `{dir: '${dir}', candidates:[redBoxs]}`;
+                selectedOptionString[dir] = `'${dir}', {candidates: [redBoxs]}`;
               } else if (selectedOption === 'container') {
-                selectedOptionString[dir] = `{dir: '${dir}', candidates:[redBoxs], container:redContainer}`;
+                selectedOptionString[dir] = `'${dir}', {candidates: [redBoxs], container: redContainer}`;
               }
           }
 
