@@ -9,38 +9,39 @@
  * Licensed under the MIT license (MIT)
  */
 
-// Turn on/off interest
-window.focuslessSpatialNavigation = false;
 
 (function () {
-  if (window.focuslessSpatialNavigation) {
-    let interestElement = null;
+  // Turn on/off interest
+  const focuslessSpatialNavigation = true;
+  let _interestElement = null;
 
+  const currentInterest = function () {
+    // get current interest element.
+    return _interestElement;
+  };
+
+  const interest = function (element) {
+    // Assign interest to element.
+    const prevInterest = currentInterest();
+    if (prevInterest) {
+      prevInterest.classList.remove('interest');
+    }
+
+    _interestElement = element;
+
+    if (element) {
+      document.activeElement.blur();
+      _interestElement.classList.add('interest');
+    }
+  };
+
+  if (focuslessSpatialNavigation) {
     window.addEventListener('load', () => {
       const style = document.createElement('style');
       style.type = 'text/css';
       style.innerHTML = '.interest { outline: 3px solid skyblue; }';
       document.getElementsByTagName('head')[0].appendChild(style);
 
-      window.setInterest = function (element) {
-        // Assign interest to element.
-        const prevInterest = window.getInterest();
-        if (prevInterest) {
-          prevInterest.classList.remove('interest');
-        }
-
-        interestElement = element;
-
-        if (element) {
-          document.activeElement.blur();
-          interestElement.classList.add('interest');
-        }
-      };
-
-      window.getInterest = function () {
-        // get current interest element.
-        return interestElement;
-      };
     });
   }
 
@@ -108,13 +109,14 @@ window.focuslessSpatialNavigation = false;
      */
     window.addEventListener('keydown', e => {
       const currentKeyMode = (parent && parent.__spatialNavigation__.keyMode) || window.__spatialNavigation__.keyMode;
-      const interestElement = window.focuslessSpatialNavigation ? window.getInterest() : null;
-      const eventTarget = window.focuslessSpatialNavigation && interestElement ? interestElement : document.activeElement;
+      const interestElement = focuslessSpatialNavigation ? currentInterest() : null;
+      const eventTarget = focuslessSpatialNavigation && interestElement ? interestElement : document.activeElement;
       const dir = ARROW_KEY_CODE[e.keyCode];
       const interestKey = INTEREST_KEY_CODE[e.keyCode];
+
       if (e.keyCode === TAB_KEY_CODE) {
-        if (window.focuslessSpatialNavigation) {
-          window.setInterest(null); // remove interest
+        if (focuslessSpatialNavigation) {
+          interest(null); // remove interest
           eventTarget.focus();
         }
         startingPoint = null;
@@ -129,8 +131,8 @@ window.focuslessSpatialNavigation = false;
       if (!e.defaultPrevented) {
         let focusNavigableArrowKey = {left: true, up: true, right: true, down: true};
 
-        if(window.focuslessSpatialNavigation && interestKey === 'enter' && e.isTrusted) {
-          window.setInterest(null);
+        if(focuslessSpatialNavigation && interestKey === 'enter' && e.isTrusted) {
+          interest(null);
           eventTarget.focus();
           let keyDownEvent = new KeyboardEvent('keydown', {
             bubbles: true, cancelable: true, keyCode: 13
@@ -144,14 +146,14 @@ window.focuslessSpatialNavigation = false;
             eventTarget.checked = true;
           }
           return;
-        } else if (window.focuslessSpatialNavigation && interestKey === 'esc' && e.isTrusted) {
-          window.setInterest(eventTarget);
+        } else if (focuslessSpatialNavigation && interestKey === 'esc' && e.isTrusted) {
+          interest(eventTarget);
           return;
         }
 
         // Edge case (text input, area) : Don't move focus, just navigate cursor in text area
         if (eventTarget.nodeName === 'INPUT' || eventTarget.nodeName === 'TEXTAREA') {
-          if (!window.focuslessSpatialNavigation || window.getInterest() === null) {
+          if (!focuslessSpatialNavigation || currentInterest() === null) {
             // Input element have focus.
             focusNavigableArrowKey = handlingEditableElement(e);
           }
@@ -176,8 +178,8 @@ window.focuslessSpatialNavigation = false;
      */
     document.addEventListener('mouseup', e => {
       startingPoint = {x: e.clientX, y: e.clientY};
-      if (window.focuslessSpatialNavigation) {
-        window.setInterest(null);
+      if (focuslessSpatialNavigation) {
+        interest(null);
       }
     });
   }
@@ -287,7 +289,7 @@ window.focuslessSpatialNavigation = false;
       if (!createSpatNavEvents('beforefocus', bestCandidate, null, dir))
         return true;
 
-      window.focuslessSpatialNavigation ? window.setInterest(bestCandidate) : bestCandidate.focus();
+      focuslessSpatialNavigation ? interest(bestCandidate) : bestCandidate.focus();
       return true;
     }
 
@@ -735,8 +737,8 @@ window.focuslessSpatialNavigation = false;
    * @returns {Node} The search origin for the spatial navigation
    */
   function findSearchOrigin() {
-    const interestElement = window.focuslessSpatialNavigation ? window.getInterest() : null;
-    let searchOrigin = window.focuslessSpatialNavigation && interestElement ? interestElement : document.activeElement;
+    const interestElement = focuslessSpatialNavigation ? currentInterest() : null;
+    let searchOrigin = focuslessSpatialNavigation && interestElement ? interestElement : document.activeElement;
 
     if (!searchOrigin ||
       (searchOrigin === document.body && !document.querySelector(':focus')) /* body isn't actually focused*/
@@ -1443,8 +1445,8 @@ window.focuslessSpatialNavigation = false;
   function handlingEditableElement(e) {
     const SPINNABLE_INPUT_TYPES = ['email', 'date', 'month', 'number', 'time', 'week'],
       TEXT_INPUT_TYPES = ['password', 'text', 'search', 'tel', 'url', null];
-    const interestElement = window.focuslessSpatialNavigation ? window.getInterest() : null;
-    const eventTarget = window.focuslessSpatialNavigation && interestElement ? interestElement : document.activeElement;
+    const interestElement = focuslessSpatialNavigation ? currentInterest() : null;
+    const eventTarget = focuslessSpatialNavigation && interestElement ? interestElement : document.activeElement;
     const startPosition = eventTarget.selectionStart;
     const endPosition = eventTarget.selectionEnd;
     const focusNavigableArrowKey = {left: false, up: false, right: false, down: false};
@@ -1651,6 +1653,8 @@ window.focuslessSpatialNavigation = false;
       enableExperimentalAPIs,
       get keyMode() { return this._keymode ? this._keymode : 'ARROW'; },
       set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW'; },
+      currentInterest,
+      interest
     };
   }
 
