@@ -9,7 +9,7 @@
 <body>
 	<div tabindex="0" class="box b3" style="left: 80px; top: 20px"></div>
 	<div tabindex="0" class="box b3" style="left: 150px; top: 30px"></div>
-	<div id="scroller" tabindex="0" style="margin: 50px; overflow-y: scroll; border: 3px pink solid; width: 200px; height: 200px;">
+	<div id="scroller3" tabindex="0" style="margin: 50px; overflow-y: scroll; border: 3px pink solid; width: 200px; height: 200px;">
 		<div tabindex="0" class="box b2" style="left: 70px; top: 30px"></div>
 		<div tabindex="0" class="box b2" style="left: 50px; top: 90px"></div>
 		<div tabindex="0" class="box b2" style="left: 130px; top: 130px"></div>
@@ -20,12 +20,12 @@
 	<div tabindex="0" class="box b3" style="left: 180px; top: 100px"></div>
 </body>
 <script type="text/javascript">
-    document.addEventListener('navnotarget', function(event) {
-		event.preventDefault();
-	});
 
-	document.getElementById('scroller').addEventListener("navnotarget", function(e){
-		e.stopPropagation();
+	let scroller = document.getElementById('scroller3');
+	document.addEventListener('keydown', function(event) {
+		event.preventDefault();
+
+		scroller.focus();
 	});
 
 </script>
