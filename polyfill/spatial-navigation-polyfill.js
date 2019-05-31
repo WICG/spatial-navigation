@@ -9,7 +9,41 @@
  * Licensed under the MIT license (MIT)
  */
 
+
 (function () {
+  // Turn on/off interest
+  const focuslessSpatialNavigation = true;
+  let _interestElement = null;
+
+  const currentInterest = function () {
+    // get current interest element.
+    return _interestElement;
+  };
+
+  const interest = function (element) {
+    // Assign interest to element.
+    const prevInterest = currentInterest();
+    if (prevInterest) {
+      prevInterest.classList.remove('interest');
+    }
+
+    _interestElement = element;
+
+    if (element) {
+      document.activeElement.blur();
+      _interestElement.classList.add('interest');
+    }
+  };
+
+  if (focuslessSpatialNavigation) {
+    window.addEventListener('load', () => {
+      const style = document.createElement('style');
+      style.type = 'text/css';
+      style.innerHTML = '.interest { outline: 3px solid skyblue; }';
+      document.getElementsByTagName('head')[0].appendChild(style);
+
+    });
+  }
 
   // The polyfill must not be executed, if it's already enabled via browser engine or browser extensions.
   if (window.navigate !== undefined) {
@@ -17,6 +51,7 @@
   }
 
   const ARROW_KEY_CODE = {37: 'left', 38: 'up', 39: 'right', 40: 'down'};
+  const INTEREST_KEY_CODE = {13: 'enter', 27: 'esc'};
   const TAB_KEY_CODE = 9;
   let mapOfBoundRect = null;
   let startingPoint = null; // Indicates global variables for spatnav (starting position)
@@ -74,11 +109,18 @@
      */
     window.addEventListener('keydown', e => {
       const currentKeyMode = (parent && parent.__spatialNavigation__.keyMode) || window.__spatialNavigation__.keyMode;
-      const eventTarget = document.activeElement;
+      const interestElement = focuslessSpatialNavigation ? currentInterest() : null;
+      const eventTarget = focuslessSpatialNavigation && interestElement ? interestElement : document.activeElement;
       const dir = ARROW_KEY_CODE[e.keyCode];
+      const interestKey = INTEREST_KEY_CODE[e.keyCode];
 
-      if (e.keyCode === TAB_KEY_CODE)
+      if (e.keyCode === TAB_KEY_CODE) {
+        if (focuslessSpatialNavigation) {
+          interest(null); // remove interest
+          eventTarget.focus();
+        }
         startingPoint = null;
+      }
 
       if (!currentKeyMode ||
           (currentKeyMode === 'NONE') ||
@@ -89,9 +131,33 @@
       if (!e.defaultPrevented) {
         let focusNavigableArrowKey = {left: true, up: true, right: true, down: true};
 
+        if(focuslessSpatialNavigation && interestKey === 'enter' && e.isTrusted) {
+          interest(null);
+          eventTarget.focus();
+          let keyDownEvent = new KeyboardEvent('keydown', {
+            bubbles: true, cancelable: true, keyCode: 13
+          });
+          eventTarget.dispatchEvent(keyDownEvent);
+
+          // Edge case
+          if (eventTarget.type === 'checkbox') {
+            eventTarget.checked = !eventTarget.checked;
+          } else if (eventTarget.type === 'radio') {
+            eventTarget.checked = true;
+          }
+          return;
+        } else if (focuslessSpatialNavigation && interestKey === 'esc' && e.isTrusted) {
+          interest(eventTarget);
+          return;
+        }
+
         // Edge case (text input, area) : Don't move focus, just navigate cursor in text area
-        if ((eventTarget.nodeName === 'INPUT') || eventTarget.nodeName === 'TEXTAREA')
-          focusNavigableArrowKey = handlingEditableElement(e);
+        if (eventTarget.nodeName === 'INPUT' || eventTarget.nodeName === 'TEXTAREA') {
+          if (!focuslessSpatialNavigation || currentInterest() === null) {
+            // Input element have focus.
+            focusNavigableArrowKey = handlingEditableElement(e);
+          }
+        }
 
         if (focusNavigableArrowKey[dir]) {
           e.preventDefault();
@@ -112,6 +178,9 @@
      */
     document.addEventListener('mouseup', e => {
       startingPoint = {x: e.clientX, y: e.clientY};
+      if (focuslessSpatialNavigation) {
+        interest(null);
+      }
     });
   }
 
@@ -220,7 +289,7 @@
       if (!createSpatNavEvents('beforefocus', bestCandidate, null, dir))
         return true;
 
-      bestCandidate.focus();
+      focuslessSpatialNavigation ? interest(bestCandidate) : bestCandidate.focus();
       return true;
     }
 
@@ -668,7 +737,9 @@
    * @returns {Node} The search origin for the spatial navigation
    */
   function findSearchOrigin() {
-    let searchOrigin = document.activeElement;
+    const interestElement = focuslessSpatialNavigation ? currentInterest() : null;
+    let searchOrigin = focuslessSpatialNavigation && interestElement ? interestElement : document.activeElement;
+
     if (!searchOrigin ||
       (searchOrigin === document.body && !document.querySelector(':focus')) /* body isn't actually focused*/
     ) {
@@ -1374,7 +1445,8 @@
   function handlingEditableElement(e) {
     const SPINNABLE_INPUT_TYPES = ['email', 'date', 'month', 'number', 'time', 'week'],
       TEXT_INPUT_TYPES = ['password', 'text', 'search', 'tel', 'url', null];
-    const eventTarget = document.activeElement;
+    const interestElement = focuslessSpatialNavigation ? currentInterest() : null;
+    const eventTarget = focuslessSpatialNavigation && interestElement ? interestElement : document.activeElement;
     const startPosition = eventTarget.selectionStart;
     const endPosition = eventTarget.selectionEnd;
     const focusNavigableArrowKey = {left: false, up: false, right: false, down: false};
@@ -1581,6 +1653,8 @@
       enableExperimentalAPIs,
       get keyMode() { return this._keymode ? this._keymode : 'ARROW'; },
       set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW'; },
+      currentInterest,
+      interest
     };
   }
 
