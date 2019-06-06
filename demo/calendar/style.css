@@ -90,7 +90,8 @@ body {
 .header {
   grid-area: header;
   color: black;
-  background-image: url("images/pattern.png");
+  background-color: #dbe8ff;
+  border: 2px solid #5e98ff;
   height: 60px;
   padding: 20px;
   font-family: 'Roboto', sans-serif;
@@ -99,18 +100,18 @@ body {
 }
 
 #s1 {
-  grid-row: 6/10;
+  grid-row: 10/13;
 }
 
-#s4 {
-  grid-row: 2;
+#s3 {
+  grid-row: 6/8;
 }
 
-#s2, #s3 {
-  grid-row: 5/8;
+#s8 {
+  grid-row: 8/10;
 }
 
-#s8, #s11 {
+#s11 {
   grid-row: 8/9;
 }
 
@@ -150,12 +151,12 @@ body {
   grid-template-rows: repeat(17, 50px);
 }
 
-#s16 {
+#s5 {
   grid-row: 3;
 }
 
-#s19 {
-  grid-row: 11/13;
+#s4 {
+  grid-row: 11/15;
 }
 
 #s20 {
@@ -177,10 +178,6 @@ body {
   grid-row: 17/18;
 }
 
-#s12 {
-  grid-row: 15/17;
-}
-
 .sat {
   grid-area: sat;
   display: grid;
@@ -192,8 +189,8 @@ body {
   grid-row: 5/6;
 }
 
-#s14 {
-  grid-row: 13/15;
+#s2 {
+  grid-row: 14/16;
 }
 
 #s15 {
@@ -205,7 +202,7 @@ body {
 }
 
 #s18 {
-  grid-row: 4/5;
+  grid-row: 5/6;
 }
 
 .sun {
@@ -271,7 +268,6 @@ body {
   background-color: #027dc5;
 }
 
-.schedule:focus {
-  color: #fff;
-  outline: 4px solid steelblue;
+:focus {
+  outline: 4px #3582ff solid;
 }
