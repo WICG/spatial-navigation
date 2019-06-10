@@ -12,7 +12,7 @@
 
 (function () {
   // Turn on/off interest
-  const focuslessSpatialNavigation = true;
+  const focuslessSpatialNavigation = false;
   let _interestElement = null;
 
   const currentInterest = function () {
