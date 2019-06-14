@@ -208,6 +208,9 @@
       // * Starting point is meaningfull when:
       // 1) starting point is inside the spatnav container
       // 2) starting point is inside the non-focusable element
+      if(elementFromPosition === null) {
+        elementFromPosition = document.body;
+      }
       if (isFocusable(elementFromPosition) && !isContainer(elementFromPosition)) {
         startingPoint = null;
       } else if (isContainer(elementFromPosition)) {
@@ -346,10 +349,10 @@
           candidates.push(elem);
 
           if(!isContainer(elem) && elem.childElementCount) {
-            candidates = candidates.concat(getSpatialNavigationCandidates(elem));
+            candidates = candidates.concat(getSpatialNavigationCandidates(elem, option = {mode: 'all'}));
           }
         } else if (elem.childElementCount) {
-          candidates = candidates.concat(getSpatialNavigationCandidates(elem));
+          candidates = candidates.concat(getSpatialNavigationCandidates(elem, option = {mode: 'all'}));
         }
       }
     }
@@ -430,7 +433,7 @@
 
       if (bestTarget && isDelegableContainer(bestTarget)) {
         // if best target is delegable container, then find descendants candidate inside delegable container.
-        const innerTarget = getSpatialNavigationCandidates(bestTarget);
+        const innerTarget = getSpatialNavigationCandidates(bestTarget, {mode: 'all'});
         const descendantsBest = innerTarget.length > 0 ? targetElement.spatialNavigationSearch(dir, {candidates: innerTarget, container: bestTarget}) : null;
         if (descendantsBest) {
           bestTarget = descendantsBest;
@@ -709,6 +712,7 @@
             }
 
             container = parentContainer;
+            currentOption = {candidates: getSpatialNavigationCandidates(container, {mode: option}), container};
 
             if (container.parentElement)
               parentContainer = container.getSpatialNavigationContainer();
@@ -725,6 +729,8 @@
 
     // Behavior after 'navnotarget' - Getting out from the current spatnav container
     if ((!parentContainer && container) && focusingController(eventTarget.spatialNavigationSearch(dir, currentOption), dir)) return;
+
+    if (!createSpatNavEvents('notarget', currentOption.container, eventTarget, dir)) return;
 
     if ((getCSSSpatNavAction(container) === 'auto') && (option === 'visible'))
       if (scrollingController(container, dir)) return;
@@ -1654,7 +1660,8 @@
       get keyMode() { return this._keymode ? this._keymode : 'ARROW'; },
       set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW'; },
       currentInterest,
-      interest
+      interest,
+      setStartingPoint: function (x, y) {startingPoint = (x && y) ? {x, y} : null}
     };
   }
 
