@@ -15,6 +15,13 @@
   const focuslessSpatialNavigation = false;
   let _interestElement = null;
 
+  const createInterestEvents = function (eventType, target) {
+    if(target && ['interestblur', 'interest'].includes(eventType)) {
+      const triggeredEvent = new CustomEvent(eventType, {bubbles: false, cancelable: false});
+      return target.dispatchEvent(triggeredEvent);
+    }
+  };
+
   const currentInterest = function () {
     // get current interest element.
     return _interestElement;
@@ -25,6 +32,7 @@
     const prevInterest = currentInterest();
     if (prevInterest) {
       prevInterest.classList.remove('interest');
+      createInterestEvents('interestblur', prevInterest);
     }
 
     _interestElement = element;
@@ -32,6 +40,7 @@
     if (element) {
       document.activeElement.blur();
       _interestElement.classList.add('interest');
+      createInterestEvents('interest', _interestElement);
     }
   };
 
@@ -1655,14 +1664,22 @@
    * @function getInitialAPIs
    */
   function getInitialAPIs() {
-    return {
-      enableExperimentalAPIs,
-      get keyMode() { return this._keymode ? this._keymode : 'ARROW'; },
-      set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW'; },
-      currentInterest,
-      interest,
-      setStartingPoint: function (x, y) {startingPoint = (x && y) ? {x, y} : null}
-    };
+    if (focuslessSpatialNavigation)
+      return {
+        enableExperimentalAPIs,
+        get keyMode() { return this._keymode ? this._keymode : 'ARROW'; },
+        set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW'; },
+        currentInterest,
+        interest,
+        setStartingPoint: function (x, y) {startingPoint = (x && y) ? {x, y} : null}
+      };
+    else
+      return {
+        enableExperimentalAPIs,
+        get keyMode() { return this._keymode ? this._keymode : 'ARROW'; },
+        set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW'; },
+        setStartingPoint: function (x, y) {startingPoint = (x && y) ? {x, y} : null}
+      };
   }
 
   window.addEventListener('load', () => {
