@@ -685,6 +685,7 @@
    * @param eventTarget {Node} - currently focused element
    * @param container {SpatialNavigationContainer} - container
    * @param parentContainer {SpatialNavigationContainer} - parent container
+   * @param option - visible || all
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
   function navigateChain(eventTarget, container, parentContainer, dir, option) {
