@@ -343,7 +343,7 @@
    *                                          Default value is 'visible'.
    * @returns {sequence<Node>} candidate elements within the container
    */
-  function getSpatialNavigationCandidates(container, option = {mode: 'visible'}) {
+  function getSpatialNavigationCandidates (container, option = {mode: 'visible'}) {
     let candidates = [];
 
     if (container.childElementCount > 0) {
@@ -358,10 +358,10 @@
           candidates.push(elem);
 
           if(!isContainer(elem) && elem.childElementCount) {
-            candidates = candidates.concat(getSpatialNavigationCandidates(elem, option = {mode: 'all'}));
+            candidates = candidates.concat(getSpatialNavigationCandidates(elem, {mode: 'all'}));
           }
         } else if (elem.childElementCount) {
-          candidates = candidates.concat(getSpatialNavigationCandidates(elem, option = {mode: 'all'}));
+          candidates = candidates.concat(getSpatialNavigationCandidates(elem, {mode: 'all'}));
         }
       }
     }
@@ -715,11 +715,6 @@
             }
           }
           else {
-            // avoiding when spatnav container with tabindex=-1
-            if (isFocusable(container)) {
-              eventTarget = container;
-            }
-
             container = parentContainer;
             currentOption = {candidates: getSpatialNavigationCandidates(container, {mode: option}), container};
 
@@ -1671,14 +1666,14 @@
         set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW'; },
         currentInterest,
         interest,
-        setStartingPoint: function (x, y) {startingPoint = (x && y) ? {x, y} : null}
+        setStartingPoint: function (x, y) {startingPoint = (x && y) ? {x, y} : null;}
       };
     else
       return {
         enableExperimentalAPIs,
         get keyMode() { return this._keymode ? this._keymode : 'ARROW'; },
         set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW'; },
-        setStartingPoint: function (x, y) {startingPoint = (x && y) ? {x, y} : null}
+        setStartingPoint: function (x, y) {startingPoint = (x && y) ? {x, y} : null;}
       };
   }
 
