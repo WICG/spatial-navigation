@@ -1072,9 +1072,9 @@
     offsetY = isNaN(offsetY) ? 1 : offsetY;
 
     const hitTestPoint = {
-    // For performance
-    // middle: [(elementRect.left + elementRect.right) / 2, (elementRect.top + elementRect.bottom) / 2],
+      middle: [(elementRect.left + elementRect.right) / 2, (elementRect.top + elementRect.bottom) / 2],
       leftTop: [elementRect.left + offsetX, elementRect.top + offsetY],
+      // For performance
     //  leftBoottom: [elementRect.left + offsetX, elementRect.bottom - offsetY],
     //  rightTop: [elementRect.right - offsetX, elementRect.top + offsetY],
       rightBottom: [elementRect.right - offsetX, elementRect.bottom - offsetY]
