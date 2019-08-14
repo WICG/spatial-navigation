@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <title>Spatnav sanity check</title>
+  <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+
+  <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
+  <link rel="stylesheet" href="test.css">
+  <script src="test.js"></script>
+  <style>
+    h1 {
+      font-size: 20px;
+    }
+    .container {
+      width: 700px;
+      height: auto;
+    }
+    .note {
+      margin-top: 20px;
+      color: red;
+    }
+  </style>
+  </head>
+  <body onload="onload()">
+    <div style="width:800px; height: auto; padding: 20px;">
+      <div class="note">
+        All container is not focusable container.
+      </div>
+      <div class="container c1" style="--spatial-navigation-contain: delegable;">
+        <h1>
+          <a id="content1" href="">Content 1</a>
+        </h1>
+        <div>
+        This is <b>delegable container</b>.
+        <br>
+        When you press "down" key from "Menu6", this "Content 1" link will get focus.
+        </div>
+      </div>
+      <div class="container c2" style="padding-top:700px; --spatial-navigation-contain: delegable;">
+        <h1>
+          <a id="content2" href="">Content 2</a>
+        </h1>
+        <div>
+        This is <b>not delegable container</b>.
+        <br>
+        The "Content 2" link is closer than "Content 1" link to "Menu6". But the red container will first target because it is delegable container.
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+  var onload = () => {
+    testInit();
+    // navigate() test
+    testRun(function() {
+      document.querySelector('#content1').focus();
+      window.navigate('down');
+      assert_equals(document.activeElement, document.querySelector('#content2'));
+    }, "delegable container TC1. #content1 -> navigate('down') -> next Target should be #content2 button. even though it is offscreen.");
+
+  }
+  </script>
+</html>
