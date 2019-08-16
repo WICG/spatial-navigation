@@ -211,6 +211,7 @@
         assert_equals(document.activeElement, document.querySelector('#s13'));
         navigate('up');
         assert_equals(document.activeElement, document.querySelector('#s18'));
+        document.documentElement.scrollTop = 0; // Because it could be failed depend on viewport size.
         navigate('up');
         assert_equals(document.activeElement, document.querySelector('#s17'));
         navigate('left');

@@ -1061,18 +1061,23 @@
    * @returns {boolean}
    */
   function hitTest(element) {
+    const elementRect = getBoundingClientRect(element);
+    if (element.nodeName !== 'IFRAME' && (elementRect.top < 0 || elementRect.left < 0 ||
+      elementRect.top > window.innerHeight || elementRect.left > window.innerWidth))
+      return false;
+
     let offsetX = parseInt(element.offsetWidth) / 10;
     let offsetY = parseInt(element.offsetHeight) / 10;
 
     offsetX = isNaN(offsetX) ? 1 : offsetX;
     offsetY = isNaN(offsetY) ? 1 : offsetY;
 
-    const elementRect = getBoundingClientRect(element);
     const hitTestPoint = {
       middle: [(elementRect.left + elementRect.right) / 2, (elementRect.top + elementRect.bottom) / 2],
       leftTop: [elementRect.left + offsetX, elementRect.top + offsetY],
-      leftBoottom: [elementRect.left + offsetX, elementRect.bottom - offsetY],
-      rightTop: [elementRect.right - offsetX, elementRect.top + offsetY],
+      // For performance
+    //  leftBoottom: [elementRect.left + offsetX, elementRect.bottom - offsetY],
+    //  rightTop: [elementRect.right - offsetX, elementRect.top + offsetY],
       rightBottom: [elementRect.right - offsetX, elementRect.bottom - offsetY]
     };
 
