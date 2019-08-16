@@ -1,0 +1,333 @@
+/* css for panel.js */
+/* button : https://codepen.io/Sambego/pen/zDLxe */
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+
+div {
+  font-size: 1em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+h2 {
+  color: #1e669f
+}
+
+h3 {
+  margin: 10px 6px 6px 6px;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.hide {
+  display: none;
+}
+
+#container {
+  margin-left: 20px;
+}
+
+body {
+  background: rgb(238,238,238);
+  width:100%;
+  padding:0;
+  margin:0;
+  font-family: "Roboto", sans-serif;
+  color: rgb(22, 21, 21);
+  font-size: 14px;
+}
+
+.header {
+  height: 8rem;
+}
+
+html, body {
+  height: 100%;
+}
+
+.test-button {
+  background: #327aea;
+  padding: 10px 30px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 9px;
+  color: white;
+  font-weight: bold;
+}
+
+#test-stop {
+  background: gray;
+}
+
+#test-progress {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.test-button:focus, .test-button:active{
+  background: #0c3d89;
+}
+
+.error-list {
+  margin: 10px;
+  min-height: 30px;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 2px solid #327aea;
+}
+
+.item-content {
+  border: 0px;
+  border-radius: 4px;
+  color: rgb(61, 60, 60);
+  background-color: white;
+  box-shadow: lightgray 0px 2px 3px 0px;
+  margin: 10px;
+  padding: 15px;
+  min-height: 50px;
+}
+
+.item-content .item {
+  display: block;
+}
+
+.item-content .item:hover {
+  color: #d62d20;
+  cursor: pointer;
+}
+
+/* css for line separator of devtool block */
+/* https://codepen.io/ibrahimjabbari/pen/ozinB */
+
+hr {
+  border: 0;
+  height: 1px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  margin-left: 7%;
+  margin-right: 7%;
+  background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b62, #f0f0f0);
+  background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b62, #f0f0f0);
+  background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b62, #f0f0f0);
+  background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b62, #f0f0f0);
+}
+
+/* css for checkbox */
+/* https://codepen.io/finnhvman/pen/zpygBB */
+
+.pure-material-checkbox {
+  z-index: 0;
+  position: relative;
+  display: inline-block;
+  color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.87);
+  font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+  font-size: 12px;
+  line-height: 1;
+}
+
+/* Input */
+.pure-material-checkbox > input {
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  z-index: -1;
+  position: absolute;
+  left: -10px;
+  top: -8px;
+  display: block;
+  margin: -5px 0px 0px 0px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
+  box-shadow: none;
+  outline: none;
+  opacity: 0;
+  transform: scale(1);
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.2s;
+}
+
+/* Span */
+.pure-material-checkbox > span {
+  display: inline-block;
+  width: 100%;
+  cursor: pointer;
+}
+
+/* Box */
+.pure-material-checkbox > span::before {
+  content: "";
+  display: inline-block;
+  box-sizing: border-box;
+  margin: -2px 11px 3px 1px;
+  border: solid 2px; /* Safari */
+  border-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
+  border-radius: 2px;
+  width: 18px;
+  height: 18px;
+  vertical-align: top;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+/* Checkmark */
+.pure-material-checkbox > span::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -2px;
+  left: 1px;
+  width: 10px;
+  height: 5px;
+  border: solid 2px transparent;
+  border-right: none;
+  border-top: none;
+  transform: translate(3px, 4px) rotate(-45deg);
+}
+
+/* Checked, Indeterminate */
+.pure-material-checkbox > input:checked,
+.pure-material-checkbox > input:indeterminate {
+  background-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+}
+
+.pure-material-checkbox > input:checked + span::before,
+.pure-material-checkbox > input:indeterminate + span::before {
+  border-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+  background-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+}
+
+.pure-material-checkbox > input:checked + span::after,
+.pure-material-checkbox > input:indeterminate + span::after {
+  border-color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+}
+
+.pure-material-checkbox > input:indeterminate + span::after {
+  border-left: none;
+  transform: translate(4px, 3px);
+}
+
+/* Hover, Focus */
+.pure-material-checkbox:hover > input {
+  opacity: 0.04;
+}
+
+.pure-material-checkbox > input:focus {
+  opacity: 0.12;
+}
+
+.pure-material-checkbox:hover > input:focus {
+  opacity: 0.16;
+}
+
+/* Active */
+.pure-material-checkbox > input:active {
+  opacity: 1;
+  transform: scale(0);
+  transition: transform 0s, opacity 0s;
+}
+
+.pure-material-checkbox > input:active + span::before {
+  border-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+}
+
+.pure-material-checkbox > input:checked:active + span::before {
+  border-color: transparent;
+  background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
+}
+
+/* Disabled */
+.pure-material-checkbox > input:disabled {
+  opacity: 0;
+}
+
+.pure-material-checkbox > input:disabled + span {
+  color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.38);
+  cursor: initial;
+}
+
+.pure-material-checkbox > input:disabled + span::before {
+  border-color: currentColor;
+}
+
+.pure-material-checkbox > input:checked:disabled + span::before,
+.pure-material-checkbox > input:indeterminate:disabled + span::before {
+  border-color: transparent;
+  background-color: currentColor;`
+}
+
+/* CSS for tooltip */
+/* https://codepen.io/deineko/pen/YZeQJP */
+
+@import url('https://fonts.googleapis.com/css?family=Raleway:200,200i,400,400i,500,500i,700,700i');
+
+/*tipped element. should be inline-block or block*/
+.qtip {
+  z-index: 100;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  color: #3bb4e5;
+  border-bottom: 0.05em dotted #3bb4e5;
+  box-sizing: border-box;
+  font-style: normal;
+  transition:all .25s ease-in-out
+}
+
+.qtip:hover {color:#0057e7;border-bottom:0.05em dotted #0057e7}
+/*the tip*/
+.qtip:before {
+  content: attr(data-tip);
+  font-size: 14px;
+  position: absolute;
+  background: rgba(10, 20, 30, 0.85);
+  color: #fff;
+  line-height: 1.2em;
+  padding: 0.5em;
+  font-style: normal;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  min-width: 120px;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all .3s ease-in-out;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  font-family: sans-serif;
+  letter-spacing: 0;
+  font-weight: 600
+}
+
+.qtip:after {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  content: '';
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  transition: all .3s ease-in-out
+}
+.qtip:hover:before,
+.qtip:hover:after {
+  visibility: visible;
+  opacity: 1
+}
+
+/*bottom*/
+.qtip.tip-bottom:before {
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, calc(100% + 8px));
+  box-sizing: border-box;
+  border-radius: 3px;
+}
+
+.qtip.tip-bottom:after {
+  border-width: 0 8px 8px 8px;
+  border-color: transparent transparent rgba(10, 20, 30, 0.85) transparent;
+  bottom: -8px;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
