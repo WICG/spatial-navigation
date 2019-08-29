@@ -1,17 +1,17 @@
 
 # spatial-navigation-chrome-extension
 
-**Written**: 2019-01-02, **Updated**: 2019-08-29
+**Written**: 2019-08-29, **Updated**: 2019-08-29
 
-**Spatial-navigation-chrome-extension** enable spatial navigation on any websites using [spatial-navigation-polyfill](https://github.com/WICG/spatial-navigation/tree/master/polyfill)
-- ![spatial navigation on any websites](./img2.gif)
+**Spatial-navigation-chrome-extension** enables spatial navigation on any websites using [spatial-navigation-polyfill](https://github.com/WICG/spatial-navigation/tree/master/polyfill)
+![spatial navigation on any websites](./img2.gif)
 
 **Spatial Navigation** provides a processing model and standards APIs for directional(top/left/bottom/right) focus navigation using arrow keys. ([Learn More](https://wicg.github.io/spatial-navigation/))
 
 ```
 Note:
-This extentension is based on spatial-navigation polyfill from develop branch.
-It is latest version, but there are some difference with Spec.
+This tool is based on spatial-navigation-polyfill which was forked from the develop branch on August 2019.
+It means the polyfill includes a few non-standards features.
 ```
 ## Features
 ### 1. Spatial Navigation
