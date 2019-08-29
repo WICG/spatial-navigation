@@ -11,7 +11,7 @@
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],
-      "js": ["polyfill/spatial-navigation-polyfill.js", "src/content_script.js", "detector/graph.js", "detector/detector.js"],
+      "js": ["polyfill/spatial-navigation-polyfill.js", "src/content_script.js", "src/detector/graph.js", "src/detector/detector.js"],
       "css": ["src/content_script.css"],
       "all_frames": true
     }
