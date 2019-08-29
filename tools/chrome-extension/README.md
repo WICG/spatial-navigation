@@ -22,7 +22,7 @@ It means the polyfill includes a few non-standards features.
 ### 2. Popup
 1. On / Off Spatial Navigation
 2. Change Key mode (ARROW / SHIFTARROW)
-3. Choose wheter to show candidates in 4 directions)
+3. Choose whether or not to show candidates in 4 directions
 
 - ![Popup menu](./img1.png)
 
@@ -39,7 +39,7 @@ It means the polyfill includes a few non-standards features.
 5. Focusable Areas
 : Show focusable child elements from current element
 6. Next Candidates
-: Show all candidates list of 4 directons from current element (show current element if scrollable)
+: Show all candidates list of 4 directions from current element (show current element if scrollable)
 7. List of Containers
 : List of containers from parent of current element to topmost container
 
@@ -47,7 +47,7 @@ It means the polyfill includes a few non-standards features.
 
 ## How to install
 1. Clone the repository `git clone https://github.com/WICG/spatial-navigation.git`.
-2. Using chrome, navigate to `chrome://extensions`.
+2. In chrome, navigate to `chrome://extensions`.
 3. Turn on the **Developer mode**.
 4. Click **LOAD UNPACKED** and select the `tools/chrome-extension` directory.
 
@@ -57,7 +57,7 @@ It means the polyfill includes a few non-standards features.
 
 ### 2. DevTool
 1. Click the SpatialNavigation tab of developer's tool(F12 / ⌥ +⌘+I).
-2. You can see the information of Spatial Navigation on the tab. Also, the information is changed as the focusing moves.
+2. You can see the information of Spatial Navigation on the tab. Also, the information is changed as the focus moves.
 
 
 ## Acknowledgement
