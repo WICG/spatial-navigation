@@ -12,8 +12,8 @@ You can raise a spec issue in [CSS WG](https://github.com/w3c/csswg-drafts/label
 * Read the [Spec](https://drafts.csswg.org/css-nav-1/)
 * Read the [Explainer](https://drafts.csswg.org/css-nav-1/explainer)
 * Play with the [Polyfill](polyfill/README.md)
-* Try the [Demo](https://wicg.github.io/spatial-navigation/demo/)
-* See the [Implementation Status](implStatus.md)
+* Try the [Demo](https://wicg.github.io/spatial-navigation/demo/) and [Extension tool]()
+* See the [Implementation status](implStatus.md)
 * Give feedback on [issues for spec](https://github.com/w3c/csswg-drafts/labels/css-nav-1) in CSS WG or [issues for others](https://github.com/WICG/spatial-navigation/issues) in WICG
 
 ## Overview
