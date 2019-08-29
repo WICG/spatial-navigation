@@ -1,0 +1,24 @@
+{
+  "name": "snu-chrome-extension-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "devtool.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^5.7.0",
+    "eslint-plugin-import": "^2.14.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/lgewst/snu-chrome-extension-1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lgewst/snu-chrome-extension-1/issues"
+  },
+  "homepage": "https://github.com/lgewst/snu-chrome-extension-1#readme"
+}

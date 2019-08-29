@@ -1,0 +1,27 @@
+{
+  "name": "SpatialNavigation",
+  "version": "0.6",
+  "description": "extension for spatial navigation",
+  "manifest_version": 2,
+  "devtools_page": "src/devtool.html",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "src/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*", "<all_urls>"],
+      "js": ["polyfill/spatial-navigation-polyfill.js", "src/content_script.js", "src/detector/graph.js", "src/detector/detector.js"],
+      "css": ["src/content_script.css"],
+      "all_frames": true
+    }
+  ],
+  "permissions": [
+    "activeTab", "tabs", "<all_urls>", "storage"
+  ],
+  "background": {
+    "scripts": ["src/background.js"],
+    "persistent": true
+  }
+}
+
