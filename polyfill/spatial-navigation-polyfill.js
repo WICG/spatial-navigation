@@ -1085,8 +1085,7 @@
     const points = {entryPoint: {x: 0, y: 0}, exitPoint:{x: 0, y: 0}};
 
     if (startingPoint) {
-      points.exitPoint.x = searchOrigin.left;
-      points.exitPoint.y = searchOrigin.top;
+      points.exitPoint = searchOrigin;
 
       switch (dir) {
       case 'left':
