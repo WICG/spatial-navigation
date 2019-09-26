@@ -339,7 +339,7 @@
    *
    * @function getSpatialNavigationCandidates
    * @param container {Node} - The spatial navigation container
-   * @param option {FocusableAreasOptions} - 'mode' attribute takes visible' or 'all' for searching the boundary of focusable elements.
+   * @param option {FocusableAreasOptions} - 'mode' attribute takes 'visible' or 'all' for searching the boundary of focusable elements.
    *                                          Default value is 'visible'.
    * @returns {sequence<Node>} candidate elements within the container
    */
@@ -393,7 +393,7 @@
 
   /**
    * Find the best candidate among the candidates within the container from the search origin (currently focused element)
-   * @see {@link https://wicg.github.io/spatial-navigation/#js-api}
+   * @see {@link https://drafts.csswg.org/css-nav-1/#dom-element-spatialnavigationsearch}
    * @function spatialNavigationSearch
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @param candidates {sequence<Node>} - The candidates for spatial navigation
@@ -618,7 +618,7 @@
    * Find focusable elements within the spatial navigation container.
    * @see {@link https://drafts.csswg.org/css-nav-1/#dom-element-focusableareas}
    * @function focusableAreas
-   * @param option {FocusableAreasOptions} - 'mode' attribute takes visible' or 'all' for searching the boundary of focusable elements.
+   * @param option {FocusableAreasOptions} - 'mode' attribute takes 'visible' or 'all' for searching the boundary of focusable elements.
    *                                          Default value is 'visible'.
    * @returns {sequence<Node>} All focusable elements or only visible focusable elements within the container
    */
