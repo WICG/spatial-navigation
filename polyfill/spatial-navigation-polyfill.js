@@ -241,6 +241,42 @@
   }
 
   /**
+   * Find the candidates within a spatial navigation container include delegable container.
+   * This function does not search inside delegable container or focusable container.
+   * In other words, this return candidates set is not included focusable elements inside delegable container or focusable container.
+   *
+   * @function getSpatialNavigationCandidates
+   * @param container {Node} - The spatial navigation container
+   * @param option {FocusableAreasOptions} - 'mode' attribute takes visible' or 'all' for searching the boundary of focusable elements.
+   *                                          Default value is 'visible'.
+   * @returns {sequence<Node>} candidate elements within the container
+   */
+  function getSpatialNavigationCandidates (container, option = {mode: 'visible'}) {
+    let candidates = [];
+
+    if (container.childElementCount > 0) {
+      if (!container.parentElement) {
+        container = container.getElementsByTagName('body')[0] || document.body;
+      }
+      const children = container.children;
+      for (const elem of children) {
+        if (isDelegableContainer(elem)) {
+          candidates.push(elem);
+        } else if(isFocusable(elem)) {
+          candidates.push(elem);
+
+          if(!isContainer(elem) && elem.childElementCount) {
+            candidates = candidates.concat(getSpatialNavigationCandidates(elem, {mode: 'all'}));
+          }
+        } else if (elem.childElementCount) {
+          candidates = candidates.concat(getSpatialNavigationCandidates(elem, {mode: 'all'}));
+        }
+      }
+    }
+    return (option.mode === 'all') ? candidates : candidates.filter(isVisible);
+  }
+
+  /**
    * Find the candidates among focusable elements within a spatial navigation container from the search origin (currently focused element)
    * depending on the directional information.
    * @function spatNavCandidates
