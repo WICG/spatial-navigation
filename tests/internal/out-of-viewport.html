@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang=en>
+  <meta charset="utf-8">
+  <title>Spatnav sanity check</title>
+  <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+  <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
+  <link rel="stylesheet" href="test.css">
+  <script src="test.js"></script>
+  <style>
+  #d {
+    width: 100px;
+    height: 100px;
+    overflow: scroll;
+  }
+  </style>
+  <body onload="onload()">
+    <div id="c1" class="container" tabindex="0" style="width:200px; height:100px; overflow-y: scroll;">
+      <button id="c1b1" class="box" style="top: -30px; left: 40px;"></button>
+      <button id="c1b2" class="box" style="top: 70px; left: 40px;"></button>
+      <button id="c1b3" class="box" style="top: 100px; left: 40px;"></button>
+      <button id="c1b4" class="box" style="top: 180px; left: 40px;"></button>
+      <button id="c1b5" class="box" style="top: 190px; left: 40px;"></button>
+    </div>
+	  <iframe src="iframe_sub.html" id="iframe-element" tabindex="0" class="container c2"></iframe>
+  </body>
+  <script>
+  var onload = () => {
+    testInit();
+    let testNum = 1;
+
+    let c1 = document.querySelector('#c1');
+    let buttons = document.querySelectorAll('#c1 button');
+    let iframeDocument = document.querySelector('#iframe-element').contentDocument.documentElement;
+    let iframeBoxs = iframeDocument.querySelectorAll(".box");
+
+    testRun(function() {
+      c1.scrollTop = 80;
+      let candidates = c1.focusableAreas();
+      window.navigate('right');
+      assert_equals(candidates.length, 3);
+      assert_equals(candidates.includes(buttons[0]), false);
+      assert_equals(candidates.includes(buttons[1]), true);
+      assert_equals(candidates.includes(buttons[2]), true);
+      assert_equals(candidates.includes(buttons[3]), true);
+      assert_equals(candidates.includes(buttons[4]), false);
+    }, `isVisible TC${testNum++}. candidates.length should be b2~b4`);
+
+    testRun(function() {
+      c1.scrollTop = 100;
+      let candidates = c1.focusableAreas();
+      window.navigate('right');
+      assert_equals(candidates.length, 3);
+      assert_equals(candidates.includes(buttons[0]), false);
+      assert_equals(candidates.includes(buttons[1]), false);
+      assert_equals(candidates.includes(buttons[2]), true);
+      assert_equals(candidates.includes(buttons[3]), true);
+      assert_equals(candidates.includes(buttons[4]), true);
+    }, `isVisible TC${testNum++}. candidates.length should be b3~b5`);
+
+    testRun(function() {
+      c1.scrollTop = 80;
+      iframeDocument.scrollTop = 58;
+      let candidates =iframeDocument.focusableAreas();
+      assert_equals(candidates.length, 5);
+      assert_equals(candidates.includes(iframeBoxs[0]), false);
+      assert_equals(candidates.includes(iframeBoxs[1]), true);
+      assert_equals(candidates.includes(iframeBoxs[2]), true);
+      assert_equals(candidates.includes(iframeBoxs[3]), true);
+      assert_equals(candidates.includes(iframeBoxs[4]), true);
+      assert_equals(candidates.includes(iframeBoxs[5]), true);
+      assert_equals(candidates.includes(iframeBoxs[6]), false);
+      assert_equals(candidates.includes(iframeBoxs[7]), false);
+    }, `isVisible TC${testNum++}. candidates.length should be box2~box6`);
+  }
+  </script>
+</html>

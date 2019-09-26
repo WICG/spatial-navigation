@@ -46,7 +46,7 @@
     </article>
 
     <article id="formelements">
-      <h2>Form Element</h2>  
+      <h2>Form Element</h2>
       <form aria-label="form">
         <input aria-label="form input">
       </form>
@@ -68,7 +68,7 @@
     </article>
 
     <article id="anchorelements">
-      <h2>Navigation Elements</h2>  
+      <h2>Navigation Elements</h2>
       <a aria-label="a[name]">link</a>
       <a href="#void" aria-label="a[href]">link</a>
       <a href="" aria-label="a[href=]">link</a>
@@ -140,7 +140,7 @@
       let insideHidden = document.querySelector("[aria-label='{hidden} > a']");
       assert_equals(focusables.includes(insideHidden), false);
     }, "The focusable element inside an element with `visibility: hidden` should not be focusable");
-    
+
     testRun(function() {
       let displaynones = document.querySelectorAll("[aria-label^='{none}']");
       let div_array = Array.prototype.slice.call(displaynones); // converts NodeList to Array
