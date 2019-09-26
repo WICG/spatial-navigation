@@ -7,27 +7,30 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto:400,900" rel="stylesheet">
     <title>Spnav Calendar</title>
   </head>
+  <script type="text/javascript">
+    function changeRule() {
+      const ruleType = document.getElementById("ruleType").value;
+      const wrapperElement = document.getElementById("wrapper");
+      wrapperElement.style.setProperty('--spatial-navigation-function', ruleType);
+    }
+  </script>
   <body>
     <div id="optionField">
       <form>
         <fieldset>
-          <legend>Option</legend>
+          <legend>spatial-navigation-function</legend>
           <div>
-            <span>Navigation Rule: </span>
-            <select id="ruleType" name=rule>
-              <option value="Nearest">Nearest</option>
-              <option value="Projection" selected="selected">Projection</option>
-              <option value="Direction">Direction</option>
+            <span>Navigation function: </span>
+            <select id="ruleType" onchange="changeRule()" name=rule>
+              <option value="normal" selected="selected">normal</option>
+              <option value="grid">grid</option>
             </select>
-            <br>
-            <span>Navigation Loop: </span>
-            <input id="loopType" type="checkbox" name="loop" value="enable">
           </div>
         </fieldset>
       </form>
     </div>
-    <div class="wrapper">
-      <div class="header"><span>2017</span><p class="month">November</p></div>
+    <div class="wrapper" id="wrapper">
+      <div class="header"><span>2019</span><p class="month">June</p></div>
       <div class="sidebar">
         <div class="date"></div>
         <div class="time">note</div>
@@ -179,11 +182,11 @@
         <div class="schedule private" id="s5" tabindex="1">Run</div>
       </div>
       <div class="weekly sat">
-        <div class="date">Sat 11</div>
+        <div class="date">Sat 8</div>
         <div class="schedule todo" id="s17" tabindex="1">Pack for Trip</div>
-        <div class="schedule private" id="s18" tabindex="1">Call to Nicole</div>
+        <div class="schedule todo" id="s18" tabindex="1">Call to Nicole</div>
         <div class="schedule private" id="s6" tabindex="1">Lunch with Daniel</div>
-        <div class="schedule" id="s7" tabindex="1">Departure from SF</div>
+        <div class="schedule" id="s7" tabindex="1">Departure from Toronto</div>
       </div>
     </div>
   </body>

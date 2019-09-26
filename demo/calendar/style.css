@@ -1,5 +1,6 @@
 body {
   margin: 10px;
+  font-family: 'Roboto', sans-serif;
 }
 
 #optionField {
@@ -29,7 +30,7 @@ body {
   font-size: 15px;
   text-align: center;
   width: calc(100% - 10px);
-  border: 1px solid #fce6bf;
+  border: 1px solid #5e98ff;
 }
 
 .schedule {
@@ -46,10 +47,10 @@ body {
   grid-area: sidebar;
   font-size: 15px;
   text-align: center;
-  background-color: #fbf8ed;
-  border-left: 1px solid #fce6bf;
-  border-top: 1px solid #fce6bf;
-  border-bottom: 1px solid #fce6bf;
+  background-color: #dbe8ff;
+  border-left: 1px solid #5e98ff;
+  border-top: 1px solid #5e98ff;
+  border-bottom: 1px solid #5e98ff;
   padding: 5px;
 
   display: grid;
@@ -63,7 +64,7 @@ body {
   font-family: 'Roboto', sans-serif;
   text-align: left;
   color: #333;
-  border-bottom: 1px solid #fce6bf;
+  border-bottom: 1px solid #5e98ff;
   padding: 5px;
 }
 
@@ -71,6 +72,7 @@ body {
   padding: 5px;
   font-size: 10px;
   font-family: 'Roboto', sans-serif;
+  border-bottom: 1px solid #5e98ff;
   text-align: left;
   color: #000;
 }
@@ -250,15 +252,16 @@ body {
 }
 
 .work {
-  background-color: #da7c4a;
+  background-color: orange;
+  color: #000;
 }
 
 .private {
-  background-color: #ba6f76;
+  background-color: purple;
 }
 
 .anniversary {
-  background-color: #3a8841;
+  background-color: violet;
 }
 
 .todo {
