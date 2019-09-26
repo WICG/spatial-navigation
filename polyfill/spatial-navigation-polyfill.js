@@ -139,8 +139,13 @@
       // * Starting point is meaningfull when:
       // 1) starting point is inside the spatnav container
       // 2) starting point is inside the non-focusable element
+      if(elementFromPosition === null) {
+        elementFromPosition = document.body;
+      }
       if (isFocusable(elementFromPosition) && !isContainer(elementFromPosition)) {
         startingPoint = null;
+      } else if (isContainer(elementFromPosition)) {
+        eventTarget = elementFromPosition;
       } else {
         eventTarget = elementFromPosition.getSpatialNavigationContainer();
       }
@@ -155,7 +160,10 @@
     // At this point, spatialNavigationSearch can be applied.
     // If startingPoint is either a scroll container or the document,
     // find the best candidate within startingPoint
+    let container = null;
     if ((isContainer(eventTarget) || eventTarget.nodeName === 'BODY') && !(eventTarget.nodeName === 'INPUT')) {
+      container = eventTarget;
+
       if (eventTarget.nodeName === 'IFRAME')
         eventTarget = eventTarget.contentDocument.body;
 
@@ -163,25 +171,31 @@
       if (getCSSSpatNavAction(eventTarget) === 'scroll') {
         if (scrollingController(eventTarget, dir)) return;
       } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
-        if (focusingController(eventTarget.spatialNavigationSearch(dir, eventTarget.focusableAreas({mode: 'all'})), dir)) return;
+        if (focusingController(eventTarget.spatialNavigationSearch(dir, {candidates: getSpatialNavigationCandidates(eventTarget, {mode: 'all'}), inside: true}), dir)) return;
       } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
-        if (focusingController(eventTarget.spatialNavigationSearch(dir), dir)) return;
+        if (focusingController(eventTarget.spatialNavigationSearch(dir, {inside: true}), dir)) return;
         if (scrollingController(eventTarget, dir)) return;
       }
     }
 
     // 6
     // Let container be the nearest ancestor of eventTarget
-    let container = eventTarget.getSpatialNavigationContainer();
+    container = container || eventTarget.getSpatialNavigationContainer();
+    let parentContainer = (container.parentElement) ? container.getSpatialNavigationContainer() : null;
 
-    if (getCSSSpatNavAction(eventTarget) === 'focus') {
-      navigateChain(eventTarget, container, 'all', dir);
+    // When the container is the viewport of a browsing context
+    if (!parentContainer && ( window.location !== window.parent.location)) {
+      parentContainer = window.parent.document.documentElement;
     }
-    else if (getCSSSpatNavAction(container) === 'auto') {
-      navigateChain(eventTarget, container, 'visible', dir);
 
-      // Behavior before getting out from the current spatnav container
+    if (getCSSSpatNavAction(eventTarget) === 'scroll') {
       if (scrollingController(container, dir)) return;
+    }
+    else if (getCSSSpatNavAction(eventTarget) === 'focus') {
+      navigateChain(eventTarget, container, parentContainer, dir, 'all');
+    }
+    else if (getCSSSpatNavAction(eventTarget) === 'auto') {
+      navigateChain(eventTarget, container, parentContainer, dir, 'visible');
     }
   }
 
@@ -279,35 +293,24 @@
   /**
    * Find the candidates among focusable elements within a spatial navigation container from the search origin (currently focused element)
    * depending on the directional information.
-   * @function spatNavCandidates
+   * @function getFilteredSpatialNavigationCandidates
    * @param element {Node} - The currently focused element which is defined as 'search origin' in the spec
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @param candidates {sequence<Node>} - The candidates for spatial navigation without the directional information
    * @param container {Node} - The spatial navigation container
    * @returns {Node} The candidates for spatial navigation considering the directional information
    */
-  function spatNavCandidates (element, dir, candidates, container) {
-    let targetElement = element;
+  function getFilteredSpatialNavigationCandidates (element, dir, candidates, container) {
+    const targetElement = element;
+    // Removed below line due to a bug. (iframe body rect is sometime weird.)
+    // const targetElement = (element.nodeName === 'IFRAME') ? element.contentDocument.body : element;
     // If the container is unknown, get the closest container from the element
     container = container || targetElement.getSpatialNavigationContainer();
 
     // If the candidates is unknown, find candidates
     // 5-1
-    if (!candidates || candidates.length <= 0) {
-      if ((isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
-        if (targetElement.nodeName === 'IFRAME')
-          targetElement = targetElement.contentDocument.body;
-
-        candidates = targetElement.focusableAreas();
-      }
-      else {
-        candidates = filteredCandidates(targetElement, container.focusableAreas(), dir, container);
-      }
-    }
-    else {
-      candidates = filteredCandidates(targetElement, candidates, dir, container);
-    }
-    return candidates;
+    candidates = (!candidates || candidates.length <= 0) ? getSpatialNavigationCandidates(container) : candidates;
+    return filteredCandidates(targetElement, candidates, dir, container);
   }
 
   /**
@@ -317,28 +320,62 @@
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @param candidates {sequence<Node>} - The candidates for spatial navigation
    * @param container {Node} - The spatial navigation container
+   * @param inside {boolean} - Whether candidates should be elements outside of the target element or not.
    * @returns {Node} The best candidate which will gain the focus
    */
-  function spatialNavigationSearch (dir, candidates, container) {
-    // Let container be the nearest ancestor of eventTarget that is a spatnav container.
-
-    // targetElement === eventTarget
+  function spatialNavigationSearch (dir, args) {
     const targetElement = this;
-    candidates = spatNavCandidates(targetElement, dir, candidates, container);
+    let internalCandidates = [];
+    let externalCandidates = [];
+    let bestTarget;
+
+    // Set default parameter value
+    if (!args)
+      args = {};
+    const container = args.container || targetElement.getSpatialNavigationContainer();
+    const candidates = (args.candidates && args.candidates.length > 0) ?
+      args.candidates.filter((candidate) => container.contains(candidate)) : getSpatialNavigationCandidates(container);
+    const inside = args.inside || false;
 
     // Find the best candidate
     // 5
     // If startingPoint is either a scroll container or the document,
     // find the best candidate within startingPoint
     if (candidates && candidates.length > 0) {
-      if ((isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
-        const targetElementInTarget = targetElement.focusableAreas();
-        if (candidates.every(x => targetElementInTarget.includes(x))) {
-          // if candidates are contained in the targetElement, then the focus moves inside the targetElement
-          return selectBestCandidateFromEdge(targetElement, candidates, dir);
+
+      // Divide internal or external candidates
+      candidates.forEach(candidate => {
+        (targetElement.contains(candidate) && targetElement !== candidate ? internalCandidates : externalCandidates).push(candidate);
+      });
+      if (!(args.candidates && args.candidates.length > 0) && (internalCandidates.length === 0)) {
+        // If targetElement is focusable container or delegable container,
+        // getFilteredSpatialNavigationCandidates not return internal candidate.
+        internalCandidates = getSpatialNavigationCandidates(targetElement);
+      }
+      // Filter external Candidates
+      if (externalCandidates.length > 0) {
+        externalCandidates = getFilteredSpatialNavigationCandidates (targetElement, dir, externalCandidates, container);
+      }
+
+      if (inside && (isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
+        bestTarget = selectBestCandidateFromEdge(targetElement, internalCandidates, dir);
+      }
+      bestTarget = bestTarget || selectBestCandidate(targetElement, externalCandidates, dir);
+
+      if (bestTarget && isDelegableContainer(bestTarget)) {
+        // if best target is delegable container, then find descendants candidate inside delegable container.
+        const innerTarget = getSpatialNavigationCandidates(bestTarget, {mode: 'all'});
+        const descendantsBest = innerTarget.length > 0 ? targetElement.spatialNavigationSearch(dir, {candidates: innerTarget, container: bestTarget}) : null;
+        if (descendantsBest) {
+          bestTarget = descendantsBest;
+        } else if (!isFocusable(bestTarget)) {
+          // if there is no target inside bestTarget and delegable container is not focusable,
+          // then try to find another best target without curren best target.
+          candidates.splice(candidates.indexOf(bestTarget), 1);
+          bestTarget = candidates.length ? targetElement.spatialNavigationSearch(dir, {candidates: candidates, container: container}) : null;
         }
       }
-      return selectBestCandidate(targetElement, candidates, dir);
+      return bestTarget;
     }
 
     return null;
@@ -373,10 +410,22 @@
      * whose principal box’s geometric center is within the closed half plane
      * whose boundary goes through the geometric center of starting point and is perpendicular to D.
      */
-    return candidates.filter(candidate =>
-      container.contains(candidate) &&
-      isOutside(getBoundingClientRect(candidate), eventTargetRect, dir)
-    );
+    if ((isContainer(currentElm) || currentElm.nodeName === 'BODY') && !(currentElm.nodeName === 'INPUT')) {
+      return candidates.filter(candidate => {
+        const candidateRect = getBoundingClientRect(candidate);
+        return container.contains(candidate) &&
+          ((currentElm.contains(candidate) && isInside(eventTargetRect, candidateRect) && candidate !== currentElm) ||
+          isOutside(candidateRect, eventTargetRect, dir));
+      });
+    } else {
+      return candidates.filter(candidate => {
+        const candidateRect = getBoundingClientRect(candidate);
+        const candidateBody = (candidate.nodeName === 'IFRAME') ? candidate.contentDocument.body : null;
+        return container.contains(candidate) &&
+          candidate !== currentElm && candidateBody !== currentElm &&
+          isOutside(candidateRect, eventTargetRect, dir);
+      });
+    }
   }
 
   /**
@@ -428,7 +477,6 @@
       return getClosestElement(currentElm, candidates, dir, getInnerDistance);
   }
 
-
   /**
    * Select the closest candidate from the currently focused element (search origin) among candidates by using the distance function.
    * @function getClosestElement
@@ -473,7 +521,7 @@
   function getSpatialNavigationContainer() {
     let container = this;
 
-    while(!isContainer(container)) {
+    do {
       if (!container.parentElement) {
         if (window.location !== window.parent.location)
           container = window.parent.document.documentElement;
@@ -484,7 +532,7 @@
       else {
         container = container.parentElement;
       }
-    }
+    } while (!isContainer(container));
     return container;
   }
 
@@ -561,57 +609,57 @@
    * @param option - visible || all
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
-  function navigateChain(eventTarget, container, option, dir) {
-    let parentContainer = (container.parentElement) ? container.parentElement.getSpatialNavigationContainer() : null;
-    // When the container is the viewport of a browsing context
-    if (!parentContainer && ( window.location !== window.parent.location)) {
-      parentContainer = window.parent.document.documentElement;
-    }
+  function navigateChain(eventTarget, container, parentContainer, dir, option) {
+    let currentOption = {candidates: getSpatialNavigationCandidates(container, {mode: option}), container};
 
-    // spatial navigation step
-    // 7
     while (parentContainer) {
-      if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas({mode: option}), container), dir)) {
+      if (focusingController(eventTarget.spatialNavigationSearch(dir, currentOption), dir)) {
         return;
       }
       else {
-        // If there isn't any candidate and the best candidate among candidate: Find candidates of the ancestor container
-
-        // [event] navnotarget : Fired when spatial navigation has failed to find any acceptable candidate to move the focus
-        // to in the current spatnav container and when that same spatnav container cannot be scrolled either,
-        // before going up the tree to search in the nearest ancestor spatnav container.
-
         if ((option === 'visible') && scrollingController(container, dir)) return;
+        else {
+          if (!createSpatNavEvents('notarget', container, eventTarget, dir)) return;
 
-        if (!createSpatNavEvents('notarget', container, eventTarget, dir)) return;
+          // find the container
+          if (container === document || container === document.documentElement) {
+            if ( window.location !== window.parent.location ) {
+              // The page is in an iframe. eventTarget needs to be reset because the position of the element in the iframe
+              eventTarget = window.frameElement;
+              container = window.parent.document.documentElement;
 
-        // find the container
-        if (container === document || container === document.documentElement) {
-          if ( window.location !== window.parent.location ) {
-            // The page is in an iframe
-            // eventTarget needs to be reset because the position of the element in the IFRAME
-            // is unuseful when the focus moves out of the iframe
-            eventTarget = window.frameElement;
-            container = window.parent.document.documentElement;
+              if (container.parentElement)
+                parentContainer = container.getSpatialNavigationContainer();
+              else {
+                parentContainer = null;
+                break;
+              }
+            }
+          }
+          else {
+            container = parentContainer;
+            currentOption = {candidates: getSpatialNavigationCandidates(container, {mode: option}), container};
+
+            if (container.parentElement)
+              parentContainer = container.getSpatialNavigationContainer();
+            else {
+              parentContainer = null;
+              break;
+            }
           }
         }
-        else {
-          // avoiding when spatnav container with tabindex=-1
-          if (isFocusable(container) && (eventTarget !== container))
-            eventTarget = container;
-
-          container = parentContainer;
-        }
-
-        parentContainer = (container.parentElement) ? container.parentElement.getSpatialNavigationContainer() : null;
       }
     }
 
-    // Behavior after 'navnotarget' - Getting out of the current spatnav container
-    if (!parentContainer && container) {
-      if (focusingController(eventTarget.spatialNavigationSearch(dir, container.focusableAreas(), container), dir))
-        return;
-    }
+    currentOption = {candidates: getSpatialNavigationCandidates(container, {mode: option}), container};
+
+    // Behavior after 'navnotarget' - Getting out from the current spatnav container
+    if ((!parentContainer && container) && focusingController(eventTarget.spatialNavigationSearch(dir, currentOption), dir)) return;
+
+    if (!createSpatNavEvents('notarget', currentOption.container, eventTarget, dir)) return;
+
+    if ((getCSSSpatNavAction(container) === 'auto') && (option === 'visible'))
+      if (scrollingController(container, dir)) return;
   }
 
   /**
@@ -1335,8 +1383,7 @@
     if (SPINNABLE_INPUT_TYPES.includes(eventTarget.getAttribute('type')) &&
       (dir === 'up' || dir === 'down')) {
       focusNavigableArrowKey[dir] = true;
-    }
-    else if (TEXT_INPUT_TYPES.includes(eventTarget.getAttribute('type')) || eventTarget.nodeName === 'TEXTAREA') {
+    } else if (TEXT_INPUT_TYPES.includes(eventTarget.getAttribute('type')) || eventTarget.nodeName === 'TEXTAREA') {
       if (startPosition === endPosition) { // if there isn't any selected text
         if (startPosition === 0) {
           focusNavigableArrowKey.left = true;
@@ -1347,8 +1394,7 @@
           focusNavigableArrowKey.down = true;
         }
       }
-    }
-    else { // HTMLDataListElement, HTMLSelectElement, HTMLOptGroup
+    } else { // HTMLDataListElement, HTMLSelectElement, HTMLOptGroup
       focusNavigableArrowKey[dir] = true;
     }
 
@@ -1406,11 +1452,11 @@
         if (eventTarget.nodeName === 'IFRAME')
           eventTarget = eventTarget.contentDocument.body;
 
-        const candidates = eventTarget.focusableAreas(option);
+        const candidates = getSpatialNavigationCandidates(eventTarget, option);
 
         // 5-2
         if (Array.isArray(candidates) && candidates.length > 0) {
-          return findCandidate ? spatNavCandidates(eventTarget, dir, candidates) : eventTarget.spatialNavigationSearch(dir, candidates);
+          return findCandidate ? getFilteredSpatialNavigationCandidates(eventTarget, dir, candidates) : eventTarget.spatialNavigationSearch(dir, {candidates});
         }
         if (canScroll(eventTarget, dir)) {
           return findCandidate ? [] : eventTarget;
@@ -1420,7 +1466,7 @@
       // 6
       // Let container be the nearest ancestor of eventTarget
       let container = eventTarget.getSpatialNavigationContainer();
-      let parentContainer = (container.parentElement) ? container.parentElement.getSpatialNavigationContainer() : null;
+      let parentContainer = (container.parentElement) ? container.getSpatialNavigationContainer() : null;
 
       // When the container is the viewport of a browsing context
       if (!parentContainer && ( window.location !== window.parent.location)) {
@@ -1429,10 +1475,10 @@
 
       // 7
       while (parentContainer) {
-        const candidates = filteredCandidates(eventTarget, container.focusableAreas(option), dir, container);
+        const candidates = filteredCandidates(eventTarget, getSpatialNavigationCandidates(container, option), dir, container);
 
         if (Array.isArray(candidates) && candidates.length > 0) {
-          bestNextTarget = eventTarget.spatialNavigationSearch(dir, candidates, container);
+          bestNextTarget = eventTarget.spatialNavigationSearch(dir, {candidates, container});
           if (bestNextTarget) {
             return findCandidate ? candidates : bestNextTarget;
           }
@@ -1454,7 +1500,7 @@
             eventTarget = window.frameElement;
             container = window.parent.document.documentElement;
             if (container.parentElement)
-              parentContainer = container.parentElement.getSpatialNavigationContainer();
+              parentContainer = container.getSpatialNavigationContainer();
             else {
               parentContainer = null;
               break;
@@ -1468,7 +1514,7 @@
 
           container = parentContainer;
           if (container.parentElement)
-            parentContainer = container.parentElement.getSpatialNavigationContainer();
+            parentContainer = container.getSpatialNavigationContainer();
           else {
             parentContainer = null;
             break;
@@ -1478,11 +1524,11 @@
 
       if (!parentContainer && container) {
         // Getting out from the current spatnav container
-        const candidates = filteredCandidates(eventTarget, container.focusableAreas(option), dir, container);
+        const candidates = filteredCandidates(eventTarget, getSpatialNavigationCandidates(container, option), dir, container);
 
         // 9
         if (Array.isArray(candidates) && candidates.length > 0) {
-          bestNextTarget = eventTarget.spatialNavigationSearch(dir, candidates, container);
+          bestNextTarget = eventTarget.spatialNavigationSearch(dir, {candidates, container});
           if (bestNextTarget) {
             return findCandidate ? candidates : bestNextTarget;
           }
@@ -1501,7 +1547,7 @@
       findNextTarget: findTarget.bind(null, false),
       getDistanceFromTarget: (element, candidateElement, dir) => {
         if ((isContainer(element) || element.nodeName === 'BODY') && !(element.nodeName === 'INPUT')) {
-          if (element.focusableAreas().includes(candidateElement)) {
+          if (getSpatialNavigationCandidates(element).includes(candidateElement)) {
             return getInnerDistance(getBoundingClientRect(element), getBoundingClientRect(candidateElement), dir);
           }
         }
@@ -1531,6 +1577,7 @@
       enableExperimentalAPIs,
       get keyMode() { return this._keymode ? this._keymode : 'ARROW'; },
       set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW'; },
+      setStartingPoint: function (x, y) {startingPoint = (x && y) ? {x, y} : null;}
     };
   }
 
