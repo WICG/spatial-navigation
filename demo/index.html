@@ -91,11 +91,16 @@
         <a href="#input-elements" class="submenu" target="_self">&bull; &lt;input&gt; elements</a>
         <a href="#spatnav-container" class="submenu" target="_self">&bull; Spatial navigation container</a>
         <a href="#spatnav-drawing-board" class="submenu" target="_self">&bull; Drawing board</a>
+        <a href="#event" target="_self">&bull; Navigation event</a>
+        <a href="#navigation-events" class="submenu" target="_self">&bull; Spatial navigation events</a>
+        <a href="#prevent-default" class="submenu" target="_self">&bull; Prevent default navigation event</a>
         <a href="#api" target="_self">&bull; API Function</a>
         <a href="#getSpatialNavigationContainer" class="submenu" target="_self">&bull; getSpatialNavigationContainer</a>
         <a href="#focusableAreas" class="submenu" target="_self">&bull; focusableAreas</a>
         <a href="#spatialNavSearch" class="submenu" target="_self">&bull; spatialNavigationSearch</a>
         <a href="#navigate" class="submenu" target="_self">&bull; navigate</a>
+        <a href="#controlling" target="_self">&bull; Controlling spatial navigation</a>
+        <a href="#spatial-navigation-action" class="submenu" target="_self">&bull; spatial-navigation-action</a>
         <a href="#demo" target="_self">&bull; Web applications</a>
         <br>
       <div>
@@ -112,7 +117,7 @@
           </div>
 
           <div class="card-view">
-            <h2 tabIndex="0" id="processing-model">2. Processing model <a href="https://wicg.github.io/spatial-navigation/#processing-model" target="_blank"><img src="link.png" width="20px"/></a></h2>
+            <h2 tabIndex="0" id="processing-model">2. Processing model <a href="https://drafts.csswg.org/css-nav-1/#processing-model" target="_blank"><img src="link.png" width="20px"/></a></h2>
             <h3 id ="default-focus-moving">* Default focus moving behavior</h3>
             <p class="iframe-description"></p>
             <iframe src="sample/heuristic_default_move.html"></iframe>
@@ -143,26 +148,46 @@
           </div>
 
           <div class="card-view">
-            <h2 tabIndex="0" id="api">3. API</h2>
-            <h3 id="getSpatialNavigationContainer">* getSpatialNavigationContainer() <a href="https://wicg.github.io/spatial-navigation/#dom-element-getspatialnavigationcontainer" target="_blank"><img src="link.png" width="20px"/></a></h3>
+            <h2 tabIndex="0" id="event">3. Navigation event <a href="https://drafts.csswg.org/css-nav-1/#events-navigationevent" target="_blank"><img src="link.png" width="20px"/></a></h2>
+
+            <h3 id="navigation-events">* Spatial navigation events</h3>
+            <p class="iframe-description"></p>
+            <iframe src="sample/api_navigate_event.html" style="height:800px;"></iframe>
+
+            <h3 id="spatnav-drawing-board">* Prevent default navigation event</h3>
+            <p class="iframe-description"></p>
+            <iframe src="sample/api_prevent_navigate_event.html"></iframe>
+          </div>
+
+          <div class="card-view">
+            <h2 tabIndex="0" id="api">4. API</h2>
+            <h3 id="getSpatialNavigationContainer">* getSpatialNavigationContainer() <a href="https://drafts.csswg.org/css-nav-1/#dom-element-getspatialnavigationcontainer" target="_blank"><img src="link.png" width="20px"/></a></h3>
             <p class="iframe-description"></p>
             <iframe src="sample/api_getSpatialNavigationContainer.html"></iframe>
 
-            <h3 id="focusableAreas">* focusableAreas(optional focusableAreasOptions) <a href="https://wicg.github.io/spatial-navigation/#dom-element-focusableareas" target="_blank"><img src="link.png" width="20px"/></a></h3>
+            <h3 id="focusableAreas">* focusableAreas(optional focusableAreasOptions) <a href="https://drafts.csswg.org/css-nav-1/#dom-element-focusableareas" target="_blank"><img src="link.png" width="20px"/></a></h3>
             <p class="iframe-description"></p>
             <iframe src="sample/api_focusableAreas.html"></iframe>
 
-            <h3 id="spatialNavSearch">* spatialNavigationSearch() <a href="https://wicg.github.io/spatial-navigation/#dom-element-spatialnavigationsearch" target="_blank"><img src="link.png" width="20px"/></a></h3>
+            <h3 id="spatialNavSearch">* spatialNavigationSearch() <a href="https://drafts.csswg.org/css-nav-1/#dom-element-spatialnavigationsearch" target="_blank"><img src="link.png" width="20px"/></a></h3>
             <p class="iframe-description"></p>
             <iframe class="api-sample" src="sample/api_spatialNavigationSearch.html"></iframe>
 
-            <h3 id="navigate">* navigate(dir) <a href="https://wicg.github.io/spatial-navigation/#dom-window-navigate" target="_blank"><img src="link.png" width="20px"/></a></h3>
+            <h3 id="navigate">* navigate(dir) <a href="https://drafts.csswg.org/css-nav-1/#dom-window-navigate" target="_blank"><img src="link.png" width="20px"/></a></h3>
             <p class="iframe-description"></p>
             <iframe class="api-sample" src="sample/api_navigate.html"></iframe>
           </div>
 
           <div class="card-view">
-            <h2 tabIndex="0" id="demo">4. Web applications demo</h2>
+            <h2 tabIndex="0" id="controlling">5. Controlling spatial navigation through declarative means <a href="https://drafts.csswg.org/css-nav-1/#declarative" target="_blank"><img src="link.png" width="20px"/></a></h2>
+
+            <h3 id="spatial-navigation-action">* Spatial navigation action</h3>
+            <p class="iframe-description"></p>
+            <iframe src="sample/api_spatial_navigation_action.html"></iframe>
+          </div>
+
+          <div class="card-view">
+            <h2 tabIndex="0" id="demo">6. Web applications demo</h2>
             <a href="blog/index.html" class="demo-thumbnail" style="margin-right: 30px;"><img src="blog/thumbnail.png" width="380px"/><br>* Blog app</a>
             <a href="calendar/index.html" class="demo-thumbnail"><img src="calendar/thumbnail.png" width="380px"/><br>* Calender app</a>
           </div>
@@ -176,11 +201,11 @@
         Explainer
       </a>
 
-      <a href="https://wicg.github.io/spatial-navigation/">
+      <a href="https://drafts.csswg.org/css-nav-1/">
         Spec
       </a>
 
-      <a href="https://wicg.github.io/spatial-navigation/#js-api">
+      <a href="https://drafts.csswg.org/css-nav-1/#js-api">
         API
       </a>
       <a href="https://github.com/WICG/spatial-navigation">
