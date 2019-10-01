@@ -45,23 +45,18 @@
     let c3Button2 = document.querySelector('#c3b2');
 
     testRun(function() {
-      let prevScrollPosition;
+      let prevScrollPosition = 0;
       container1.scrollTop = 0;
       c1Button1.focus();
 
       // scroll
       navigate('down');
       assert_equals(document.activeElement, c1Button1);
-      assert_not_equals(container1.scrollTop, 0);
-      prevScrollPosition = container1.scrollTop;
-
+      assert_not_equals(container1.scrollTop, prevScrollPosition);
+      
       // move focus to c1Button2
       navigate('down');
       assert_equals(document.activeElement, c1Button2);
-
-      // scroll
-      navigate('down');
-      assert_not_equals(container1.scrollTop, prevScrollPosition);
 
       // move focus to container2
       navigate('down');
@@ -70,7 +65,6 @@
     }, `--spatial-navigation-action TC${testNum++}. --spatial-navigation-action: auto; should perform scroll and move focus`);
 
     testRun(function() {
-      let prevScrollPosition;
       container1.scrollTop = 0;
       container2.focus();
 
@@ -80,7 +74,6 @@
     }, `--spatial-navigation-action TC${testNum++}. --spatial-navigation-action: focus; should perform move focus. when press down key on container1, c1Button1 should get focus.`);
 
     testRun(function() {
-      let prevScrollPosition;
       c2Button1.focus();
 
       // move focus to c2Button1
