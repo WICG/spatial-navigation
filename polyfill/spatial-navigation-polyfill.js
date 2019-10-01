@@ -712,6 +712,17 @@
   }
 
   /**
+   * Decide whether an element is delegable container or not.
+   * NOTE: THIS IS NON-NORMATIVE API. 
+   * @function isDelegableContainer
+   * @param element {Node} element
+   * @returns {boolean}
+   */
+  function isDelegableContainer(element) {
+    return readCssVar(element, 'spatial-navigation-contain') === 'delegable';
+  }
+
+  /**
    * Decide whether an element is a scrollable container or not.
    * @see {@link https://drafts.csswg.org/css-overflow-3/#scroll-container}
    * @function isScrollContainer
