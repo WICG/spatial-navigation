@@ -19,7 +19,7 @@
     <h3>Demo</h3>
     <p>This demo shows the infinite scroll in Spatial Navigation. </p></p>
   </div>
-  
+
   <form class="option">
     <fieldset>
       <div>
@@ -29,7 +29,7 @@
     </fieldset>
   </form>
   <div >
-    
+
   </div>
   <div class="wrapper">
 
@@ -62,7 +62,7 @@
   document.body.addEventListener('navnotarget', function(e) {
     console.log("%cnavnotarget event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target}, {causedTarget: e.detail.causedTarget});
     e.preventDefault();
-    
+
     addBoxes(e.target, 2, e.detail.dir).then(function(elementNum){
       currItemNum.innerText = elementNum;
       moveFocusMore(e.detail.dir, e.detail.causedTarget, e.target);
@@ -71,7 +71,7 @@
 
   function moveFocusMore (dir, lastTarget, container) {
     let nextFocus = lastTarget.spatialNavigationSearch(dir, container.focusableAreas({'mode': 'all'}), container);
-    
+
     if (nextFocus) {
       nextFocus.scrollIntoView();
       nextFocus.focus({preventScroll:true});
