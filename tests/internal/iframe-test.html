@@ -47,6 +47,18 @@
       assert_not_equals(document.activeElement, iframeElement);
       assert_equals(document.activeElement, document.querySelector('#b4'));
     }, "iframe TC3. iframe -> iterate 'down' key -> focus should escape from iframe");
+
+    testRun(function() {
+      iframeElement.contentDocument.documentElement.scroll(0, iframeElement.contentDocument.documentElement.scrollHeight);
+      document.querySelector('#b4').focus();
+
+      let e = new KeyboardEvent("keydown", {bubbles : true, cancelable : true, keyCode : 40});
+      iframeElement.contentDocument.dispatchEvent(e);
+      window.navigate('up');
+      window.navigate('up');
+      assert_not_equals(document.activeElement, iframeElement);
+      assert_equals(document.activeElement, document.querySelector('#sub-b7'));
+    }, "iframe TC4. #b4 button -> iterate double 'up' key -> focus the most bottom element of iframe");
   }
   </script>
 </html>

@@ -164,8 +164,12 @@
     if ((isContainer(eventTarget) || eventTarget.nodeName === 'BODY') && !(eventTarget.nodeName === 'INPUT')) {
       container = eventTarget;
 
-      if (eventTarget.nodeName === 'IFRAME')
+      if (eventTarget.nodeName === 'IFRAME') {
         eventTarget = eventTarget.contentDocument.body;
+
+        let candidates = getSpatialNavigationCandidates(eventTarget, {mode: 'visible'});
+        candidates.forEach(candidate => {console.log(candidate); }); 
+      }
 
       let bestInsideCandidate = null;
 
