@@ -11,8 +11,8 @@
     <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
   </head>
   <body>
-    <div style="width: 80%;">
-      <p class="cssSyntax">spatial-navigation-action: auto | focus | scroll</p>  
+    <div style="width: 80%; margin: 20px auto;" >
+      <p class="cssSyntax" style="margin: 20px auto;">spatial-navigation-action: auto | focus | scroll</p>
       <ul>
         <li>`auto`: The directional input will move the focus to the visible candidates inside the spatial navigation container. 
           If there isn't any visible candidate, the user can manually scroll the container. <br>(current spec)</li>
@@ -22,12 +22,11 @@
           Moving the focus inside the container doesn't work with the directional input.</li>
       </ul>
     </div>
-    
     <form style="width: 750px; margin: 20px auto;">
       <fieldset>
         <legend>Option</legend>
         <div>
-          <span>Initial number of elements: <input id="itemNum" type="number" value=10></input></span>
+          <span>Initial number of elements: <input id="itemNum" type="number" value="10" min="1" max="100"></input></span>
           <span style="margin-left: 10px;">
             spatial-navigation-action :
             <select id="behavior" style="margin:0px 20px;">
@@ -40,15 +39,14 @@
       </fieldset>
     </form>
     <div >
-      
     </div>
     <div class="wrapper">
 
       <!-- Feed Section starts -->
       <div id="feed" tabindex="0" style="--spatial-navigation-action: auto;">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut 
-          labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-          nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit 
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+          labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+          nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
           esse cillum dolore eu fugiat nulla pariatur.</p>
       </div>
       <!-- Feed Section end -->
@@ -71,12 +69,21 @@
       }
     }
 
+    function updateBoxes(root, amount) {
+      root.innerHTML = '';
+      for (let i = 0; i < amount; i++) {
+        root.innerHTML += `<div class= "item" tabindex="0" style="background-color: #${getRandomInt(100, 800)};"></div>`;
+      }
+    }
+
     function getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min)) + min;
-    } 
+    }
 
     itemNum.addEventListener('change', function (e) {
       console.log("boxNum: " + e.target.value);
+      e.target.value = Math.max(1, e.target.value);
+      e.target.value = Math.min(100, e.target.value);
       updateBoxes(container, e.target.value);
     });
     behaviorOption.addEventListener('change', function (e) {

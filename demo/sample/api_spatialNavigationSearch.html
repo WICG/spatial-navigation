@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="application-name" content="API :spatialNavigationSearch()">
-    <meta name="author" content="jeonghee Ahn">
+    <meta name="author" content="Jeonghee Ahn">
     <meta name="description" content="element.spatialNavigationSearch(SpatialNavigationSearchOptions) returns the best candidate which will gain the focus.
+    If there isn't any candidate, it returns `null`.<br>
     You can check the result of element.spatialNavigationSearch() as <b>'border-color' whenever the container gains the focus.</b>">
     <link rel="stylesheet" href="spatnav-style.css">
     <script src="spatnav-utils.js"></script>
@@ -21,7 +22,7 @@
       let redContainer;
       const init = function(e) {
         console.log('========init=======');
-        const focusables = document.body.focusableAreas({'mode': 'all'});
+        const focusables = document.body.focusableAreas({mode: 'all'});
 
         for(focusable of focusables) {
           focusable.addEventListener('focus', callSpatialNavigationSearch);
@@ -49,9 +50,9 @@
           if (selectedOption === 'dir') {
             nextTarget = currentElement.spatialNavigationSearch(dir);
           } else if (selectedOption === 'candidates') {
-            nextTarget = currentElement.spatialNavigationSearch(dir, redBoxes);
+            nextTarget = currentElement.spatialNavigationSearch(dir, {candidates: redBoxes});
           } else if (selectedOption === 'container') {
-            nextTarget = currentElement.spatialNavigationSearch(dir, redBoxes, redContainer);
+            nextTarget = currentElement.spatialNavigationSearch(dir, {candidates: redBoxes, container: redContainer});
           }
 
           if(nextTarget && nextTarget.nodeName === 'BUTTON') {
@@ -66,11 +67,11 @@
           let selectedOptionString = {};
             for(dir of DIRECTION) {
               if (selectedOption === 'dir') {
-                selectedOptionString[dir] = `{dir: '${dir}'`;
+                selectedOptionString[dir] = `'${dir}'`;
               } else if (selectedOption === 'candidates') {
-                selectedOptionString[dir] = `{dir: '${dir}', candidates:[redBoxs]}`;
+                selectedOptionString[dir] = `'${dir}', {candidates: [redBoxs]}`;
               } else if (selectedOption === 'container') {
-                selectedOptionString[dir] = `{dir: '${dir}', candidates:[redBoxs], container:redContainer}`;
+                selectedOptionString[dir] = `'${dir}', {candidates: [redBoxs], container: redContainer}`;
               }
           }
 
