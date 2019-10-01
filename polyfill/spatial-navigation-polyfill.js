@@ -167,14 +167,17 @@
       if (eventTarget.nodeName === 'IFRAME')
         eventTarget = eventTarget.contentDocument.body;
 
+      let bestInsideCandidate = null;
+
       // 5-2
       if (getCSSSpatNavAction(eventTarget) === 'scroll') {
         if (scrollingController(eventTarget, dir)) return;
       } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
-        if (focusingController(eventTarget.spatialNavigationSearch(dir, {candidates: getSpatialNavigationCandidates(eventTarget, {mode: 'all'}), inside: true}), dir)) return;
+        bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, candidates: getSpatialNavigationCandidates(eventTarget, {mode: 'all'}), inside: true});
+        if (focusingController(bestInsideCandidate, dir)) return;
       } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
-        if (focusingController(eventTarget.spatialNavigationSearch(dir, {inside: true}), dir)) return;
-        if (scrollingController(eventTarget, dir)) return;
+        bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, inside: true});
+        if (focusingController(bestInsideCandidate, dir) || scrollingController(eventTarget, dir)) return;
       }
     }
 
