@@ -165,7 +165,7 @@
       container = eventTarget;
 
       if (eventTarget.nodeName === 'IFRAME') {
-        eventTarget = eventTarget.contentDocument.body;
+        eventTarget = eventTarget.contentDocument.documentElement;
 
         let candidates = getSpatialNavigationCandidates(eventTarget, {mode: 'visible'});
         candidates.forEach(candidate => {console.log(candidate); }); 
