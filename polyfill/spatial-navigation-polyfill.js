@@ -733,7 +733,10 @@
     const elementStyle = window.getComputedStyle(element, null);
     const overflowX = elementStyle.getPropertyValue('overflow-x');
     const overflowY = elementStyle.getPropertyValue('overflow-y');
-    return (overflowX !== 'visible' && overflowX !== 'clip') && (overflowY !== 'visible' && overflowY !== 'clip');
+
+    return ((overflowX !== 'visible' && overflowX !== 'clip' && isOverflow(element, 'left')) ||
+          (overflowY !== 'visible' && overflowY !== 'clip' && isOverflow(element, 'down'))) ?
+           true : false;
   }
 
   /**
@@ -1554,6 +1557,7 @@
 
     return {
       isContainer,
+      isScrollContainer,
       findCandidates: findTarget.bind(null, true),
       findNextTarget: findTarget.bind(null, false),
       getDistanceFromTarget: (element, candidateElement, dir) => {
