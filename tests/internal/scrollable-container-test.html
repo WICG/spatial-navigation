@@ -15,38 +15,51 @@
   }
   </style>
   <body onload="onload()">
-    <div id="c1" class="container" tabindex="0" style="width:600px; height:100px; overflow-y: scroll;">
+    <div id="c1" class="container" tabindex="0" style="width:600px; height:100px; overflow: scroll;">
+      overflow: scroll
       <button id="c1b1" class="box" style="top: 50px; left: 100px;"></button>
     </div>
 
     <div id="c2" class="container" tabindex="0" style="width:600px; height:100px; overflow: auto;">
-        <button id="c2b1" class="box" style="top: 50px; left: 100px;"></button>
+      overflow: auto
+      <button id="c2b1" class="box" style="top: 50px; left: 100px;"></button>
     </div>
 
     <div id="c3" class="container" tabindex="0" style="width:600px; height:100px; overflow: auto;">
+      overflow: auto
       <button id="c3b1" class="box" style="top: 50px; left: 100px;"></button>
       <button id="c3b2" class="box" style="top: 100px; left: 100px;"></button>
+      <button id="c3b3" class="box" style="top: 150px; left: 100px;"></button>
     </div>
 
     <div id="c4" class="container" tabindex="0" style="width:600px; height:100px; overflow: scroll;">
-        <button id="c3b1" class="box" style="top: 50px; left: 100px;"></button>
-        <button id="c3b2" class="box" style="top: 100px; left: 100px;"></button>
-      </div>
-
-    <div id="c5" class="container" tabindex="0" style="width:600px; height:100px; overflow: hidden;">
+      overflow: scroll
       <button id="c3b1" class="box" style="top: 50px; left: 100px;"></button>
       <button id="c3b2" class="box" style="top: 100px; left: 100px;"></button>
+      <button id="c3b3" class="box" style="top: 150px; left: 100px;"></button>
+    </div>
+
+    <div id="c5" class="container" tabindex="0" style="width:600px; height:100px; overflow: hidden;">
+      overflow: hidden
+      <button id="c3b1" class="box" style="top: 50px; left: 100px;"></button>
+      <button id="c3b2" class="box" style="top: 100px; left: 100px;"></button>
+      <button id="c3b3" class="box" style="top: 150px; left: 100px;"></button>
     </div>
 
     <div id="c6" class="container" tabindex="0" style="width:600px; height:100px; overflow: clip;">
+      overflow: clip
       <button id="c3b1" class="box" style="top: 50px; left: 100px;"></button>
       <button id="c3b2" class="box" style="top: 100px; left: 100px;"></button>
+      <button id="c3b3" class="box" style="top: 150px; left: 100px;"></button>
     </div>
 
     <div id="c7" class="container" tabindex="0" style="width:600px; height:100px; overflow: visible;">
-        <button id="c3b1" class="box" style="top: 50px; left: 100px;"></button>
-        <button id="c3b2" class="box" style="top: 100px; left: 100px;"></button>
+      overflow: visible
+      <button id="c3b1" class="box" style="top: 50px; left: 100px;"></button>
+      <button id="c3b2" class="box" style="top: 100px; left: 100px;"></button>
+      <button id="c3b3" class="box" style="top: 150px; left: 100px;"></button>
     </div>
+    <br><br>
   </body>
   <script>
   var onload = () => {
