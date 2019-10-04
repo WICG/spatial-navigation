@@ -166,9 +166,6 @@
 
       if (eventTarget.nodeName === 'IFRAME') {
         eventTarget = eventTarget.contentDocument.documentElement;
-
-        let candidates = getSpatialNavigationCandidates(eventTarget, {mode: 'visible'});
-        candidates.forEach(candidate => {console.log(candidate); }); 
       }
 
       let bestInsideCandidate = null;
@@ -511,7 +508,7 @@
     if (candidates) {
       for (let i = 0; i < candidates.length; i++) {
         const distance = distanceFunction(eventTargetRect, getBoundingClientRect(candidates[i]), dir);
-        
+
         // If the same distance, the candidate will be selected in the DOM order
         if (distance < minDistance) {
           minDistance = distance;
