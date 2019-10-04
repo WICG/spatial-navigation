@@ -223,7 +223,7 @@
       if (!createSpatNavEvents('beforefocus', bestCandidate, null, dir))
         return true;
 
-      bestCandidate.focus();
+      bestCandidate.focus({preventScroll:true});
       return true;
     }
 
@@ -741,6 +741,8 @@
 
   /**
    * Decide whether this element is scrollable or not.
+   * NOTE: If the value of 'overflow' is given to either 'visible', 'clip', or 'hidden', the element isn't scrollable.
+   *       If the value is 'hidden', the element can be only programmically scrollable. (https://drafts.csswg.org/css-overflow-3/#valdef-overflow-hidden)
    * @function isScrollable
    * @param element {Node}
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
@@ -759,11 +761,11 @@
           case 'left':
             /* falls through */
           case 'right':
-            return (overflowX !== 'visible' && overflowX !== 'clip');
+            return (overflowX !== 'visible' && overflowX !== 'clip' && overflowX !== 'hidden');
           case 'up':
             /* falls through */
           case 'down':
-            return (overflowY !== 'visible' && overflowY !== 'clip');
+            return (overflowY !== 'visible' && overflowY !== 'clip' && overflowY !== 'hidden');
           }
         }
         return false;
