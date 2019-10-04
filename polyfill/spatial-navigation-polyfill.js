@@ -211,9 +211,13 @@
     // When bestCandidate is found
     if (bestCandidate) {
       const container = bestCandidate.getSpatialNavigationContainer();
+      const elementStyle = window.getComputedStyle(container, null);
+      const overflowX = elementStyle.getPropertyValue('overflow-x');
+      const overflowY = elementStyle.getPropertyValue('overflow-y');
 
       // Scrolling container or document when the next focusing element isn't entirely visible
-      if (isScrollContainer(container) && !isEntirelyVisible(bestCandidate))
+      if (isScrollContainer(container) && !isEntirelyVisible(bestCandidate) && 
+          (overflowX !== 'hidden' || overflowY !== 'hidden'))
         bestCandidate.scrollIntoView();
 
       // When bestCandidate is a focusable element and not a container : move focus
