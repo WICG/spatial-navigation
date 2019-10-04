@@ -1,5 +1,6 @@
 body {
   margin: 10px;
+  font-family: 'Roboto', sans-serif;
 }
 
 #optionField {
@@ -14,7 +15,7 @@ body {
 }
 
 .month {
-  paddig: 0px;
+  padding: 0px;
   margin-top: 5px;
 
   font-weight: 900;
@@ -29,7 +30,7 @@ body {
   font-size: 15px;
   text-align: center;
   width: calc(100% - 10px);
-  border: 1px solid #fce6bf;
+  border: 1px solid #5e98ff;
 }
 
 .schedule {
@@ -46,10 +47,10 @@ body {
   grid-area: sidebar;
   font-size: 15px;
   text-align: center;
-  background-color: #fbf8ed;
-  border-left: 1px solid #fce6bf;
-  border-top: 1px solid #fce6bf;
-  border-bottom: 1px solid #fce6bf;
+  background-color: #dbe8ff;
+  border-left: 1px solid #5e98ff;
+  border-top: 1px solid #5e98ff;
+  border-bottom: 1px solid #5e98ff;
   padding: 5px;
 
   display: grid;
@@ -63,7 +64,7 @@ body {
   font-family: 'Roboto', sans-serif;
   text-align: left;
   color: #333;
-  border-bottom: 1px solid #fce6bf;
+  border-bottom: 1px solid #5e98ff;
   padding: 5px;
 }
 
@@ -71,6 +72,7 @@ body {
   padding: 5px;
   font-size: 10px;
   font-family: 'Roboto', sans-serif;
+  border-bottom: 1px solid #5e98ff;
   text-align: left;
   color: #000;
 }
@@ -88,7 +90,8 @@ body {
 .header {
   grid-area: header;
   color: black;
-  background-image: url("images/pattern.png");
+  background-color: #dbe8ff;
+  border: 2px solid #5e98ff;
   height: 60px;
   padding: 20px;
   font-family: 'Roboto', sans-serif;
@@ -96,15 +99,19 @@ body {
   font-size: 110%;
 }
 
-#s1, #s4 {
-  grid-row: 2;
+#s1 {
+  grid-row: 10/13;
 }
 
-#s2, #s3 {
-  grid-row: 5/8;
+#s3 {
+  grid-row: 6/8;
 }
 
-#s8, #s11 {
+#s8 {
+  grid-row: 8/10;
+}
+
+#s11 {
   grid-row: 8/9;
 }
 
@@ -144,12 +151,12 @@ body {
   grid-template-rows: repeat(17, 50px);
 }
 
-#s16 {
+#s5 {
   grid-row: 3;
 }
 
-#s19 {
-  grid-row: 11/13;
+#s4 {
+  grid-row: 11/15;
 }
 
 #s20 {
@@ -171,10 +178,6 @@ body {
   grid-row: 17/18;
 }
 
-#s12 {
-  grid-row: 15/17;
-}
-
 .sat {
   grid-area: sat;
   display: grid;
@@ -186,8 +189,8 @@ body {
   grid-row: 5/6;
 }
 
-#s14 {
-  grid-row: 13/15;
+#s2 {
+  grid-row: 14/16;
 }
 
 #s15 {
@@ -199,7 +202,7 @@ body {
 }
 
 #s18 {
-  grid-row: 4/5;
+  grid-row: 5/6;
 }
 
 .sun {
@@ -249,23 +252,22 @@ body {
 }
 
 .work {
-  background-color: #da7c4a;
+  background-color: orange;
+  color: #000;
 }
 
 .private {
-  background-color: #ba6f76;
+  background-color: purple;
 }
 
 .anniversary {
-  background-color: #3a8841;
+  background-color: violet;
 }
 
 .todo {
   background-color: #027dc5;
 }
 
-.schedule:focus {
-  box-shadow: inset 0 0 5px 5px #D80546;
-  color: #fff;
-  outline: none;
+:focus {
+  outline: 4px #3582ff solid;
 }

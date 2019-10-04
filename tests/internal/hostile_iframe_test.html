@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hostile iframe test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="application-name" content="Hostile iframe test">
+    <meta name="description" content="The 'navnotarget' event is fired when the focus reaches to the end of the document in iframe,
+     and the focus will move out of the container. If the event is prevented, the focus will remain in the container.
+     The hostile iframe can do it.">
+     <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+    <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
+    <link class="codestyle" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <h1><a href="http://10.177.242.47/jihye/spatial-navigation/tests/internal/hostile_iframe_test.html">Hostile iframe Test</a></h1>
+    <h2>Focus Trap by preventDefault 'navnotarget' Event</h2>
+    <iframe src="hostile_iframe1.html" tabindex="0" id="hostileIframe" class="container c2" style="width:300px; height:300px;"></iframe>
+    <h2>Focus Trap by preventDefault 'navbeforefocus' Event</h2>
+	  <iframe src="hostile_iframe2.html" tabindex="0" id="hostileIframe" class="container c2" style="width:300px; height:300px;"></iframe>
+    <h2>Focus Trap by preventDefault 'keydown'(LRUD) Event</h2>
+	  <iframe src="hostile_iframe3.html" tabindex="0" id="hostileIframe" class="container c2" style="width:300px; height:300px;"></iframe>
+    <button class="box b1" style="top: 80px; left: -70px; width:30px; height:30px;"></button>
+  </body>
+</html>

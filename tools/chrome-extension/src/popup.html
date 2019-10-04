@@ -1,0 +1,44 @@
+<html>
+
+<head>
+    <title>Spatial Navigation Settings</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+    <div class="align-center">
+        <input type="checkbox" id="switch">
+        <label for="switch" class="switch-label">
+            <span class="toggle--on">SpatialNavigation On</span>
+            <span class="toggle--off">SpatialNavigation Off</span>
+        </label>
+    </div>
+    <div id="optionArea">
+      <label class="popup-label">KeyMode</label>
+      <div class="select aling ">
+          <select id="keyMode" class="select-text">
+              <option value="ARROW">ARROW Key</option>
+              <option value="SHIFTARROW">SHIFT + ARROW Key</option>
+          </select>
+          <span class="select-bar"></span>
+      </div>
+      <label class="popup-label">Screen Overlay</label>
+      <div>
+          <div class="md-radio">
+              <input id="visActive" type="radio" name="options" checked>
+              <label for="visActive">Visible Active Only</label>
+          </div>
+          <div class="md-radio">
+              <input id="visNextTarget" type="radio" name="options">
+              <label for="visNextTarget">Visible Next Target</label>
+          </div>
+          <div class="md-radio">
+              <input id="visNone" type="radio" name="options">
+              <label for="visNone"> Visible Nothing </label>
+          </div>
+      </div>
+    </div>
+    <div id="status"></div>
+</body>
+<script src="popup.js"></script>
+</html>
