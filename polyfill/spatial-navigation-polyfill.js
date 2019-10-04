@@ -230,7 +230,6 @@
       if (!createSpatNavEvents('beforefocus', bestCandidate, null, dir))
         return true;
 
-      bestCandidate.focus({preventScroll:true});
       return true;
     }
 
