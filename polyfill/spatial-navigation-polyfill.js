@@ -164,9 +164,8 @@
     if ((isContainer(eventTarget) || eventTarget.nodeName === 'BODY') && !(eventTarget.nodeName === 'INPUT')) {
       container = eventTarget;
 
-      if (eventTarget.nodeName === 'IFRAME') {
+      if (eventTarget.nodeName === 'IFRAME')
         eventTarget = eventTarget.contentDocument.documentElement;
-      }
 
       let bestInsideCandidate = null;
 
