@@ -10,11 +10,11 @@
   <script src="test.js"></script>
 </head>
 <body onload="onload()">
-	<iframe src="iframe_sub.html" id="iframe-element" tabindex="0" class="container c2"></iframe>
-	<div tabindex="0" class="box b1" id="b1" style="left: 70px; top: -180px;"></div>
-	<div tabindex="0" class="box b1" id="b2" style="left: 180px; top: -120px;"></div>
+  <div tabindex="0" class="box b1" id="b1" style="left: 70px; top: 10px; margin-bottom: 20px;"></div>
+  <iframe src="iframe_sub.html" id="iframe-element" tabindex="0" class="container c2"></iframe>	
+	<div tabindex="0" class="box b1" id="b2" style="left: 120px; top: -150px;"></div>
 	<div tabindex="0" class="box b1" id="b3" style="left: 20px; top: -90px;"></div>
-	<div tabindex="0" class="box b1" id="b4" style="left: 190px; top: -50px;"></div>
+	<div tabindex="0" class="box b1" id="b4" style="left: 190px; top: -20px;"></div>
 </body>
 
   <script>
@@ -27,38 +27,39 @@
       window.navigate('up');
       assert_equals(document.activeElement, iframeElement);
       window.navigate('up');
-      assert_equals(document.activeElement, document.querySelector('#iframe-element'));
+      assert_equals(document.activeElement, iframeElement);
       assert_equals(iframeElement.contentDocument.activeElement, iframeElement.contentDocument.querySelector('#sub-b4'));
     }, "iframe TC1. b4 button -> navigate('up') -> next Target should be iframe element");
 
     testRun(function() {
-      iframeElement.contentDocument.querySelector('#sub-b8').focus();
+      iframeElement.contentDocument.querySelector('#sub-b7').focus();
       var e = new KeyboardEvent("keydown", {bubbles : true, cancelable : true, keyCode : 40});
       iframeElement.contentDocument.dispatchEvent(e);
       assert_equals(document.activeElement, document.querySelector('#b4'));
-    }, "iframe TC2. #sub-b8 button -> navigate('down') -> next Target should be #b4 element");
+    }, "iframe TC2. sub-b7 button -> iterate 'down' key -> focus should escape from iframe and next Target should be #b4 element");
 
     testRun(function() {
-      iframeElement.contentDocument.querySelector('#sub-b8').focus();
-      let e = new KeyboardEvent("keydown", {bubbles : true, cancelable : true, keyCode : 40});
-      iframeElement.contentDocument.dispatchEvent(e);
+      iframeElement.contentDocument.documentElement.scroll(0, 0);
+      document.querySelector('#b1').focus();
+
       window.navigate('down');
+      assert_equals(document.activeElement, iframeElement);
       window.navigate('down');
-      assert_not_equals(document.activeElement, iframeElement);
-      assert_equals(document.activeElement, document.querySelector('#b4'));
-    }, "iframe TC3. iframe -> iterate 'down' key -> focus should escape from iframe");
+      assert_equals(document.activeElement, iframeElement);
+      assert_equals(iframeElement.contentDocument.activeElement, iframeElement.contentDocument.querySelector('#sub-b1'));
+    }, "iframe TC4. b1 button -> iterate double 'down' key -> focus the most top element of iframe");
 
     testRun(function() {
       iframeElement.contentDocument.documentElement.scroll(0, iframeElement.contentDocument.documentElement.scrollHeight);
       document.querySelector('#b4').focus();
 
-      let e = new KeyboardEvent("keydown", {bubbles : true, cancelable : true, keyCode : 40});
-      iframeElement.contentDocument.dispatchEvent(e);
       window.navigate('up');
+      assert_equals(document.activeElement, iframeElement);
       window.navigate('up');
-      assert_not_equals(document.activeElement, iframeElement);
-      assert_equals(document.activeElement, document.querySelector('#sub-b7'));
-    }, "iframe TC4. #b4 button -> iterate double 'up' key -> focus the most bottom element of iframe");
+      assert_equals(document.activeElement, iframeElement);
+      assert_equals(iframeElement.contentDocument.activeElement, iframeElement.contentDocument.querySelector('#sub-b7'));
+      assert_not_equals(iframeElement.contentDocument.activeElement, iframeElement.contentDocument.querySelector('#sub-b4'));
+    }, "iframe TC4. b4 button -> iterate double 'up' key -> focus the most bottom element of iframe");
   }
   </script>
 </html>
