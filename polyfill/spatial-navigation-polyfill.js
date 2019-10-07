@@ -165,7 +165,7 @@
       container = eventTarget;
 
       if (eventTarget.nodeName === 'IFRAME')
-        eventTarget = eventTarget.contentDocument.body;
+        eventTarget = eventTarget.contentDocument.documentElement;
 
       let bestInsideCandidate = null;
 
@@ -494,7 +494,17 @@
    * @returns {Node} The candidate which is the closest one from the search origin
    */
   function getClosestElement(currentElm, candidates, dir, distanceFunction) {
-    const eventTargetRect = getBoundingClientRect(currentElm);
+    let eventTargetRect = null;
+    if (( window.location !== window.parent.location ) && (currentElm.nodeName === 'BODY' || currentElm.nodeName === 'HTML')) {
+      // If the eventTarget is iframe, then get rect of it based on its containing document
+      // Set the iframe's position as (0,0) because the rects of elements inside the iframe don't know the real iframe's position.
+      eventTargetRect = window.frameElement.getBoundingClientRect();
+      eventTargetRect.x = 0;
+      eventTargetRect.y = 0;
+    }
+    else 
+      eventTargetRect = currentElm.getBoundingClientRect();
+
     let minDistance = Number.POSITIVE_INFINITY;
     let minDistanceElements = [];
 
