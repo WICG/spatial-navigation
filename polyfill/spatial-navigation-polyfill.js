@@ -214,9 +214,13 @@
     // When bestCandidate is found
     if (bestCandidate) {
       const container = bestCandidate.getSpatialNavigationContainer();
+      const elementStyle = window.getComputedStyle(container, null);
+      const overflowX = elementStyle.getPropertyValue('overflow-x');
+      const overflowY = elementStyle.getPropertyValue('overflow-y');
 
       // Scrolling container or document when the next focusing element isn't entirely visible
-      if (isScrollContainer(container) && !isEntirelyVisible(bestCandidate))
+      // This is for the browser compatability
+      if (isScrollable(container, dir) && !isEntirelyVisible(bestCandidate));
         bestCandidate.scrollIntoView();
 
       // When bestCandidate is a focusable element and not a container : move focus
@@ -754,6 +758,8 @@
 
   /**
    * Decide whether this element is scrollable or not.
+   * NOTE: If the value of 'overflow' is given to either 'visible', 'clip', or 'hidden', the element isn't scrollable.
+   *       If the value is 'hidden', the element can be only programmically scrollable. (https://drafts.csswg.org/css-overflow-3/#valdef-overflow-hidden)
    * @function isScrollable
    * @param element {Node}
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
@@ -772,11 +778,11 @@
           case 'left':
             /* falls through */
           case 'right':
-            return (overflowX !== 'visible' && overflowX !== 'clip');
+            return (overflowX !== 'visible' && overflowX !== 'clip' && overflowX !== 'hidden');
           case 'up':
             /* falls through */
           case 'down':
-            return (overflowY !== 'visible' && overflowY !== 'clip');
+            return (overflowY !== 'visible' && overflowY !== 'clip' && overflowY !== 'hidden');
           }
         }
         return false;
