@@ -219,8 +219,8 @@
       const overflowY = elementStyle.getPropertyValue('overflow-y');
 
       // Scrolling container or document when the next focusing element isn't entirely visible
-      if (isScrollContainer(container) && !isEntirelyVisible(bestCandidate) && 
-          (overflowX !== 'hidden' || overflowY !== 'hidden'))
+      // This is for the browser compatability
+      if (isScrollable(container, dir) && !isEntirelyVisible(bestCandidate));
         bestCandidate.scrollIntoView();
 
       // When bestCandidate is a focusable element and not a container : move focus
@@ -230,6 +230,7 @@
       if (!createSpatNavEvents('beforefocus', bestCandidate, null, dir))
         return true;
 
+      bestCandidate.focus();
       return true;
     }
 
