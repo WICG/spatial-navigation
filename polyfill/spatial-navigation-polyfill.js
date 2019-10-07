@@ -227,6 +227,7 @@
       if (!createSpatNavEvents('beforefocus', bestCandidate, null, dir))
         return true;
 
+      bestCandidate.focus();
       return true;
     }
 
