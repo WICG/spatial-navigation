@@ -334,6 +334,7 @@
     const targetElement = this;
     let internalCandidates = [];
     let externalCandidates = [];
+    let insideOverlappedCandidates = hasOverlappedCandidates(targetElement);
     let bestTarget;
 
     // Set default parameter value
@@ -367,6 +368,11 @@
       if (inside && (isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
         bestTarget = selectBestCandidateFromEdge(targetElement, internalCandidates, dir);
       }
+
+      if (insideOverlappedCandidates && insideOverlappedCandidates.length > 0) {
+        bestTarget = selectBestCandidateFromEdge(targetElement, insideOverlappedCandidates, dir);
+      }
+
       bestTarget = bestTarget || selectBestCandidate(targetElement, externalCandidates, dir);
 
       if (bestTarget && isDelegableContainer(bestTarget)) {
@@ -958,9 +964,10 @@
    * @param element {Node}
    * @returns {boolean}
    */
-  function isEntirelyVisible(element) {
+  function isEntirelyVisible(element, container) {
     const rect = getBoundingClientRect(element);
-    const containerRect = getBoundingClientRect(element.getSpatialNavigationContainer());
+    const containerElm = container || element.getSpatialNavigationContainer();
+    const containerRect = getBoundingClientRect(containerElm);
 
     // FIXME: when element is bigger than container?
     const entirelyVisible = !((rect.left < containerRect.left) ||
@@ -1427,7 +1434,7 @@
   /**
    * Get the DOMRect of an element
    * @function getBoundingClientRect
-   * @param element {Node}
+   * @param {Node} element 
    * @returns {DOMRect}
    */
   function getBoundingClientRect(element) {
@@ -1446,6 +1453,24 @@
       mapOfBoundRect && mapOfBoundRect.set(element, rect);
     }
     return rect;
+  }
+
+  /**
+   * Get the candidates which is fully inside the target element in visual
+   * @param {Node} targetElement
+   * @returns {sequence<Node>}  insideCandidates
+   */
+  function hasOverlappedCandidates(targetElement) {      
+    const container = targetElement.getSpatialNavigationContainer();
+    const candidates = container.focusableAreas();
+    let insideCandidates = [];
+
+    candidates.forEach(element => {
+      if ((targetElement !== element) && isEntirelyVisible(element, targetElement))
+        insideCandidates.push(element);
+    });
+
+    return insideCandidates;
   }
 
   /**
