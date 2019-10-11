@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang=en>
+  <meta charset="utf-8">
+  <title>Spatnav sanity check</title>
+  <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+  <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
+  <link rel="stylesheet" href="test.css">
+  <script src="test.js"></script>
+  <style>
+    .container {
+      width:500px;
+      height:150px;
+    }
+    .scroller {
+      width:200px;
+      height:100px;
+      overflow-y: scroll;
+      border: 2px solid black;
+    }
+  </style>
+  <body onload="onload()">
+    <div class="container" id="c1">
+      <div class="scroller" tabindex="0">
+        <button id="b1" class="box" style="top: 10px; left: 140px;"></button>
+        <button id="b2" class="box" style="top: 110px; left: 50px;"></button>
+        <button id="b3" class="box" style="top: 210px; left: -40px;"></button>
+      </div>
+      <button id="b4" class="box" style="top: 8px; left: 20px;"></button>
+      <button id="b5" class="box" style="top: 10px; left: 120px;"></button>
+    </div>
+    <div class="container" id="c2">
+      <div class="scroller" tabindex="0">
+        <button id="b1" class="box" style="top: 10px; left: 140px;"></button>
+        <button id="b2" class="box" style="top: 110px; left: 50px;"></button>
+        <button id="b3" class="box" style="top: 220px; left: -40px;"></button>
+      </div>
+      <button id="b4" class="box" style="top: 8px; left: 10px;"></button>
+      <button id="b5" class="box" style="top: 12px; left: 55px;"></button>
+      <button id="b6" class="box" style="top: 16px; left: 100px;"></button>
+    </div>
+  </body>
+  <script>
+  var onload = () => {
+    window.__spatialNavigation__.enableExperimentalAPIs(true);
+    testInit();
+
+    let testNum = 1;
+    let containers = document.querySelectorAll('.container');
+
+    testRun(function() {
+      containers[0].querySelector('.scroller > #b1').focus();
+      containers[0].querySelector('.scroller').scrollBy(0, 50);
+
+      window.navigate('down');
+
+      assert_equals(document.activeElement, containers[0].querySelector('#b4'));
+      assert_not_equals(document.activeElement, containers[0].querySelector('.scroller > #b2'));
+    }, `Reset the scrolled out search origin TC${testNum++}. Search origin is reset to the container when previous one became offscree.`);
+
+    testRun(function() {
+      containers[1].querySelector('.scroller > #b2').focus();
+      containers[1].querySelector('.scroller').scrollBy(0, 150);
+
+      window.navigate('down');
+
+      assert_equals(document.activeElement, containers[1].querySelector('#b4'));
+      assert_not_equals(document.activeElement, containers[1].querySelector('#b5'));
+    }, `Reset the scrolled out search origin TC${testNum++}. Search origin is reset to the container when previous one became offscree.`);
+  }
+  </script>
+</html>

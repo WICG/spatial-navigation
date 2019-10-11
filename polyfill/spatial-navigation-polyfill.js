@@ -170,14 +170,19 @@
       let bestInsideCandidate = null;
 
       // 5-2
-      if (getCSSSpatNavAction(eventTarget) === 'scroll') {
-        if (scrollingController(eventTarget, dir)) return;
-      } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
-        bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, candidates: getSpatialNavigationCandidates(eventTarget, {mode: 'all'}), inside: true});
-        if (focusingController(bestInsideCandidate, dir)) return;
-      } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
-        bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, inside: true});
-        if (focusingController(bestInsideCandidate, dir) || scrollingController(eventTarget, dir)) return;
+      if ((document.activeElement === searchOrigin) || (document.activeElement === document.body) && (searchOrigin === document)) {
+        if (getCSSSpatNavAction(eventTarget) === 'scroll') {
+          if (scrollingController(eventTarget, dir)) return;
+        } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
+          bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, candidates: getSpatialNavigationCandidates(eventTarget, {mode: 'all'}), inside: true});
+          if (focusingController(bestInsideCandidate, dir)) return;
+        } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
+          bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, inside: true});
+          if (focusingController(bestInsideCandidate, dir) || scrollingController(eventTarget, dir)) return;
+        }
+      }
+      else {
+        container = container.getSpatialNavigationContainer();
       }
     }
 
@@ -220,7 +225,7 @@
 
       // Scrolling container or document when the next focusing element isn't entirely visible
       // This is for the browser compatability
-      if (isScrollable(container, dir) && !isEntirelyVisible(bestCandidate));
+      if (isScrollable(container, dir) && !isEntirelyVisible(bestCandidate))
         bestCandidate.scrollIntoView();
 
       // When bestCandidate is a focusable element and not a container : move focus
@@ -231,6 +236,7 @@
         return true;
 
       bestCandidate.focus();
+      startingPoint = null;
       return true;
     }
 
@@ -362,14 +368,16 @@
       }
       // Filter external Candidates
       if (externalCandidates.length > 0) {
-        externalCandidates = getFilteredSpatialNavigationCandidates (targetElement, dir, externalCandidates, container);
+        externalCandidates = getFilteredSpatialNavigationCandidates(targetElement, dir, externalCandidates, container);
       }
 
+      // Inside First
+      //if (inside && (isContainer(targetElement) || targetElement.nodeName === 'BODY') && (window.__spatialNavigation__.searchOrigin === document.activeElement) 
       if (inside && (isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
         bestTarget = selectBestCandidateFromEdge(targetElement, internalCandidates, dir);
       }
 
-      if (insideOverlappedCandidates && insideOverlappedCandidates.length > 0) {
+      if (!isContainer(targetElement) && insideOverlappedCandidates && insideOverlappedCandidates.length > 0) {
         bestTarget = selectBestCandidateFromEdge(targetElement, insideOverlappedCandidates, dir);
       }
 
@@ -550,6 +558,30 @@
   }
 
   /**
+   * Get nearest scroll container of an element.
+   * @function getScrollContainer
+   * @param Element
+   * @returns {Node} The spatial navigation container
+   */
+  function getScrollContainer(element) {
+    let scrollContainer = element;
+
+    do {
+      if (!scrollContainer.parentElement) {
+        if (window.location !== window.parent.location)
+          scrollContainer = window.parent.document.documentElement;
+        else
+          scrollContainer = window.document.documentElement;
+        break;
+      }
+      else {
+        scrollContainer = scrollContainer.parentElement;
+      }
+    } while (!isScrollContainer(scrollContainer) || !isVisible(scrollContainer));
+    return scrollContainer;
+  }
+
+  /**
    * Find focusable elements within the spatial navigation container.
    * @see {@link https://drafts.csswg.org/css-nav-1/#dom-element-focusableareas}
    * @function focusableAreas
@@ -682,12 +714,25 @@
    * @returns {Node} The search origin for the spatial navigation
    */
   function findSearchOrigin() {
+    const prevSearchOrigin = window.__spatialNavigation__.searchOrigin;
     let searchOrigin = document.activeElement;
+
     if (!searchOrigin ||
       (searchOrigin === document.body && !document.querySelector(':focus')) /* body isn't actually focused*/
     ) {
       searchOrigin = document;
+
+      window.__spatialNavigation__.searchOrigin = searchOrigin;
+      return searchOrigin;
     }
+
+    if (!hitTest(searchOrigin) && (isScrollable(searchOrigin.getSpatialNavigationContainer()))) {
+    //if (isScrolledOut(searchOrigin)) {
+      startingPoint = null;
+      searchOrigin = searchOrigin.getSpatialNavigationContainer();
+    }
+
+    window.__spatialNavigation__.searchOrigin = searchOrigin;
     return searchOrigin;
   }
 
@@ -1027,6 +1072,28 @@
       }
     }
     return false;
+  }
+
+  /**
+   * Decide whether this element is out of the scroll viewport.
+   * @function isScrolledOut
+   * @param element {Node}
+   * @returns {boolean}
+   */
+  function isScrolledOut(element) {
+    let scrollContainer = getScrollContainer(element);
+   
+    var elementTop = element.offsetTop;
+    var elementBottom = elementTop + element.offsetHeight;
+    var elementLeft = element.offsetLeft;
+    var elementRight = elementLeft + element.offsetWidth;
+
+    var viewportTop = scrollContainer.scrollTop;
+    var viewportBottom = viewportTop + scrollContainer.clientHeight;
+    var viewportLeft = scrollContainer.scrollLeft;
+    var viewportRight = viewportLeft + scrollContainer.clientWidth;
+
+    return (elementBottom < viewportTop) ||(elementTop > viewportBottom) || (elementRight < viewportLeft) ||(elementLeft > viewportRight);
   }
 
   /**
@@ -1626,6 +1693,8 @@
       enableExperimentalAPIs,
       get keyMode() { return this._keymode ? this._keymode : 'ARROW'; },
       set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW'; },
+      get searchOrigin() { return this._searchOrigin ? this._searchOrigin : document.activeElement; },
+      set searchOrigin(element)  { this._searchOrigin = element; },
       setStartingPoint: function (x, y) {startingPoint = (x && y) ? {x, y} : null;}
     };
   }
