@@ -38,6 +38,12 @@
       </button>
       <button class="box" id="b4" style="top:-20px; left:220px;"></button>
     </div>
+
+    <div class="container" id="c5">
+      <div class="container" id="scroller" tabindex="0" style="width:200px; height:80px; overflow: scroll;"></div>
+      <button id="b1" class="box" style="top: -80px; left: 60px;"></button>
+      <button id="b2" class="box" style="top: 0px; left: 40px;"></button>
+    </div>
     
   </body>
   <script type="text/javascript">
@@ -89,6 +95,19 @@
         assert_equals(document.activeElement, containers[3].querySelector('#b4'));
         assert_not_equals(document.activeElement, containers[3].querySelector('#b3'));
       }, `Overlapped focusables TC${testNum++}. Focus can move to the inside focusable element first, then outside focusable element`);
+
+      testRun(function() {
+        containers[4].querySelector('#scroller').focus();
+
+        window.navigate('down');
+
+        assert_equals(document.activeElement, containers[4].querySelector('#b1'));
+        assert_not_equals(document.activeElement, containers[4].querySelector('#b2'));
+
+        window.navigate('down');
+        assert_equals(document.activeElement, containers[4].querySelector('#b2'));
+        assert_not_equals(document.activeElement, document.body);
+      }, `Overlapped focusables TC${testNum++}. Focus can move to the sibling focusable element which inside the spatial navigation container`);
     }
   </script>
 </html>
