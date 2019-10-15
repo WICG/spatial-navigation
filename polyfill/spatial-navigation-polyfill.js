@@ -532,7 +532,12 @@
    * @returns {Node} The candidate which is the closest one from the search origin
    */
   function getClosestElement(currentElm, candidates, dir, distanceFunction) {
-    const eventTargetRect = searchOriginRect || getBoundingClientRect(currentElm);
+    let eventTargetRect = null;
+    if (currentElm.nodeName === 'BODY' || currentElm.nodeName === 'HTML')
+      eventTargetRect = currentElm.frameElement.getBoundingClientRect();
+    else 
+      eventTargetRect = searchOriginRect || currentElm.getBoundingClientRect();
+
     let minDistance = Number.POSITIVE_INFINITY;
     let minDistanceElements = [];
 
