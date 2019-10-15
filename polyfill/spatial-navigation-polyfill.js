@@ -460,13 +460,13 @@
    */
   function selectBestCandidate(currentElm, candidates, dir) {
     const spatialNavigationFunction = getComputedStyle(currentElm).getPropertyValue('--spatial-navigation-function');
-    const currentElmRect = getBoundingClientRect(currentElm);
+    const currentTargetRect = getBoundingClientRect(currentElm);
     let distanceFunction;
     let alignedCandidates;
 
     switch (spatialNavigationFunction) {
     case 'grid':
-      alignedCandidates = candidates.filter(elm => isAligned(currentElmRect, getBoundingClientRect(elm), dir));
+      alignedCandidates = candidates.filter(elm => isAligned(currentTargetRect, getBoundingClientRect(elm), dir));
       if (alignedCandidates.length > 0) {
         candidates = alignedCandidates;
       }
@@ -714,25 +714,20 @@
    * @returns {Node} The search origin for the spatial navigation
    */
   function findSearchOrigin() {
-    const prevSearchOrigin = window.__spatialNavigation__.searchOrigin;
     let searchOrigin = document.activeElement;
-
     if (!searchOrigin ||
       (searchOrigin === document.body && !document.querySelector(':focus')) /* body isn't actually focused*/
     ) {
       searchOrigin = document;
-
-      window.__spatialNavigation__.searchOrigin = searchOrigin;
       return searchOrigin;
     }
 
-    if (!hitTest(searchOrigin) && (isScrollable(searchOrigin.getSpatialNavigationContainer()))) {
-    //if (isScrolledOut(searchOrigin)) {
+    if (!isVisibleInScroller(searchOrigin)) {
+      console.log(`getscrollconatinr: ${getScrollContainer(searchOrigin).className}`);
       startingPoint = null;
       searchOrigin = searchOrigin.getSpatialNavigationContainer();
     }
 
-    window.__spatialNavigation__.searchOrigin = searchOrigin;
     return searchOrigin;
   }
 
@@ -909,6 +904,32 @@
       case 'down': return (Math.abs(winScrollY - height) <= 1);
       }
     }
+    return false;
+  }
+
+  /**
+   * Decide whether an element is inside the scorller viewport or not
+   *
+   * @function isVisibleInScroller
+   * @param element {Node}
+   * @returns {boolean}
+   */
+  function isVisibleInScroller(element) {
+    let elementRect = element.getBoundingClientRect();
+    let nearestScroller = getScrollContainer(element);
+
+    // checking whether fully visible
+    if(elementRect.top >= 0 && elementRect.bottom <= nearestScroller.innerHeight) {
+      // Element is fully visible
+      return true;
+    }
+
+    // checking for partial visibility
+    if(elementRect.top < nearestScroller.innerHeight && elementRect.bottom >= 0) {
+      // Element is partially
+      return true;
+    }
+
     return false;
   }
 
@@ -1693,8 +1714,6 @@
       enableExperimentalAPIs,
       get keyMode() { return this._keymode ? this._keymode : 'ARROW'; },
       set keyMode(mode) { this._keymode = (['SHIFTARROW', 'ARROW', 'NONE'].includes(mode)) ? mode : 'ARROW'; },
-      get searchOrigin() { return this._searchOrigin ? this._searchOrigin : document.activeElement; },
-      set searchOrigin(element)  { this._searchOrigin = element; },
       setStartingPoint: function (x, y) {startingPoint = (x && y) ? {x, y} : null;}
     };
   }
