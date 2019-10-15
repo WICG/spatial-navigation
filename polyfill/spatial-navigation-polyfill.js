@@ -20,6 +20,8 @@
   const TAB_KEY_CODE = 9;
   let mapOfBoundRect = null;
   let startingPoint = null; // Indicates global variables for spatnav (starting position)
+  let savedSearchOrigin = {element: null, rect: null};  // Saves previous search origin
+  let searchOriginRect = null;  // Rect of current search origin
 
   /**
    * Initiate the spatial navigation features of the polyfill.
@@ -112,6 +114,23 @@
      */
     document.addEventListener('mouseup', e => {
       startingPoint = {x: e.clientX, y: e.clientY};
+    });
+
+    /*
+     * focusin EventListener :
+     * If the mouse click a point in the page, the point will be the starting point.
+     * NOTE: Let UA set the spatial navigation starting point based on click
+     */
+    window.addEventListener('focusin', (event) => {
+      if (event.target !== window) {
+        savedSearchOrigin.element = event.target;
+        savedSearchOrigin.rect = event.target.getBoundingClientRect();
+        searchOriginRect = null;
+      }
+    });
+
+    window.addEventListener('focusout', () => {
+      searchOriginRect = savedSearchOrigin.rect;  
     });
   }
 
@@ -371,6 +390,11 @@
         externalCandidates = getFilteredSpatialNavigationCandidates(targetElement, dir, externalCandidates, container);
       }
 
+      // If there isn't search origin element but search orgin rect exist  (search origin isn't in the layout case)
+      if (searchOriginRect) {
+        bestTarget = selectBestCandidate(targetElement, getFilteredSpatialNavigationCandidates(targetElement, dir, internalCandidates, container), dir);
+      }
+
       // Inside First
       //if (inside && (isContainer(targetElement) || targetElement.nodeName === 'BODY') && (window.__spatialNavigation__.searchOrigin === document.activeElement) 
       if (inside && (isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
@@ -424,7 +448,7 @@
     // Offscreen handling when originalContainer is not <HTML>
     if (originalContainer.parentElement && container !== originalContainer && !isVisible(currentElm))
       eventTargetRect = getBoundingClientRect(originalContainer);
-    else eventTargetRect = getBoundingClientRect(currentElm);
+    else eventTargetRect = searchOriginRect || getBoundingClientRect(currentElm);
 
     /*
      * Else, let candidates be the subset of the elements in visibles
@@ -460,7 +484,7 @@
    */
   function selectBestCandidate(currentElm, candidates, dir) {
     const spatialNavigationFunction = getComputedStyle(currentElm).getPropertyValue('--spatial-navigation-function');
-    const currentTargetRect = getBoundingClientRect(currentElm);
+    const currentTargetRect = searchOriginRect || getBoundingClientRect(currentElm);
     let distanceFunction;
     let alignedCandidates;
 
@@ -508,7 +532,7 @@
    * @returns {Node} The candidate which is the closest one from the search origin
    */
   function getClosestElement(currentElm, candidates, dir, distanceFunction) {
-    const eventTargetRect = getBoundingClientRect(currentElm);
+    const eventTargetRect = searchOriginRect || getBoundingClientRect(currentElm);
     let minDistance = Number.POSITIVE_INFINITY;
     let minDistanceElements = [];
 
@@ -578,6 +602,10 @@
         scrollContainer = scrollContainer.parentElement;
       }
     } while (!isScrollContainer(scrollContainer) || !isVisible(scrollContainer));
+
+    if (scrollContainer === document || scrollContainer === document.documentElement)
+      scrollContainer = window;
+  
     return scrollContainer;
   }
 
@@ -715,11 +743,26 @@
    */
   function findSearchOrigin() {
     let searchOrigin = document.activeElement;
-    if (!searchOrigin ||
-      (searchOrigin === document.body && !document.querySelector(':focus')) /* body isn't actually focused*/
-    ) {
-      searchOrigin = document;
+
+    if (!searchOrigin || (searchOrigin === document.body && !document.querySelector(':focus'))
+      ) {
+      // When the previous search origin lost its focus by blur: (1) disable attribute (2) visibility: hidden
+      if (searchOrigin !== savedSearchOrigin.element) {
+        const elementStyle = window.getComputedStyle(savedSearchOrigin.element, null);
+        const invisibleStyle = ['hidden', 'collapse'];
+
+        if (savedSearchOrigin.element.disabled || invisibleStyle.includes(elementStyle.getPropertyValue('visibility'))) {
+          searchOrigin = savedSearchOrigin.element;
+          return searchOrigin;
+        }
+      }
+      searchOrigin = document;  // OR null?
       return searchOrigin;
+    }
+
+    // When the previous search origin lost its focus by blur: (3) display:none (4) element size turned into zero
+    if ((searchOrigin.getBoundingClientRect().height === 0) || (searchOrigin.getBoundingClientRect().width === 0)) {
+      searchOriginRect = savedSearchOrigin.rect;
     }
 
     if (!isVisibleInScroller(searchOrigin)) {
@@ -1009,7 +1052,7 @@
     if (!isVisibleStyleProperty(element.parentElement))
       return false;
     if (!isVisibleStyleProperty(element) || (element.style.opacity === 0) ||
-        ((element.style.width === '0px' || element.style.width === 0) && (element.style.height === '0px' || element.style.height === 0)))
+        (element.getBoundingClientRect().height === 0 || element.getBoundingClientRect().height === 0))
       return false;
     return true;
   }

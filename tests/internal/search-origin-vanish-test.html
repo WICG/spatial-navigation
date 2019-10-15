@@ -24,7 +24,7 @@
 <body onload="onload()"></body>
 <script type="text/javascript">
     var onload = () => {
-        const totalTestNum = 7; 
+        const totalTestNum = 8; 
         for (let i=0; i < totalTestNum; i++) {
             let divElm = document.createElement('div');
             divElm.innerHTML = `<div class="container" id="c${i+1}">
@@ -64,7 +64,7 @@
         testRun(function() {
             containers[1].querySelector('#b1').focus();
             window.navigate('down');
-            const objs = containers[0].querySelector('#inputForm1').children;
+            const objs = containers[1].querySelector('#inputForm1').children;
             for (let i = 0; i < objs.length; i++) {
                 objs[i].inert = true;
                 if(objs[i].nodeName === 'INPUT')    objs[i].placeholder = `I'm inert`;
@@ -129,17 +129,41 @@
                 objs[i].style.display = 'none';
                 if(objs[i].nodeName === 'INPUT')    objs[i].placeholder = `I'm 'display: none'`;
             }
+            const objs2 = containers[5].querySelector('#inputForm2').children;
+            for (let i = 0; i < objs2.length; i++) {
+                objs2[i].style.top = '15px';
+            }
             window.navigate('down');
 
-            assert_equals(document.activeElement, containers[5].querySelector('#input2'));
+            assert_equals(document.activeElement, containers[6].querySelector('#b1'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
             assert_not_equals(document.activeElement, containers[5].querySelector('#input1'));
         }, `Reset the search origin when it became 'display: none' TC${testNum++}. Search origin is the previous of 'display: none' element`);
 
         testRun(function() {
-            containers[6].querySelector('#b1').focus();
-            window.navigate('down');
             const objs = containers[6].querySelector('#inputForm1').children;
+            objs[0].focus();
+
+            for (let i = 0; i < objs.length; i++) {
+                objs[i].style.display = 'none';
+                if(objs[i].nodeName === 'INPUT')    objs[i].placeholder = `I'm 'display: none'`;
+            }
+            const objs2 = containers[6].querySelector('#inputForm2').children;
+            for (let i = 0; i < objs2.length; i++) {
+                objs2[i].style.top = '20px';
+            }
+
+            window.navigate('down');
+
+            assert_equals(document.activeElement, containers[7].querySelector('#b1'));
+            assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
+            assert_not_equals(document.activeElement, containers[6].querySelector('#input1'));
+        }, `Reset the search origin when it became 'display: none' TC${testNum++}. Search origin is the previous of 'display: none' element`);
+
+        testRun(function() {
+            containers[7].querySelector('#b1').focus();
+            window.navigate('down');
+            const objs = containers[7].querySelector('#inputForm1').children;
             for (let i = 0; i < objs.length; i++) {
                 objs[i].style.width = '0px';
                 objs[i].style.height = '0px';
@@ -149,9 +173,9 @@
             }
             window.navigate('down');
 
-            assert_equals(document.activeElement, containers[6].querySelector('#input2'));
+            assert_equals(document.activeElement, containers[7].querySelector('#input2'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
-            assert_not_equals(document.activeElement, containers[6].querySelector('#input1'));
+            assert_not_equals(document.activeElement, containers[7].querySelector('#input1'));
         }, `Reset the search origin when its size became zero TC${testNum++}. Search origin is the previous rect of zero sized element`);
     }
 </script>
