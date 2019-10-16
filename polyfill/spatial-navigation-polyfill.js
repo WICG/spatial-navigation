@@ -568,7 +568,7 @@
   }
 
   /**
-   * Create the NavigatoinEvent: navbeforefocus, navnotarget
+   * Create the NavigationEvent: navbeforefocus, navnotarget
    * @see {@link https://drafts.csswg.org/css-nav-1/#events-navigationevent}
    * @function createSpatNavEvents
    * @param option {string} - Type of the navigation event (beforefocus, notarget)
