@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang=en>
+  <meta charset="utf-8">
+  <title>Spatnav sanity check</title>
+  <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+  <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
+  <link rel="stylesheet" href="test.css">
+  <script src="test.js"></script>
+  <style>
+  .box {
+    width: 30px;
+    height: 30px;
+  }
+  </style>
+  <body onload="onload()">
+      <div id="c1" class="container" tabindex="0" style="width:150px; height:150px; overflow: scroll;">
+         <button id="c1b1" class="box" style="top: 10px; left: 50px;"></button>
+         <button id="c1b2" class="box" style="top: 90px; left: 50px; margin-bottom: 50px"></button>
+         <button id="c1b3" class="box" style="top: 170px; left: 50px; margin-bottom: 50px"></button>
+         <button id="c1b4" class="box" style="top: 250px; left: 50px; margin-bottom: 50px"></button>
+         <button id="c1b5" class="box" style="top: 80px; left: 150px; margin-bottom: 50px"></button>
+         <button id="c1b6" class="box" style="top: 80px; left: 200px; margin-bottom: 50px"></button>
+      </div>
+
+  </body>
+  <script>
+  var onload = () => {
+    window.__spatialNavigation__.enableExperimentalAPIs(true);
+    testInit();
+    let testNum = 1;
+    let scroller = document.querySelector('#c1');
+    let boxes = scroller.querySelectorAll('.box');
+
+    scroller.scrollTop = 60;
+    scroller.scrollLeft = 110;
+
+    testRun(function() {
+      assert_equals(window.__spatialNavigation__.isVisibleInScroller(boxes[0]), false);
+    }, `isVisibleInScroller TC${testNum++}. Element with #${boxes[0].id} is not visible in the scroller`);
+
+    testRun(function() {
+      assert_equals(window.__spatialNavigation__.isVisibleInScroller(boxes[1]), true);
+    }, `isVisibleInScroller TC${testNum++}. Element with #${boxes[1].id} is visible in the scroller`);
+
+    testRun(function() {
+      assert_equals(window.__spatialNavigation__.isVisibleInScroller(boxes[2]), true);
+    }, `isVisibleInScroller TC${testNum++}. Element with #${boxes[2].id} is visible in the scroller`);
+
+    testRun(function() {
+      assert_equals(window.__spatialNavigation__.isVisibleInScroller(boxes[3]), false);
+    }, `isVisibleInScroller TC${testNum++}. Element with #${boxes[3].id} is not visible in the scroller`);
+
+    testRun(function() {
+      assert_equals(window.__spatialNavigation__.isVisibleInScroller(boxes[4]), true);
+    }, `isVisibleInScroller TC${testNum++}. Element with #${boxes[4].id} is visible in the scroller`);
+
+    testRun(function() {
+      assert_equals(window.__spatialNavigation__.isVisibleInScroller(boxes[5]), true);
+    }, `isVisibleInScroller TC${testNum++}. Element with #${boxes[5].id} is visible in the scroller`);
+    
+  }
+  </script>
+</html>
