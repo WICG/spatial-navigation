@@ -18,6 +18,7 @@
     input {
         margin: 0px;
         padding: 0px;
+        width: 150px;
     }
 
 </style>
@@ -28,15 +29,9 @@
         for (let i=0; i < totalTestNum; i++) {
             let divElm = document.createElement('div');
             divElm.innerHTML = `<div class="container" id="c${i+1}">
-                                    <button class="box" id="b1" style="position: relative; top: 10px; left: 120px; height: 30px; width: 80px;"></button>
-                                    <div id="inputForm1">
-                                        <input id="input1" type="text" placeholder="I'm focusable!" style="position: relative; top: 20px; left: 10px;"/>
-                                        <button class="box" id="b2" style="position: relative; top: 24px; left: 20px; height: 20px; width: 40px;"></button>
-                                        </div>
-                                    <div id="inputForm2">
-                                        <input id="input2" type="text" placeholder="I'm focusable!" style="position: relative; top: 40px; left: 10px;"/>
-                                        <button class="box" id="b3" style="position: relative; top: 44px; left: 20px; height: 20px; width: 40px;"></button>
-                                    </div>
+                                    <button class="box" id="b1" style="position: relative; top: 10px; left: 100px; height: 30px; width: 80px;"></button>
+                                    <input id="input1" type="text" placeholder="I'm focusable!" style="position: relative; top: 40px; left: 10px;"/>
+                                    <input id="input2" type="text" placeholder="I'm focusable!" style="position: relative; top: 80px; left: -150px;"/>
                                 </div>`;
             document.body.appendChild(divElm);
         }
@@ -49,11 +44,10 @@
         testRun(function() {
             containers[0].querySelector('#b1').focus();
             window.navigate('down');
-            const objs = containers[0].querySelector('#inputForm1').children;
-            for (let i = 0; i < objs.length; i++) {
-                objs[i].tabindex = -1;
-                if(objs[i].nodeName === 'INPUT') objs[i].placeholder = `I'm non-focusable`;
-            }
+
+            containers[0].querySelector('#input1').tabindex = -1;
+            containers[0].querySelector('#input1').placeholder = `I'm non-focusable`;
+
             window.navigate('down');
 
             assert_equals(document.activeElement, containers[0].querySelector('#input2'));
@@ -64,11 +58,10 @@
         testRun(function() {
             containers[1].querySelector('#b1').focus();
             window.navigate('down');
-            const objs = containers[1].querySelector('#inputForm1').children;
-            for (let i = 0; i < objs.length; i++) {
-                objs[i].inert = true;
-                if(objs[i].nodeName === 'INPUT')    objs[i].placeholder = `I'm inert`;
-            }
+
+            containers[1].querySelector('#input1').inert = true;
+            containers[1].querySelector('#input1').placeholder = `I'm inert`;
+            
             window.navigate('down');
 
             assert_equals(document.activeElement, containers[1].querySelector('#input2'));
@@ -79,11 +72,10 @@
         testRun(function() {
             containers[2].querySelector('#b1').focus();
             window.navigate('down');
-            const objs = containers[2].querySelector('#inputForm1').children;
-            for (let i = 0; i < objs.length; i++) {
-                objs[i].disabled = true;
-                if(objs[i].nodeName === 'INPUT')    objs[i].placeholder = `I'm disabled`;
-            }
+
+            containers[2].querySelector('#input1').disabled = true;
+            containers[2].querySelector('#input1').placeholder = `I'm disabled`;
+
             window.navigate('down');
 
             assert_equals(document.activeElement, containers[2].querySelector('#input2'));
@@ -94,11 +86,10 @@
         testRun(function() {
             containers[3].querySelector('#b1').focus();
             window.navigate('down');
-            const objs = containers[3].querySelector('#inputForm1').children;
-            for (let i = 0; i < objs.length; i++) {
-                objs[i].style.visibility = 'hidden';
-                if(objs[i].nodeName === 'INPUT')    objs[i].placeholder = `I'm 'visibility: hidden'`;
-            }
+
+            containers[3].querySelector('#input1').style.visibility = 'hidden';
+            containers[3].querySelector('#input1').placeholder = `I'm 'visibility: hidden'`;
+            
             window.navigate('down');
 
             assert_equals(document.activeElement, containers[3].querySelector('#input2'));
@@ -109,49 +100,35 @@
         testRun(function() {
             containers[4].querySelector('#b1').focus();
             window.navigate('down');
-            const objs = containers[4].querySelector('#inputForm1').children;
-            for (let i = 0; i < objs.length; i++) {
-                objs[i].style.opacity = '0';
-                if(objs[i].nodeName === 'INPUT')    objs[i].placeholder = `I'm 'opacity: 0'`;
-            }
+            
+            containers[4].querySelector('#input1').style.opacity = 0;
+            containers[4].querySelector('#input1').placeholder = `I'm 'opacity: 0'`;
+
             window.navigate('down');
 
             assert_equals(document.activeElement, containers[4].querySelector('#input2'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
-            assert_not_equals(document.activeElement, containers[4].querySelector('#input1'));
         }, `Reset the search origin when it became 'opacity: 0' TC${testNum++}. Search origin is still the rect of 'opacity: 0' element`);
 
         testRun(function() {
             containers[5].querySelector('#b1').focus();
             window.navigate('down');
-            const objs = containers[5].querySelector('#inputForm1').children;
-            for (let i = 0; i < objs.length; i++) {
-                objs[i].style.display = 'none';
-                if(objs[i].nodeName === 'INPUT')    objs[i].placeholder = `I'm 'display: none'`;
-            }
-            const objs2 = containers[5].querySelector('#inputForm2').children;
-            for (let i = 0; i < objs2.length; i++) {
-                objs2[i].style.top = '15px';
-            }
+
+            containers[5].querySelector('#input1').style.display = 'none';
+            containers[5].querySelector('#input1').placeholder = `I'm 'display: none'`;
+            containers[5].querySelector('#input2').style.left = '0px';
+           
             window.navigate('down');
 
-            assert_equals(document.activeElement, containers[6].querySelector('#b1'));
+            assert_equals(document.activeElement, containers[5].querySelector('#input2'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
-            assert_not_equals(document.activeElement, containers[5].querySelector('#input1'));
         }, `Reset the search origin when it became 'display: none' TC${testNum++}. Search origin is the previous of 'display: none' element`);
 
         testRun(function() {
-            const objs = containers[6].querySelector('#inputForm1').children;
-            objs[0].focus();
-
-            for (let i = 0; i < objs.length; i++) {
-                objs[i].style.display = 'none';
-                if(objs[i].nodeName === 'INPUT')    objs[i].placeholder = `I'm 'display: none'`;
-            }
-            const objs2 = containers[6].querySelector('#inputForm2').children;
-            for (let i = 0; i < objs2.length; i++) {
-                objs2[i].style.top = '20px';
-            }
+            containers[6].querySelector('#input1').focus();
+            
+            containers[6].querySelector('#input1').style.display = 'none';
+            containers[6].querySelector('#input1').placeholder = `I'm 'display: none'`;
 
             window.navigate('down');
 
@@ -163,19 +140,17 @@
         testRun(function() {
             containers[7].querySelector('#b1').focus();
             window.navigate('down');
-            const objs = containers[7].querySelector('#inputForm1').children;
-            for (let i = 0; i < objs.length; i++) {
-                objs[i].style.width = '0px';
-                objs[i].style.height = '0px';
-                objs[i].style.fontSize = '0px';
-                objs[i].style.border = '0px';
-                if(objs[i].nodeName === 'INPUT')    objs[i].placeholder = `I'm zero sized element`;
-            }
+
+            containers[7].querySelector('#input1').width = 0;
+            containers[7].querySelector('#input1').height = 0;
+            containers[7].querySelector('#input1').style.fontSize = '0px';
+            containers[7].querySelector('#input1').style.border = '0px';
+            containers[7].querySelector('#input1').placeholder = `I'm zero sized element`;
+
             window.navigate('down');
 
             assert_equals(document.activeElement, containers[7].querySelector('#input2'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
-            assert_not_equals(document.activeElement, containers[7].querySelector('#input1'));
         }, `Reset the search origin when its size became zero TC${testNum++}. Search origin is the previous rect of zero sized element`);
     }
 </script>
