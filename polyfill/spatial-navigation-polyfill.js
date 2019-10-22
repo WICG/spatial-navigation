@@ -393,8 +393,10 @@
       }
 
       // If there isn't search origin element but search orgin rect exist  (search origin isn't in the layout case)
-      if (searchOriginRect) {
+      if (searchOriginRect && (document.activeElement !== targetElement)) {
         bestTarget = selectBestCandidate(targetElement, getFilteredSpatialNavigationCandidates(targetElement, dir, internalCandidates, container), dir);
+      } else {
+        searchOriginRect = null;
       }
 
       // Inside First
@@ -780,7 +782,6 @@
       if (scroller && getCSSSpatNavAction(scroller) === 'auto')
         return scroller;
     }
-    
     return searchOrigin;
   }
 
