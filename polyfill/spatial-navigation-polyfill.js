@@ -189,7 +189,8 @@
       let bestInsideCandidate = null;
 
       // 5-2
-      if ((document.activeElement === searchOrigin) || (document.activeElement === document.body) && (searchOrigin === document)) {
+      if ((document.activeElement === searchOrigin) || 
+          (document.activeElement === document.body) && (searchOrigin === document)) {
         if (getCSSSpatNavAction(eventTarget) === 'scroll') {
           if (scrollingController(eventTarget, dir)) return;
         } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
@@ -201,6 +202,7 @@
         }
       }
       else {
+        // when the previous search origin became offscreen
         container = container.getSpatialNavigationContainer();
       }
     }
@@ -766,21 +768,19 @@
           return searchOrigin;
         }
       }
-      searchOrigin = document;  // OR null?
-      return searchOrigin;
+      searchOrigin = document;
     }
-
     // When the previous search origin lost its focus by blur: (3) display:none (4) element size turned into zero
-    if ((searchOrigin.getBoundingClientRect().height === 0) || (searchOrigin.getBoundingClientRect().width === 0)) {
+    if ((getBoundingClientRect(searchOrigin).height === 0) || (getBoundingClientRect(searchOrigin).width === 0)) {
       searchOriginRect = savedSearchOrigin.rect;
     }
-
+    
     if (!isVisibleInScroller(searchOrigin)) {
-      console.log(`getscrollconatinr: ${getScrollContainer(searchOrigin).className}`);
-      startingPoint = null;
-      searchOrigin = searchOrigin.getSpatialNavigationContainer();
+      const scroller = getScrollContainer(searchOrigin);
+      if (scroller && getCSSSpatNavAction(scroller) === 'auto')
+        return scroller;
     }
-
+    
     return searchOrigin;
   }
 
@@ -971,19 +971,19 @@
     let elementRect = element.getBoundingClientRect();
     let nearestScroller = getScrollContainer(element);
 
-    // checking whether fully visible
-    if(elementRect.top >= 0 && elementRect.bottom <= nearestScroller.innerHeight) {
-      // Element is fully visible
-      return true;
+    let scrollerRect = null;
+    if (nearestScroller !== window) {
+      scrollerRect = getBoundingClientRect(nearestScroller);
     }
-
-    // checking for partial visibility
-    if(elementRect.top < nearestScroller.innerHeight && elementRect.bottom >= 0) {
-      // Element is partially
-      return true;
+    else {
+      scrollerRect = getBoundingClientRect(document.documentElement);
+      nearestScroller = document.documentElement;
     }
-
-    return false;
+   
+    if(isInside(scrollerRect, elementRect, 'left') && isInside(scrollerRect, elementRect, 'down'))
+      return true; 
+    else
+      return false;
   }
 
   /**
@@ -1061,8 +1061,8 @@
   function isBeingRendered(element) {
     if (!isVisibleStyleProperty(element.parentElement))
       return false;
-    if (!isVisibleStyleProperty(element) || (element.style.opacity === 0) ||
-        (element.getBoundingClientRect().height === 0 || element.getBoundingClientRect().height === 0))
+    if (!isVisibleStyleProperty(element) || (element.style.opacity === '0') ||
+        (window.getComputedStyle(element).height === '0px' || window.getComputedStyle(element).width === '0px'))
       return false;
     return true;
   }
@@ -1146,28 +1146,6 @@
       }
     }
     return false;
-  }
-
-  /**
-   * Decide whether this element is out of the scroll viewport.
-   * @function isScrolledOut
-   * @param element {Node}
-   * @returns {boolean}
-   */
-  function isScrolledOut(element) {
-    let scrollContainer = getScrollContainer(element);
-   
-    var elementTop = element.offsetTop;
-    var elementBottom = elementTop + element.offsetHeight;
-    var elementLeft = element.offsetLeft;
-    var elementRight = elementLeft + element.offsetWidth;
-
-    var viewportTop = scrollContainer.scrollTop;
-    var viewportBottom = viewportTop + scrollContainer.clientHeight;
-    var viewportLeft = scrollContainer.scrollLeft;
-    var viewportRight = viewportLeft + scrollContainer.clientWidth;
-
-    return (elementBottom < viewportTop) ||(elementTop > viewportBottom) || (elementRight < viewportLeft) ||(elementLeft > viewportRight);
   }
 
   /**
@@ -1733,6 +1711,7 @@
     return {
       isContainer,
       isScrollContainer,
+      isVisibleInScroller,
       findCandidates: findTarget.bind(null, true),
       findNextTarget: findTarget.bind(null, false),
       getDistanceFromTarget: (element, candidateElement, dir) => {
