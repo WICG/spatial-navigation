@@ -20,7 +20,7 @@
         width: 80px;
     }
 
-    #input1, #input2 {
+    .input1, .input2 {
         margin: 0px;
         padding: 0px;
         width: 150px;
@@ -35,8 +35,8 @@
             let divElm = document.createElement('div');
             divElm.innerHTML = `<div class="container" id="c${i+1}">
                                     <button class="box" id="b${i+1}" style="position: relative; top: 5px; left: 100px;"></button>
-                                    <button id="input1" style="position: relative; top: 40px; left: 10px;">I'm focusable!</button>
-                                    <button id="input2" style="position: relative; top: 80px; left: -140px;">I'm focusable!</button>
+                                    <button class="input1" style="position: relative; top: 40px; left: 10px;">I'm focusable!</button>
+                                    <button class="input2" style="position: relative; top: 80px; left: -140px;">I'm focusable!</button>
                                 </div>`;
             document.body.appendChild(divElm);
         }
@@ -47,105 +47,105 @@
         let containers = document.querySelectorAll('.container');
 
         testRun(function() {
-            containers[0].querySelector('#input1').focus();
-            containers[0].querySelector('#input1').setAttribute("tabIndex", -1);
-            containers[0].querySelector('#input1').innerText = `I'm non-focusable`;
+            containers[0].querySelector('.input1').focus();
+            containers[0].querySelector('.input1').setAttribute("tabIndex", -1);
+            containers[0].querySelector('.input1').innerText = `I'm non-focusable`;
 
             setTimeout( window.navigate('down'), 1000);
 
-            assert_equals(document.activeElement, containers[0].querySelector('#input2'));
+            assert_equals(document.activeElement, containers[0].querySelector('.input2'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
-            assert_not_equals(document.activeElement, containers[0].querySelector('#input1'));
+            assert_not_equals(document.activeElement, containers[0].querySelector('.input1'));
         }, `Reset the search origin when it became non-focusable TC${testNum++}. Search origin is still the rect of non-focusable element`);
 
         testRun(function() {
             containers[1].querySelector('#b2').focus();
             window.navigate('down');
-            containers[1].querySelector('#input1').inert = true;
-            containers[1].querySelector('#input1').innerText = `I'm inert`;
+            containers[1].querySelector('.input1').inert = true;
+            containers[1].querySelector('.input1').innerText = `I'm inert`;
             
             setTimeout( window.navigate('down'), 1000);
 
-            assert_equals(document.activeElement, containers[1].querySelector('#input2'));
+            assert_equals(document.activeElement, containers[1].querySelector('.input2'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
-            assert_not_equals(document.activeElement, containers[1].querySelector('#input1'));
+            assert_not_equals(document.activeElement, containers[1].querySelector('.input1'));
         }, `Reset the search origin when it became inert TC${testNum++}. Search origin is still the rect of inert element`);
 
         testRun(function() {
-            containers[2].querySelector('#input1').focus();
-            containers[2].querySelector('#input1').disabled = true;
-            containers[2].querySelector('#input1').innerText = `I'm disabled`;
+            containers[2].querySelector('.input1').focus();
+            containers[2].querySelector('.input1').disabled = true;
+            containers[2].querySelector('.input1').innerText = `I'm disabled`;
 
             setTimeout( window.navigate('down'), 1000);
 
-            assert_equals(document.activeElement, containers[2].querySelector('#input2'));
+            assert_equals(document.activeElement, containers[2].querySelector('.input2'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
-            assert_not_equals(document.activeElement, containers[2].querySelector('#input1'));
+            assert_not_equals(document.activeElement, containers[2].querySelector('.input1'));
         }, `Reset the search origin when it became disabled TC${testNum++}. Search origin is still the rect of disabled element`);
 
         testRun(function() {
-            containers[3].querySelector('#input1').focus();
-            containers[3].querySelector('#input1').style.visibility = 'hidden';
-            containers[3].querySelector('#input1').innerText = `I'm 'visibility: hidden'`;
+            containers[3].querySelector('.input1').focus();
+            containers[3].querySelector('.input1').style.visibility = 'hidden';
+            containers[3].querySelector('.input1').innerText = `I'm 'visibility: hidden'`;
             
             setTimeout( window.navigate('down'), 1000);
 
-            assert_equals(document.activeElement, containers[3].querySelector('#input2'));
+            assert_equals(document.activeElement, containers[3].querySelector('.input2'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
-            assert_not_equals(document.activeElement, containers[3].querySelector('#input1'));
+            assert_not_equals(document.activeElement, containers[3].querySelector('.input1'));
         }, `Reset the search origin when it became 'visibility: hidden' TC${testNum++}. Search origin is still the rect of 'visibility: hidden' element`);
 
         testRun(function() {
-            containers[4].querySelector('#input1').focus();            
-            containers[4].querySelector('#input1').style.opacity = 0;
-            containers[4].querySelector('#input1').innerText = `I'm 'opacity: 0'`;
+            containers[4].querySelector('.input1').focus();            
+            containers[4].querySelector('.input1').style.opacity = 0;
+            containers[4].querySelector('.input1').innerText = `I'm 'opacity: 0'`;
 
             setTimeout( window.navigate('down'), 1000);
 
-            assert_equals(document.activeElement, containers[4].querySelector('#input2'));
+            assert_equals(document.activeElement, containers[4].querySelector('.input2'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
         }, `Reset the search origin when it became 'opacity: 0' TC${testNum++}. Search origin is still the rect of 'opacity: 0' element`);
 
         testRun(function() {
-            containers[5].querySelector('#input1').focus();
-            containers[5].querySelector('#input1').style.display = 'none';
-            containers[5].querySelector('#input1').innerText = `I'm 'display: none'`;
-            containers[5].querySelector('#input2').style.left = '0px';
+            containers[5].querySelector('.input1').focus();
+            containers[5].querySelector('.input1').style.display = 'none';
+            containers[5].querySelector('.input1').innerText = `I'm 'display: none'`;
+            containers[5].querySelector('.input2').style.left = '0px';
            
             setTimeout( window.navigate('down'), 1000);
 
-            assert_equals(document.activeElement, containers[5].querySelector('#input2'));
+            assert_equals(document.activeElement, containers[5].querySelector('.input2'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
         }, `Reset the search origin when it became 'display: none' TC${testNum++}. Search origin is the previous of 'display: none' element`);
 
         testRun(function() {
-            containers[6].querySelector('#input1').focus();            
-            containers[6].querySelector('#input1').style.display = 'none';
-            containers[6].querySelector('#input1').innerText = `I'm 'display: none'`;
+            containers[6].querySelector('.input1').focus();            
+            containers[6].querySelector('.input1').style.display = 'none';
+            containers[6].querySelector('.input1').innerText = `I'm 'display: none'`;
  
-            if (document.activeElement === containers[6].querySelector('#input1'))
+            if (document.activeElement === containers[6].querySelector('.input1'))
                 setTimeout( window.navigate('down'), 2000);
 
             assert_equals(document.activeElement, containers[7].querySelector('#b8'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
-            assert_not_equals(document.activeElement, containers[6].querySelector('#input1'));
+            assert_not_equals(document.activeElement, containers[6].querySelector('.input1'));
         }, `Reset the search origin when it became 'display: none' TC${testNum++}. Search origin is the previous of 'display: none' element`);
 
         testRun(function() {
             document.querySelector('#b8').focus();
             window.navigate('down');
 
-            containers[7].querySelector('#input1').width = 0;
-            containers[7].querySelector('#input1').height = 0;
-            containers[7].querySelector('#input1').style.fontSize = '0px';
-            containers[7].querySelector('#input1').style.border = '0px';
-            containers[7].querySelector('#input1').innerText = `I'm zero sized element`;
+            containers[7].querySelector('.input1').width = 0;
+            containers[7].querySelector('.input1').height = 0;
+            containers[7].querySelector('.input1').style.fontSize = '0px';
+            containers[7].querySelector('.input1').style.border = '0px';
+            containers[7].querySelector('.input1').innerText = `I'm zero sized element`;
 
             setTimeout( window.navigate('down'), 1000);
 
             window.navigate('down');
 
-            assert_equals(document.activeElement, containers[7].querySelector('#input2'));
+            assert_equals(document.activeElement, containers[7].querySelector('.input2'));
             assert_not_equals(document.activeElement, containers[0].querySelector('#b1'));
         }, `Reset the search origin when its size became zero TC${testNum++}. Search origin is the previous rect of zero sized element`);
     }
