@@ -689,8 +689,7 @@
     while (parentContainer) {
       if (focusingController(eventTarget.spatialNavigationSearch(dir, currentOption), dir)) {
         return;
-      }
-      else {
+      } else {
         if ((option === 'visible') && scrollingController(container, dir)) return;
         else {
           if (!createSpatNavEvents('notarget', container, eventTarget, dir)) return;
@@ -709,8 +708,7 @@
                 break;
               }
             }
-          }
-          else {
+          } else {
             container = parentContainer;
             currentOption = {candidates: getSpatialNavigationCandidates(container, {mode: option}), container};
 
@@ -956,7 +954,7 @@
    * @returns {boolean}
    */
   function isVisibleInScroller(element) {
-    let elementRect = element.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
     let nearestScroller = getScrollContainer(element);
 
     let scrollerRect = null;
@@ -1570,7 +1568,7 @@
   function getOverlappedCandidates(targetElement) {      
     const container = targetElement.getSpatialNavigationContainer();
     const candidates = container.focusableAreas();
-    let overlappedCandidates = [];
+    const overlappedCandidates = [];
 
     candidates.forEach(element => {
       if ((targetElement !== element) && isEntirelyVisible(element, targetElement))
