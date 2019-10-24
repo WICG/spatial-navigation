@@ -118,14 +118,13 @@
 
     /*
      * focusin EventListener :
-     * If the mouse click a point in the page, the point will be the starting point.
-     * NOTE: Let UA set the spatial navigation starting point based on click
+     * When the element get the focus, save it and its DOMRect for resetting the search origin
+     * if it disappears.
      */
-    window.addEventListener('focusin', (event) => {
+    document.addEventListener('focusin', (event) => {
       if (event.target !== window) {
         savedSearchOrigin.element = event.target;
         savedSearchOrigin.rect = event.target.getBoundingClientRect();
-        searchOriginRect = null;
       }
     });
   }
@@ -214,11 +213,9 @@
 
     if (getCSSSpatNavAction(eventTarget) === 'scroll') {
       if (scrollingController(container, dir)) return;
-    }
-    else if (getCSSSpatNavAction(eventTarget) === 'focus') {
+    } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
       navigateChain(eventTarget, container, parentContainer, dir, 'all');
-    }
-    else if (getCSSSpatNavAction(eventTarget) === 'auto') {
+    } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
       navigateChain(eventTarget, container, parentContainer, dir, 'visible');
     }
   }
@@ -305,7 +302,7 @@
       for (const elem of children) {
         if (isDelegableContainer(elem)) {
           candidates.push(elem);
-        } else if(isFocusable(elem)) {
+        } else if (isFocusable(elem)) {
           candidates.push(elem);
 
           if(!isContainer(elem) && elem.childElementCount) {
@@ -388,10 +385,8 @@
       }
 
       // If there isn't search origin element but search orgin rect exist  (search origin isn't in the layout case)
-      if (searchOriginRect && (document.activeElement !== targetElement)) {
+      if (searchOriginRect) {
         bestTarget = selectBestCandidate(targetElement, getFilteredSpatialNavigationCandidates(targetElement, dir, internalCandidates, container), dir);
-      } else {
-        searchOriginRect = null;
       }
 
       // Inside First
@@ -763,7 +758,7 @@
       }
       searchOrigin = document.documentElement;
     }
-    // When the previous search origin lost its focus by blur: (3) display:none (4) element size turned into zero
+    // When the previous search origin lost its focus by blur: (1) display:none () element size turned into zero
     if (savedSearchOrigin.element &&
       ((getBoundingClientRect(savedSearchOrigin.element).height === 0) || (getBoundingClientRect(savedSearchOrigin.element).width === 0))) {
       searchOriginRect = savedSearchOrigin.rect;
