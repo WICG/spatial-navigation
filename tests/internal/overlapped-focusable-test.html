@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
+    <link rel="stylesheet" href="test.css">
+    <script src="test.js"></script>
+    <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+  </head>
+  <style>
+    .container {
+      width:500px;
+      height:150px;
+    }
+  </style>
+  <body onload="onload()">
+    <div class="container" id="c1">
+        <button class="box" id="b1" style="position: absolute; left: 100px; height: 120px; width: 250px;"></button>
+        <button class="box" id="b2" style="position: absolute; top: 40px; left: 120px; height: 40px; width: 80px;"></button>
+        <button class="box" id="b3" style="position: absolute; top: 90px; left: 220px; height: 40px; width: 80px;"></button>
+    </div>
+    <div class="container" id="c2">
+        <button class="box" id="b1" style="position: relative; left: 100px; height: 115px; width: 250px;"></button>
+        <button class="box" id="b2" style="position: relative; top: -35px; left: -40px; height: 40px; width: 80px;"></button>
+        <button class="box" id="b3" style="position: relative; top: 25px; left: -150px; height: 40px; width: 80px;"></button>
+        <button class="box" id="b3" style="position: relative; top: -1px; left: 280px; height: 40px; width: 80px;"></button>
+      </div>
+    <div class="container" id="c3">
+        <button class="box" id="b1" style="position: absolute; top: 400px; left: 70px; height: 120px; width: 250px;"></button>
+        <button class="box" id="b2" style="position: absolute; top: 410px; left: 90px; height: 90px; width: 150px;"></button>
+        <button class="box" id="b3" style="position: absolute; top: 420px; left: 110px;"></button>
+    </div>
+    <div class="container" id="c4">
+      <button class="box" id="b1" style="top:0px; left:25px;"></button>
+      <button class="box" id="b2" style="top:10px; left:100px; width:120px; height:100px;">
+        <button class="box" id="b3" style="top:-10px; left:20px;"></button>
+      </button>
+      <button class="box" id="b4" style="top:-20px; left:220px;"></button>
+    </div>
+
+    <div class="container" id="c5">
+      <div class="container" id="scroller" tabindex="0" style="width:200px; height:80px; overflow: scroll;"></div>
+      <button id="b1" class="box" style="top: -80px; left: 60px;"></button>
+      <button id="b2" class="box" style="top: 0px; left: 40px;"></button>
+    </div>
+    
+  </body>
+  <script type="text/javascript">
+    var onload = () => {
+      window.__spatialNavigation__.enableExperimentalAPIs(true);
+      testInit();
+
+      let testNum = 1;
+      let containers = document.querySelectorAll('.container');
+
+      testRun(function() {
+        containers[0].querySelector('#b1').focus();
+        window.navigate('down');
+
+        assert_equals(document.activeElement, containers[0].querySelector('#b2'));
+        assert_not_equals(document.activeElement, containers[1].querySelector('#b1'));
+      }, `Overlapped focusables TC${testNum++}. Focus can move inside the focusable element`);
+
+      testRun(function() {
+        containers[1].querySelector('#b1').focus();
+        
+        window.navigate('down');
+        assert_equals(document.activeElement, containers[1].querySelector('#b2'));
+        assert_not_equals(document.activeElement, containers[1].querySelector('#b3'));
+
+        window.navigate('down');
+        assert_equals(document.activeElement, containers[1].querySelector('#b3'));
+        assert_not_equals(document.activeElement, containers[2].querySelector('#b1'));
+      }, `Overlapped focusables TC${testNum++}. Focus can move to the fully inside focusable element first, then partially overlapped focusable element`);
+
+      testRun(function() {
+        containers[2].querySelector('#b3').focus();
+
+        window.navigate('down');
+        assert_equals(document.activeElement, containers[3].querySelector('#b2'));
+        assert_not_equals(document.activeElement, containers[2].querySelector('#b2'));
+      }, `Overlapped focusables TC${testNum++}. If there isn't valid focusable element, move the focus to the closest focusable element outside of the target`);
+
+      testRun(function() {
+        containers[3].querySelector('#b1').focus();
+
+        window.navigate('right');
+        window.navigate('right');
+
+        assert_equals(document.activeElement, containers[3].querySelector('#b3'));
+        assert_not_equals(document.activeElement, containers[3].querySelector('#b2'));
+
+        window.navigate('right');
+        assert_equals(document.activeElement, containers[3].querySelector('#b4'));
+        assert_not_equals(document.activeElement, containers[3].querySelector('#b3'));
+      }, `Overlapped focusables TC${testNum++}. Focus can move to the inside focusable element first, then outside focusable element`);
+
+      testRun(function() {
+        containers[4].querySelector('#scroller').focus();
+
+        window.navigate('down');
+
+        assert_equals(document.activeElement, containers[4].querySelector('#b1'));
+        assert_not_equals(document.activeElement, containers[4].querySelector('#b2'));
+
+        window.navigate('down');
+        assert_equals(document.activeElement, containers[4].querySelector('#b2'));
+        assert_not_equals(document.activeElement, document.body);
+      }, `Overlapped focusables TC${testNum++}. Focus can move to the sibling focusable element which inside the spatial navigation container`);
+    }
+  </script>
+</html>

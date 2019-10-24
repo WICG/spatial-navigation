@@ -17,7 +17,7 @@
     <div style="padding: 20px;">
       <button id="b1" class="box" style="top:100px; left:20px;"></button>
       <button id="b2" class="box" style="top:98px; left:180px;"></button>
-      <div id="c1" class="container c1" tabindex="-1" style="position: relative; left:110px; width:500px; height:200px; overflow-x: scroll;">
+      <div id="c1" class="container c1" tabindex="-1" style="position: relative; left:110px; width:500px; height:200px; --spatial-navigation-contain: contain;">
         <button id="c1b1" class="box b2" style="top:78px; left:25px;"></button>
           <div id="c2" class="container c2" style="position: relative; left:110px; width:250px; height:100px; --spatial-navigation-contain: contain;">
             <button id="c2b1" class="box b3" style="top:40px; left:60px;"></button>
@@ -332,7 +332,7 @@
     testRun(function() {
       let result = document.querySelector('#b1').spatialNavigationSearch('right', {container: c2Container});
       assert_equals(result, document.querySelector('#c2b1'));
-    }, `spatialNavigationSearch() TC${testNum++}. c2Container.spatialNavigationSearch('right', {container: #c2}); -> return element should be #c2b1 button`);
+    }, `spatialNavigationSearch() TC${testNum++}. #b1.spatialNavigationSearch('right', {container: #c2}); -> return element should be #c2b1 button`);
 
     testRun(function() {
       let result = document.querySelector('#c2b2').spatialNavigationSearch('right');
@@ -340,9 +340,9 @@
     }, `spatialNavigationSearch() TC${testNum++}. #c2b2.spatialNavigationSearch('right'); -> return element should be null`)
 
     testRun(function() {
-      let result = document.querySelector('#c2b2').spatialNavigationSearch('right', {container: c1Container});
+      let result = document.querySelector('#c2b2').spatialNavigationSearch('right', {container: c1Container, inside: false});
       assert_equals(result, document.querySelector('#c1b3'));
-    }, `spatialNavigationSearch() TC${testNum++}. #c2b2.spatialNavigationSearch('right', {container: #c1, outsideOnly: false}); -> return element should be #c1b3 button`);
+    }, `spatialNavigationSearch() TC${testNum++}. #c2b2.spatialNavigationSearch('right', {container: #c1, inside: false}); -> return element should be #c1b3 button`);
 
     testRun(function() {
       let result = document.querySelector('#c2b2').spatialNavigationSearch('right', {candidates: c1Candidates});

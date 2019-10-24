@@ -20,6 +20,8 @@
   const TAB_KEY_CODE = 9;
   let mapOfBoundRect = null;
   let startingPoint = null; // Indicates global variables for spatnav (starting position)
+  let savedSearchOrigin = {element: null, rect: null};  // Saves previous search origin
+  let searchOriginRect = null;  // Rect of current search origin
 
   /**
    * Initiate the spatial navigation features of the polyfill.
@@ -113,6 +115,18 @@
     document.addEventListener('mouseup', e => {
       startingPoint = {x: e.clientX, y: e.clientY};
     });
+
+    /*
+     * focusin EventListener :
+     * When the element get the focus, save it and its DOMRect for resetting the search origin
+     * if it disappears.
+     */
+    document.addEventListener('focusin', (event) => {
+      if (event.target !== window) {
+        savedSearchOrigin.element = event.target;
+        savedSearchOrigin.rect = event.target.getBoundingClientRect();
+      }
+    });
   }
 
   /**
@@ -170,14 +184,20 @@
       let bestInsideCandidate = null;
 
       // 5-2
-      if (getCSSSpatNavAction(eventTarget) === 'scroll') {
-        if (scrollingController(eventTarget, dir)) return;
-      } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
-        bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, candidates: getSpatialNavigationCandidates(eventTarget, {mode: 'all'}), inside: true});
-        if (focusingController(bestInsideCandidate, dir)) return;
-      } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
-        bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, inside: true});
-        if (focusingController(bestInsideCandidate, dir) || scrollingController(eventTarget, dir)) return;
+      if ((document.activeElement === searchOrigin) || 
+          (document.activeElement === document.body) && (searchOrigin === document)) {
+        if (getCSSSpatNavAction(eventTarget) === 'scroll') {
+          if (scrollingController(eventTarget, dir)) return;
+        } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
+          bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, candidates: getSpatialNavigationCandidates(eventTarget, {mode: 'all'}), inside: true});
+          if (focusingController(bestInsideCandidate, dir)) return;
+        } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
+          bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, inside: true});
+          if (focusingController(bestInsideCandidate, dir) || scrollingController(eventTarget, dir)) return;
+        }
+      } else {
+        // when the previous search origin became offscreen
+        container = container.getSpatialNavigationContainer();
       }
     }
 
@@ -193,11 +213,9 @@
 
     if (getCSSSpatNavAction(eventTarget) === 'scroll') {
       if (scrollingController(container, dir)) return;
-    }
-    else if (getCSSSpatNavAction(eventTarget) === 'focus') {
+    } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
       navigateChain(eventTarget, container, parentContainer, dir, 'all');
-    }
-    else if (getCSSSpatNavAction(eventTarget) === 'auto') {
+    } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
       navigateChain(eventTarget, container, parentContainer, dir, 'visible');
     }
   }
@@ -220,7 +238,7 @@
 
       // Scrolling container or document when the next focusing element isn't entirely visible
       // This is for the browser compatability
-      if (isScrollable(container, dir) && !isEntirelyVisible(bestCandidate));
+      if (isScrollable(container, dir) && !isEntirelyVisible(bestCandidate))
         bestCandidate.scrollIntoView();
 
       // When bestCandidate is a focusable element and not a container : move focus
@@ -231,6 +249,7 @@
         return true;
 
       bestCandidate.focus();
+      startingPoint = null;
       return true;
     }
 
@@ -283,7 +302,7 @@
       for (const elem of children) {
         if (isDelegableContainer(elem)) {
           candidates.push(elem);
-        } else if(isFocusable(elem)) {
+        } else if (isFocusable(elem)) {
           candidates.push(elem);
 
           if(!isContainer(elem) && elem.childElementCount) {
@@ -334,6 +353,7 @@
     const targetElement = this;
     let internalCandidates = [];
     let externalCandidates = [];
+    let insideOverlappedCandidates = getOverlappedCandidates(targetElement);
     let bestTarget;
 
     // Set default parameter value
@@ -361,12 +381,21 @@
       }
       // Filter external Candidates
       if (externalCandidates.length > 0) {
-        externalCandidates = getFilteredSpatialNavigationCandidates (targetElement, dir, externalCandidates, container);
+        externalCandidates = getFilteredSpatialNavigationCandidates(targetElement, dir, externalCandidates, container);
       }
 
+      // If there isn't search origin element but search orgin rect exist  (search origin isn't in the layout case)
+      if (searchOriginRect) {
+        bestTarget = selectBestCandidate(targetElement, getFilteredSpatialNavigationCandidates(targetElement, dir, internalCandidates, container), dir);
+      }
+
+      // Inside First
       if (inside && (isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
         bestTarget = selectBestCandidateFromEdge(targetElement, internalCandidates, dir);
+      } else if (!isContainer(targetElement) && insideOverlappedCandidates && insideOverlappedCandidates.length > 0) {
+        bestTarget = selectBestCandidateFromEdge(targetElement, insideOverlappedCandidates, dir);
       }
+
       bestTarget = bestTarget || selectBestCandidate(targetElement, externalCandidates, dir);
 
       if (bestTarget && isDelegableContainer(bestTarget)) {
@@ -410,7 +439,7 @@
     // Offscreen handling when originalContainer is not <HTML>
     if (originalContainer.parentElement && container !== originalContainer && !isVisible(currentElm))
       eventTargetRect = getBoundingClientRect(originalContainer);
-    else eventTargetRect = getBoundingClientRect(currentElm);
+    else eventTargetRect = searchOriginRect || getBoundingClientRect(currentElm);
 
     /*
      * Else, let candidates be the subset of the elements in visibles
@@ -446,13 +475,13 @@
    */
   function selectBestCandidate(currentElm, candidates, dir) {
     const spatialNavigationFunction = getComputedStyle(currentElm).getPropertyValue('--spatial-navigation-function');
-    const currentElmRect = getBoundingClientRect(currentElm);
+    const currentTargetRect = searchOriginRect || getBoundingClientRect(currentElm);
     let distanceFunction;
     let alignedCandidates;
 
     switch (spatialNavigationFunction) {
     case 'grid':
-      alignedCandidates = candidates.filter(elm => isAligned(currentElmRect, getBoundingClientRect(elm), dir));
+      alignedCandidates = candidates.filter(elm => isAligned(currentTargetRect, getBoundingClientRect(elm), dir));
       if (alignedCandidates.length > 0) {
         candidates = alignedCandidates;
       }
@@ -503,7 +532,7 @@
       eventTargetRect.y = 0;
     }
     else 
-      eventTargetRect = currentElm.getBoundingClientRect();
+      eventTargetRect = searchOriginRect || currentElm.getBoundingClientRect();
 
     let minDistance = Number.POSITIVE_INFINITY;
     let minDistanceElements = [];
@@ -551,6 +580,34 @@
       }
     } while (!isContainer(container));
     return container;
+  }
+
+  /**
+   * Get nearest scroll container of an element.
+   * @function getScrollContainer
+   * @param Element
+   * @returns {Node} The spatial navigation container
+   */
+  function getScrollContainer(element) {
+    let scrollContainer = element;
+
+    do {
+      if (!scrollContainer.parentElement) {
+        if (window.location !== window.parent.location)
+          scrollContainer = window.parent.document.documentElement;
+        else
+          scrollContainer = window.document.documentElement;
+        break;
+      }
+      else {
+        scrollContainer = scrollContainer.parentElement;
+      }
+    } while (!isScrollContainer(scrollContainer) || !isVisible(scrollContainer));
+
+    if (scrollContainer === document || scrollContainer === document.documentElement)
+      scrollContainer = window;
+  
+    return scrollContainer;
   }
 
   /**
@@ -632,8 +689,7 @@
     while (parentContainer) {
       if (focusingController(eventTarget.spatialNavigationSearch(dir, currentOption), dir)) {
         return;
-      }
-      else {
+      } else {
         if ((option === 'visible') && scrollingController(container, dir)) return;
         else {
           if (!createSpatNavEvents('notarget', container, eventTarget, dir)) return;
@@ -652,8 +708,7 @@
                 break;
               }
             }
-          }
-          else {
+          } else {
             container = parentContainer;
             currentOption = {candidates: getSpatialNavigationCandidates(container, {mode: option}), container};
 
@@ -687,10 +742,30 @@
    */
   function findSearchOrigin() {
     let searchOrigin = document.activeElement;
-    if (!searchOrigin ||
-      (searchOrigin === document.body && !document.querySelector(':focus')) /* body isn't actually focused*/
-    ) {
-      searchOrigin = document;
+
+    if (!searchOrigin || (searchOrigin === document.body && !document.querySelector(':focus'))) {
+      // When the previous search origin lost its focus by blur: (1) disable attribute (2) visibility: hidden
+      if (savedSearchOrigin.element && (searchOrigin !== savedSearchOrigin.element)) {
+        const elementStyle = window.getComputedStyle(savedSearchOrigin.element, null);
+        const invisibleStyle = ['hidden', 'collapse'];
+
+        if (savedSearchOrigin.element.disabled || invisibleStyle.includes(elementStyle.getPropertyValue('visibility'))) {
+          searchOrigin = savedSearchOrigin.element;
+          return searchOrigin;
+        }
+      }
+      searchOrigin = document.documentElement;
+    }
+    // When the previous search origin lost its focus by blur: (1) display:none () element size turned into zero
+    if (savedSearchOrigin.element &&
+      ((getBoundingClientRect(savedSearchOrigin.element).height === 0) || (getBoundingClientRect(savedSearchOrigin.element).width === 0))) {
+      searchOriginRect = savedSearchOrigin.rect;
+    }
+    
+    if (!isVisibleInScroller(searchOrigin)) {
+      const scroller = getScrollContainer(searchOrigin);
+      if (scroller && getCSSSpatNavAction(scroller) === 'auto')
+        return scroller;
     }
     return searchOrigin;
   }
@@ -872,6 +947,32 @@
   }
 
   /**
+   * Decide whether an element is inside the scorller viewport or not
+   *
+   * @function isVisibleInScroller
+   * @param element {Node}
+   * @returns {boolean}
+   */
+  function isVisibleInScroller(element) {
+    const elementRect = element.getBoundingClientRect();
+    let nearestScroller = getScrollContainer(element);
+
+    let scrollerRect = null;
+    if (nearestScroller !== window) {
+      scrollerRect = getBoundingClientRect(nearestScroller);
+    }
+    else {
+      scrollerRect = getBoundingClientRect(document.documentElement);
+      nearestScroller = document.documentElement;
+    }
+   
+    if(isInside(scrollerRect, elementRect, 'left') && isInside(scrollerRect, elementRect, 'down'))
+      return true; 
+    else
+      return false;
+  }
+
+  /**
    * Decide whether an element is focusable for spatial navigation.
    * 1. If element is the browsing context (document, iframe), then it's focusable,
    * 2. If the element is scrollable container (regardless of scrollable axis), then it's focusable,
@@ -946,8 +1047,8 @@
   function isBeingRendered(element) {
     if (!isVisibleStyleProperty(element.parentElement))
       return false;
-    if (!isVisibleStyleProperty(element) || (element.style.opacity === 0) ||
-        ((element.style.width === '0px' || element.style.width === 0) && (element.style.height === '0px' || element.style.height === 0)))
+    if (!isVisibleStyleProperty(element) || (element.style.opacity === '0') ||
+        (window.getComputedStyle(element).height === '0px' || window.getComputedStyle(element).width === '0px'))
       return false;
     return true;
   }
@@ -968,9 +1069,10 @@
    * @param element {Node}
    * @returns {boolean}
    */
-  function isEntirelyVisible(element) {
+  function isEntirelyVisible(element, container) {
     const rect = getBoundingClientRect(element);
-    const containerRect = getBoundingClientRect(element.getSpatialNavigationContainer());
+    const containerElm = container || element.getSpatialNavigationContainer();
+    const containerRect = getBoundingClientRect(containerElm);
 
     // FIXME: when element is bigger than container?
     const entirelyVisible = !((rect.left < containerRect.left) ||
@@ -1437,7 +1539,7 @@
   /**
    * Get the DOMRect of an element
    * @function getBoundingClientRect
-   * @param element {Node}
+   * @param {Node} element 
    * @returns {DOMRect}
    */
   function getBoundingClientRect(element) {
@@ -1456,6 +1558,24 @@
       mapOfBoundRect && mapOfBoundRect.set(element, rect);
     }
     return rect;
+  }
+
+  /**
+   * Get the candidates which is fully inside the target element in visual
+   * @param {Node} targetElement
+   * @returns {sequence<Node>}  overlappedCandidates
+   */
+  function getOverlappedCandidates(targetElement) {      
+    const container = targetElement.getSpatialNavigationContainer();
+    const candidates = container.focusableAreas();
+    const overlappedCandidates = [];
+
+    candidates.forEach(element => {
+      if ((targetElement !== element) && isEntirelyVisible(element, targetElement))
+      overlappedCandidates.push(element);
+    });
+
+    return overlappedCandidates;
   }
 
   /**
@@ -1577,6 +1697,7 @@
     return {
       isContainer,
       isScrollContainer,
+      isVisibleInScroller,
       findCandidates: findTarget.bind(null, true),
       findNextTarget: findTarget.bind(null, false),
       getDistanceFromTarget: (element, candidateElement, dir) => {
