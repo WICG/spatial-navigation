@@ -128,10 +128,6 @@
         searchOriginRect = null;
       }
     });
-
-    window.addEventListener('focusout', () => {
-      searchOriginRect = savedSearchOrigin.rect;  
-    });
   }
 
   /**
@@ -200,8 +196,7 @@
           bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, inside: true});
           if (focusingController(bestInsideCandidate, dir) || scrollingController(eventTarget, dir)) return;
         }
-      }
-      else {
+      } else {
         // when the previous search origin became offscreen
         container = container.getSpatialNavigationContainer();
       }
@@ -361,7 +356,7 @@
     const targetElement = this;
     let internalCandidates = [];
     let externalCandidates = [];
-    let insideOverlappedCandidates = hasOverlappedCandidates(targetElement);
+    let insideOverlappedCandidates = getOverlappedCandidates(targetElement);
     let bestTarget;
 
     // Set default parameter value
@@ -400,12 +395,9 @@
       }
 
       // Inside First
-      //if (inside && (isContainer(targetElement) || targetElement.nodeName === 'BODY') && (window.__spatialNavigation__.searchOrigin === document.activeElement) 
       if (inside && (isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
         bestTarget = selectBestCandidateFromEdge(targetElement, internalCandidates, dir);
-      }
-
-      if (!isContainer(targetElement) && insideOverlappedCandidates && insideOverlappedCandidates.length > 0) {
+      } else if (!isContainer(targetElement) && insideOverlappedCandidates && insideOverlappedCandidates.length > 0) {
         bestTarget = selectBestCandidateFromEdge(targetElement, insideOverlappedCandidates, dir);
       }
 
@@ -758,10 +750,9 @@
   function findSearchOrigin() {
     let searchOrigin = document.activeElement;
 
-    if (!searchOrigin || (searchOrigin === document.body && !document.querySelector(':focus'))
-      ) {
+    if (!searchOrigin || (searchOrigin === document.body && !document.querySelector(':focus'))) {
       // When the previous search origin lost its focus by blur: (1) disable attribute (2) visibility: hidden
-      if (searchOrigin !== savedSearchOrigin.element) {
+      if (savedSearchOrigin.element && (searchOrigin !== savedSearchOrigin.element)) {
         const elementStyle = window.getComputedStyle(savedSearchOrigin.element, null);
         const invisibleStyle = ['hidden', 'collapse'];
 
@@ -770,10 +761,11 @@
           return searchOrigin;
         }
       }
-      searchOrigin = document;
+      searchOrigin = document.documentElement;
     }
     // When the previous search origin lost its focus by blur: (3) display:none (4) element size turned into zero
-    if ((getBoundingClientRect(searchOrigin).height === 0) || (getBoundingClientRect(searchOrigin).width === 0)) {
+    if (savedSearchOrigin.element &&
+      ((getBoundingClientRect(savedSearchOrigin.element).height === 0) || (getBoundingClientRect(savedSearchOrigin.element).width === 0))) {
       searchOriginRect = savedSearchOrigin.rect;
     }
     
@@ -1578,19 +1570,19 @@
   /**
    * Get the candidates which is fully inside the target element in visual
    * @param {Node} targetElement
-   * @returns {sequence<Node>}  insideCandidates
+   * @returns {sequence<Node>}  overlappedCandidates
    */
-  function hasOverlappedCandidates(targetElement) {      
+  function getOverlappedCandidates(targetElement) {      
     const container = targetElement.getSpatialNavigationContainer();
     const candidates = container.focusableAreas();
-    let insideCandidates = [];
+    let overlappedCandidates = [];
 
     candidates.forEach(element => {
       if ((targetElement !== element) && isEntirelyVisible(element, targetElement))
-        insideCandidates.push(element);
+      overlappedCandidates.push(element);
     });
 
-    return insideCandidates;
+    return overlappedCandidates;
   }
 
   /**
