@@ -232,9 +232,6 @@
     // When bestCandidate is found
     if (bestCandidate) {
       const container = bestCandidate.getSpatialNavigationContainer();
-      const elementStyle = window.getComputedStyle(container, null);
-      const overflowX = elementStyle.getPropertyValue('overflow-x');
-      const overflowY = elementStyle.getPropertyValue('overflow-y');
 
       // Scrolling container or document when the next focusing element isn't entirely visible
       // This is for the browser compatability

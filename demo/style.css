@@ -13,7 +13,7 @@ src: local('LG Smart'), url('LG Smart Regular.woff') format('woff');
 }
 
 body {
-  font-family: Roboto, sans-serif;
+  font-family: 'LG Smart';
   margin: 0;
   padding: 0;
   word-break: break-word;
@@ -62,7 +62,7 @@ header .title{
   line-height: 81px;
   background: #5e568b;
   color: #FFF;
-  font-family:'-webkit-body';
+  font-family: 'LG Smart';
   font-size: 36px;
   font-weight: 600;
 }
