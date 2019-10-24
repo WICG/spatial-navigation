@@ -49,7 +49,7 @@
         testRun(function() {
             containers[0].querySelector('.input1').focus();
             containers[0].querySelector('.input1').setAttribute("tabIndex", -1);
-            containers[0].querySelector('.input1').innerText = `I'm non-focusable`;
+            containers[0].querySelector('.input1').innerText = "I'm non focusable";
 
             setTimeout( window.navigate('down'), 1000);
 
@@ -62,7 +62,7 @@
             containers[1].querySelector('#b2').focus();
             window.navigate('down');
             containers[1].querySelector('.input1').inert = true;
-            containers[1].querySelector('.input1').innerText = `I'm inert`;
+            containers[1].querySelector('.input1').innerText = "I'm inert";
             
             setTimeout( window.navigate('down'), 1000);
 
@@ -74,7 +74,7 @@
         testRun(function() {
             containers[2].querySelector('.input1').focus();
             containers[2].querySelector('.input1').disabled = true;
-            containers[2].querySelector('.input1').innerText = `I'm disabled`;
+            containers[2].querySelector('.input1').innerText = "I'm disabled";
 
             setTimeout( window.navigate('down'), 1000);
 
@@ -86,7 +86,7 @@
         testRun(function() {
             containers[3].querySelector('.input1').focus();
             containers[3].querySelector('.input1').style.visibility = 'hidden';
-            containers[3].querySelector('.input1').innerText = `I'm 'visibility: hidden'`;
+            containers[3].querySelector('.input1').innerText = "I'm visibility: hidden";
             
             setTimeout( window.navigate('down'), 1000);
 
@@ -98,7 +98,7 @@
         testRun(function() {
             containers[4].querySelector('.input1').focus();            
             containers[4].querySelector('.input1').style.opacity = 0;
-            containers[4].querySelector('.input1').innerText = `I'm 'opacity: 0'`;
+            containers[4].querySelector('.input1').innerText = "I'm 'opacity: 0'";
 
             setTimeout( window.navigate('down'), 1000);
 
@@ -109,7 +109,7 @@
         testRun(function() {
             containers[5].querySelector('.input1').focus();
             containers[5].querySelector('.input1').style.display = 'none';
-            containers[5].querySelector('.input1').innerText = `I'm 'display: none'`;
+            containers[5].querySelector('.input1').innerText = "I'm 'display: none'";
             containers[5].querySelector('.input2').style.left = '0px';
            
             setTimeout( window.navigate('down'), 1000);
@@ -121,7 +121,7 @@
         testRun(function() {
             containers[6].querySelector('.input1').focus();            
             containers[6].querySelector('.input1').style.display = 'none';
-            containers[6].querySelector('.input1').innerText = `I'm 'display: none'`;
+            containers[6].querySelector('.input1').innerText = "I'm 'display: none'";
  
             if (document.activeElement === containers[6].querySelector('.input1'))
                 setTimeout( window.navigate('down'), 2000);
@@ -139,7 +139,7 @@
             containers[7].querySelector('.input1').height = 0;
             containers[7].querySelector('.input1').style.fontSize = '0px';
             containers[7].querySelector('.input1').style.border = '0px';
-            containers[7].querySelector('.input1').innerText = `I'm zero sized element`;
+            containers[7].querySelector('.input1').innerText = "I'm zero sized element";
 
             setTimeout( window.navigate('down'), 1000);
 
