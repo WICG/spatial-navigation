@@ -133,7 +133,7 @@ pre.code-area {
 
 pre.code-area code {
     border-radius: 0 0 10px 10px;
-    overflow-x: hidden;
+    overflow-x: scroll;
 }
 
 .code-select {
