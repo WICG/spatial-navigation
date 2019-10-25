@@ -225,31 +225,6 @@
       }, `--spatial-navigation-function TC${testNum++}. grid rule check`);
 
       testRun(function() {
-        changeRule('euclidean');
-        document.querySelector('#s17').focus();
-        navigate('down');
-        assert_equals(document.activeElement, document.querySelector('#s16'));
-        navigate('down');
-        assert_equals(document.activeElement, document.querySelector('#s18'));
-        navigate('down');
-        assert_equals(document.activeElement, document.querySelector('#s6'));
-        navigate('left');
-        assert_equals(document.activeElement, document.querySelector('#s19'));
-        navigate('left');
-        assert_equals(document.activeElement, document.querySelector('#s5'));
-        navigate('left');
-        assert_equals(document.activeElement, document.querySelector('#s20'));
-        navigate('left');
-        assert_equals(document.activeElement, document.querySelector('#s10'));
-        navigate('left');
-        assert_equals(document.activeElement, document.querySelector('#s9'));
-        navigate('left');
-        assert_equals(document.activeElement, document.querySelector('#s14'));
-        navigate('up');
-        assert_equals(document.activeElement, document.querySelector('#s20'));
-      }, `--spatial-navigation-function TC${testNum++}. euclidean rule check`);
-
-      testRun(function() {
         changeRule('normal');
         document.querySelector('#s3').focus();
         navigate('right');
