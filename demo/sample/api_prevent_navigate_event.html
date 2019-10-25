@@ -15,21 +15,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   </head>
   <body>
-    <div class="container c1" id="scroller" style="width:200px; height: 400px; padding: 20px; overflow-y: scroll;">
-      <button class="box b2" style="left: 50px; width:50px; height:50px;"></button>
-      <button class="box b2" style="top: calc(300px * 1); left: 0px; width:50px; height:50px;"></button>
-      <button class="box b2" style="top: calc(300px * 2); left: -50px; width:50px; height:50px;"></button>
-      <button class="box b2" style="top: calc(300px * 3); left: 50px; width:50px; height:50px;"></button>
-      <button class="box b2" style="top: calc(300px * 4); left: 0px; width:50px; height:50px;"></button>
+    <div class="container c1" id="scroller" style="width:200px; height: 200px; padding: 20px; overflow-y: scroll;">
+      <button class="box b2" style="left: 50px;"></button>
+      <button class="box b2" style="top: calc(100px * 1); left: 20px;"></button>
+      <button class="box b2" style="top: calc(100px * 2); left: -10px;"></button>
+      <button class="box b2" style="top: calc(100px * 3); left: 50px;"></button>
+      <button class="box b2" style="top: calc(100px * 4); left: 0px;"></button>
     </div>
-    <button class="box b1" style="top: 20px; left: 100px; width:50px; height:50px;"></button>
+    <button class="box b1" style="top: 20px; left: 100px;"></button>
+    <div class="event-log"></div>
   </body>
   <script type="text/javascript">
     const container = document.getElementById('scroller');
+    const logDiv = document.querySelector('.event-log');
     let nextTarget = null;
 
     container.addEventListener('navnotarget', function(e) {
+      appendLog('navnotarget', `*currentTarget: ${getElementInfoString(e.currentTarget)}, *target: ${getElementInfoString(e.target)}`);
       e.preventDefault();
+
+      appendLog('navnotarget', 'is cancelled by preventDefault()');
 
       const candidates = e.target.focusableAreas({'mode': 'all'});
 
@@ -38,8 +43,19 @@
       } else if (e.detail.dir === 'up') {
         nextTarget = candidates[candidates.length-1];
       }
-
       nextTarget.focus();
     });
+
+    function getElementInfoString (element) {
+      return element.tagName + " " + element.className;
+    }
+
+    function appendLog (eventType, description) {
+      const newEventDiv = document.createElement('div');
+      newEventDiv.className = eventType;
+      newEventDiv.innerHTML = '<b>' + eventType + ' event! </b>' + description;
+      logDiv.appendChild(newEventDiv);
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
   </script>
 </html>

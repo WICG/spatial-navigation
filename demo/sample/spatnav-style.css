@@ -220,3 +220,25 @@ button {
   vertical-align: middle;
   font-size: 36px;
 }
+
+.event-log {
+  position: relative;
+  top: 130px;
+  margin: 30px;
+  width: 600px;
+  height: 150px;
+  border: 1px solid gray;
+  overflow-y: scroll;
+}
+
+.event-log .scroll{
+  background: lightgray;
+}
+
+.event-log .navbeforefocus{
+  background: lightsteelblue;
+}
+
+.event-log .navnotarget{
+  background: lightblue;
+}

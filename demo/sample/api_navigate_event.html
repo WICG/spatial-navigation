@@ -14,29 +14,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
   </head>
-  <style type="text/css">
-    #event-log {
-      position: relative;
-      top: 130px;
-      margin: 30px;
-      width: 600px;
-      height: 150px;
-      border: 1px solid gray;
-      overflow-y: scroll;
-    }
-
-    #event-log .scroll{
-      background: lightgray;
-    }
-
-    #event-log .navbeforefocus{
-      background: lightcoral;
-    }
-
-    #event-log .navnotarget{
-      background: lightgreen;
-    }
-  </style>
   <body>
     <div style="width:600px; height: 400px; padding: 20px;">
       <h4>
@@ -60,27 +37,24 @@
       </div>
       <button class="box" style="left: 250px;"></button>
     </div>
-    <div id="event-log"></div>
+    <div class="event-log"></div>
   </body>
   <script type="text/javascript">
     let previousAreas;
 
     const containers = document.getElementsByClassName('container');
-    const logDiv = document.querySelector('#event-log');
+    const logDiv = document.querySelector('.event-log');
 
     for(container of containers) {
       container.addEventListener('scroll', function(e) {
-        console.log("%cscroll event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target});
         appendLog('scroll', `*currentTarget: ${getElementInfoString(e.currentTarget)}, *target: ${getElementInfoString(e.target)}`);
       });
     }
     document.body.addEventListener('navbeforefocus', function(e) {
-      console.log("%cnavbeforefocus event: \n%o, %o", "background: lightcoral", {currentTarget: e.currentTarget}, {target: e.target});
       appendLog('navbeforefocus', `*currentTarget: ${getElementInfoString(e.currentTarget)}, *target: ${getElementInfoString(e.target)}`);
     });
 
     document.body.addEventListener('navnotarget', function(e) {
-      console.log("%cnavnotarget event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target});
       appendLog('navnotarget', `*currentTarget: ${getElementInfoString(e.currentTarget)}, *target: ${getElementInfoString(e.target)}`);
     });
 
