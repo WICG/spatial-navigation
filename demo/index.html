@@ -10,9 +10,8 @@
   <script src="../polyfill/spatial-navigation-polyfill.js"></script>
   <script type="text/javascript">
     window.addEventListener("load", function() {
-
-      let iframes = document.getElementsByTagName('iframe');
-      let iframesDescriptions =  document.getElementsByClassName('iframe-description');
+      const iframes = document.getElementsByTagName('iframe');
+      const iframesDescriptions =  document.getElementsByClassName('iframe-description');
       for(let i = 0; i < iframes.length; i++) {
         // Get Inner Doc and set background color
         let innerDoc = iframes[i].contentDocument || iframes[i].contentWindow.document;
@@ -128,11 +127,11 @@
 
             <h3 id="scrollable-region">* Scrollable region</h3>
             <p class="iframe-description"></p>
-            <iframe src="sample/heuristic_scrollable.html"></iframe>
+            <iframe src="sample/heuristic_scrollable.html" style="height:350px;"></iframe>
 
             <h3 id="iframe-element">* &lt;iframe&gt; element</h3>
             <p class="iframe-description"></p>
-            <iframe src="sample/heuristic_iframe.html"></iframe>
+            <iframe src="sample/heuristic_iframe.html" style="height:350px;"></iframe>
 
             <h3 id="input-elements">* &lt;input&gt; elements</h3>
             <p class="iframe-description"></p>
@@ -140,11 +139,11 @@
 
             <h3 id="spatnav-container">* Spatial navigation container</h3>
             <p class="iframe-description"></p>
-            <iframe src="sample/api_spatial_navigation_contain.html"></iframe>
+            <iframe src="sample/api_spatial_navigation_contain.html" style="height:450px;"></iframe>
 
             <h3 id="spatnav-drawing-board">* Drawing board</h3>
             <p class="iframe-description"></p>
-            <iframe src="sample/heuristic_drawing_board.html"></iframe>
+            <iframe src="sample/heuristic_drawing_board.html" style="height:600px;"></iframe>
           </div>
 
           <div class="card-view">
@@ -152,30 +151,30 @@
 
             <h3 id="navigation-events">* Spatial navigation events</h3>
             <p class="iframe-description"></p>
-            <iframe src="sample/api_navigate_event.html" style="height:800px;"></iframe>
+            <iframe src="sample/api_navigate_event.html" style="height:720px;"></iframe>
 
             <h3 id="spatnav-drawing-board">* Prevent default navigation event</h3>
             <p class="iframe-description"></p>
-            <iframe src="sample/api_prevent_navigate_event.html"></iframe>
+            <iframe src="sample/api_prevent_navigate_event.html" style="height:570px;"></iframe>
           </div>
 
           <div class="card-view">
             <h2 tabIndex="0" id="api">4. API</h2>
             <h3 id="getSpatialNavigationContainer">* getSpatialNavigationContainer() <a href="https://drafts.csswg.org/css-nav-1/#dom-element-getspatialnavigationcontainer" target="_blank"><img src="link.png" width="20px"/></a></h3>
             <p class="iframe-description"></p>
-            <iframe src="sample/api_getSpatialNavigationContainer.html"></iframe>
+            <iframe src="sample/api_getSpatialNavigationContainer.html" style="height:550px;"></iframe>
 
             <h3 id="focusableAreas">* focusableAreas(optional focusableAreasOptions) <a href="https://drafts.csswg.org/css-nav-1/#dom-element-focusableareas" target="_blank"><img src="link.png" width="20px"/></a></h3>
             <p class="iframe-description"></p>
-            <iframe src="sample/api_focusableAreas.html"></iframe>
+            <iframe src="sample/api_focusableAreas.html" style="height:600px;"></iframe>
 
             <h3 id="spatialNavSearch">* spatialNavigationSearch() <a href="https://drafts.csswg.org/css-nav-1/#dom-element-spatialnavigationsearch" target="_blank"><img src="link.png" width="20px"/></a></h3>
             <p class="iframe-description"></p>
-            <iframe class="api-sample" src="sample/api_spatialNavigationSearch.html"></iframe>
+            <iframe class="api-sample" src="sample/api_spatialNavigationSearch.html" style="height:650px;"></iframe>
 
             <h3 id="navigate">* navigate(dir) <a href="https://drafts.csswg.org/css-nav-1/#dom-window-navigate" target="_blank"><img src="link.png" width="20px"/></a></h3>
             <p class="iframe-description"></p>
-            <iframe class="api-sample" src="sample/api_navigate.html"></iframe>
+            <iframe class="api-sample" src="sample/api_navigate.html" style="height:600px;"></iframe>
           </div>
 
           <div class="card-view">

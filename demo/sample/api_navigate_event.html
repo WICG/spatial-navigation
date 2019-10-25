@@ -14,29 +14,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
   </head>
-  <style type="text/css">
-    #event-log {
-      position: relative;
-      top: 130px;
-      margin: 30px;
-      width: 600px;
-      height: 150px;
-      border: 1px solid gray;
-      overflow-y: scroll;
-    }
-
-    #event-log .scroll{
-      background: lightgray;
-    }
-
-    #event-log .navbeforefocus{
-      background: lightcoral;
-    }
-
-    #event-log .navnotarget{
-      background: lightgreen;
-    }
-  </style>
   <body>
     <div style="width:600px; height: 400px; padding: 20px;">
       <h4>
@@ -45,42 +22,39 @@
         <span class="c2">Scroll container</span> >
         <span class="c3">Scroll container</span>
       </h4>
-      <div class="container c1" tabindex="0" style="position: relative; width:600px; height:400px; overflow-y: scroll; ">
-        <div class="container c2" tabindex="0" style="position: relative; left:50px; width:500px; height:300px; overflow-y: scroll;">
-          <div class="container c3" tabindex="0" style="position: relative; left:50px; width:200px; height:150px; overflow-y: scroll;">
-            <button class="box b3" style="left: 50px; width:50px; height:50px; background-color: #00b176b0"></button>
-            <button class="box b3" style="top: calc(300px * 1); left: 0px; width:50px; height:50px; background-color: #00b176b0"></button>
-            <button class="box b3" style="top: calc(300px * 2); left: -50px; width:50px; height:50px; background-color: #00b176b0"></button>
-            <button class="box b3" style="top: calc(300px * 3); left: 50px; width:50px; height:50px; background-color: #00b176b0"></button>
+      <div class="container c1" tabindex="0" style="position: relative; width:450px; height:300px; overflow-y: scroll; ">
+        <div class="container c2" tabindex="0" style="position: relative; left:50px; width:300px; height:200px; overflow-y: scroll;">
+          <div class="container c3" tabindex="0" style="position: relative; left:20px; width:200px; height:120px; overflow-y: scroll;">
+            <button class="box b3" style="left: 50px; background-color: #00b176b0"></button>
+            <button class="box b3" style="top: calc(100px * 1); left: 0px; background-color: #00b176b0"></button>
+            <button class="box b3" style="top: calc(100px * 2); left: -50px; background-color: #00b176b0"></button>
+            <button class="box b3" style="top: calc(100px * 3); left: 50px; background-color: #00b176b0"></button>
           </div>
-          <button class="box b3" style="top: 50px; left:100px; width:50px; height:50px;"></button>
-          <button class="box b3" style="top: calc(150px * 1); left: 50px; width:50px; height:50px;"></button>
-          <button class="box b3" style="top: calc(150px * 2); left: -10px; width:50px; height:50px;"></button>
+          <button class="box b3" style="top: 50px; left:100px;"></button>
+          <button class="box b3" style="top: calc(150px * 1); left: 50px;"></button>
+          <button class="box b3" style="top: calc(150px * 2); left: -10px;"></button>
         </div>
       </div>
-      <button class="box b3" style="left: 250px; width:50px; height:50px; background-color: #00b176b0"></button>
+      <button class="box" style="left: 250px;"></button>
     </div>
-    <div id="event-log"></div>
+    <div class="event-log"></div>
   </body>
   <script type="text/javascript">
     let previousAreas;
 
     const containers = document.getElementsByClassName('container');
-    const logDiv = document.querySelector('#event-log');
+    const logDiv = document.querySelector('.event-log');
 
     for(container of containers) {
       container.addEventListener('scroll', function(e) {
-        console.log("%cscroll event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target});
         appendLog('scroll', `*currentTarget: ${getElementInfoString(e.currentTarget)}, *target: ${getElementInfoString(e.target)}`);
       });
     }
     document.body.addEventListener('navbeforefocus', function(e) {
-      console.log("%cnavbeforefocus event: \n%o, %o", "background: lightcoral", {currentTarget: e.currentTarget}, {target: e.target});
       appendLog('navbeforefocus', `*currentTarget: ${getElementInfoString(e.currentTarget)}, *target: ${getElementInfoString(e.target)}`);
     });
 
     document.body.addEventListener('navnotarget', function(e) {
-      console.log("%cnavnotarget event: \n%o, %o", "background: lightgreen", {currentTarget: e.currentTarget}, {target: e.target});
       appendLog('navnotarget', `*currentTarget: ${getElementInfoString(e.currentTarget)}, *target: ${getElementInfoString(e.target)}`);
     });
 

@@ -53,7 +53,8 @@
   </div>
 
   <pre class="code-area">
-    <code id="code">      const redContainer = document.getElementsByClassName("container c1")[0];
+    <code id="code">
+      const redContainer = document.getElementsByClassName("container c1")[0];
       redContainer.addEventListener('keydown', function(e) {
         const dir = WASD_KEY_CODE[e.keyCode];
         if(window.navigate && dir) {
