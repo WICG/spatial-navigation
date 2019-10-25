@@ -6,13 +6,6 @@
   <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
   <link rel="stylesheet" href="test.css">
   <script src="test.js"></script>
-  <style>
-  #d {
-    width: 100px;
-    height: 100px;
-    overflow: scroll;
-  }
-  </style>
   <body onload="onload()">
     <div style="padding: 20px;">
       <button id="b1" class="box" style="top:100px; left:20px;"></button>
@@ -40,7 +33,7 @@
     let dir;
 
     const navEventHandler = (e) => {
-      console.log("navEventHandler")
+      console.log(e);
       eventOccured = true;
       targetElement = e.target;
       causedTarget = e.detail.causedTarget;
@@ -52,7 +45,7 @@
       document.body.addEventListener('navnotarget', navEventHandler);
       document.querySelector('#c2b2').focus();
       window.navigate('right');
-      document.body.removeEventListener("navnotarget", navEventHandler);
+      document.body.removeEventListener('navnotarget', navEventHandler);
 
       setTimeout(
         testRun(function() {
@@ -65,7 +58,7 @@
       document.body.addEventListener('navnotarget', navEventHandler);
       document.querySelector('#c2b2').focus();
       window.navigate('right');
-      document.body.removeEventListener("navnotarget", navEventHandler);
+      document.body.removeEventListener('navnotarget', navEventHandler);
 
       setTimeout(
         testRun(function() {
@@ -80,7 +73,7 @@
       document.body.addEventListener('navnotarget', navEventHandler);
       document.querySelector('#c1b3').focus();
       window.navigate('right');
-      document.body.removeEventListener("navnotarget", navEventHandler);
+      document.body.removeEventListener('navnotarget', navEventHandler);
 
       assert_equals(document.activeElement, document.querySelector('#c1b3'));
     }, `navnotarget Event TC${testNum++}. 'navnotarget' event should allow prevent defalut.`);
@@ -93,7 +86,7 @@
       document.body.addEventListener('navbeforefocus', navEventHandler);
       document.querySelector('#c2b2').focus();
       window.navigate('right');
-      document.body.removeEventListener("navbeforefocus", navEventHandler);
+      document.body.removeEventListener('navbeforefocus', navEventHandler);
 
       setTimeout(
         testRun(function() {
@@ -108,7 +101,7 @@
       document.body.addEventListener('navbeforefocus', navEventHandler);
       document.querySelector('#c2b2').focus();
       window.navigate('right');
-      document.body.removeEventListener("navbeforefocus", navEventHandler);
+      document.body.removeEventListener('navbeforefocus', navEventHandler);
 
       setTimeout(
         testRun(function() {
@@ -122,7 +115,7 @@
       document.body.addEventListener('navbeforefocus', navEventHandler);
       document.querySelector('#c1b3').focus();
       window.navigate('right');
-      document.body.removeEventListener("navbeforefocus", navEventHandler);
+      document.body.removeEventListener('navbeforefocus', navEventHandler);
 
       assert_equals(document.activeElement, document.querySelector('#c1b3'));
     }, `navbeforefocus Event TC${testNum++}. 'navbeforefocus' event should allow prevent defalut.`);
