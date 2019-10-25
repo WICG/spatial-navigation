@@ -233,11 +233,6 @@
     if (bestCandidate) {
       const container = bestCandidate.getSpatialNavigationContainer();
 
-      // Scrolling container or document when the next focusing element isn't entirely visible
-      // This is for the browser compatability
-      if (isScrollable(container, dir) && !isEntirelyVisible(bestCandidate))
-        bestCandidate.scrollIntoView();
-
       // When bestCandidate is a focusable element and not a container : move focus
       /*
        * [event] navbeforefocus : Fired before spatial or sequential navigation changes the focus.
