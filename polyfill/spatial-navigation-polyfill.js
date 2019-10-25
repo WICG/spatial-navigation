@@ -121,7 +121,7 @@
      * When the element get the focus, save it and its DOMRect for resetting the search origin
      * if it disappears.
      */
-    document.addEventListener('focusin', (e) => {
+    window.addEventListener('focusin', (e) => {
       if (e.target !== window) {
         savedSearchOrigin.element = e.target;
         savedSearchOrigin.rect = e.target.getBoundingClientRect();
