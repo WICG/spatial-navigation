@@ -33,9 +33,9 @@ nav {
 }
 
 nav .menu {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0px;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0px;
 }
 
 nav .menu a {
@@ -228,17 +228,17 @@ a:hover {
 }
 
 .card-view {
-    margin-top : 50px;
-    margin-left: 20px;
-    padding: 20px 30px;
-    padding-right: 0;
-    background: white;
-    border: 1px solid lightgray;
-    border-left: 15px solid #3F51B5;
-    max-width: 850px;
-     -webkit-box-shadow: 0 10px 6px -6px #777;
-    -moz-box-shadow: 0 10px 6px -6px #777;
-    box-shadow: 0 10px 6px -6px #777;
+  margin-top : 50px;
+  margin-left: 20px;
+  padding: 20px 30px;
+  padding-right: 0;
+  background: white;
+  border: 1px solid lightgray;
+  border-left: 15px solid #3F51B5;
+  max-width: 850px;
+    -webkit-box-shadow: 0 10px 6px -6px #777;
+  -moz-box-shadow: 0 10px 6px -6px #777;
+  box-shadow: 0 10px 6px -6px #777;
 }
 
 .demo-thumbnail {
