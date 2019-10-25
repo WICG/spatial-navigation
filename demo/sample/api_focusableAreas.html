@@ -16,7 +16,6 @@
     <script type="text/javascript">
       let previousAreas;
       const init = function(e) {
-        console.log('========init=======');
         const containers = document.getElementsByClassName('container');
         for(container of containers) {
           container.addEventListener('focus', function(e) {
@@ -30,7 +29,6 @@
               focusable.style.outline = '5px solid red';
             });
             previousAreas = focusableAreas;
-            console.log(focusableAreas);
           });
 
           container.addEventListener('focusout', function(e) {

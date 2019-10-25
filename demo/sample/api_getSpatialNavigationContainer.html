@@ -17,9 +17,7 @@
       let previousContainer;
       let previousBackground;
       const init = function(e) {
-        console.log('========init=======');
         const focusables = document.body.focusableAreas({mode: 'all'});
-        console.log(focusables);
         for(focusable of focusables) {
           focusable.addEventListener('focus', function(e) {
             if(previousContainer) {
@@ -31,7 +29,6 @@
             spatnavContainer.style.background = '#F0808099';
             spatnavContainer.style.outline = '5px red solid';
             previousContainer = spatnavContainer;
-            console.log(spatnavContainer);
           });
 
           focusable.addEventListener('focusout', function(e) {

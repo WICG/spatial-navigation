@@ -70,7 +70,6 @@
     }
 
     itemNum.addEventListener('change', function (e) {
-      console.log("boxNum: " + e.target.value);
       e.target.value = Math.max(1, e.target.value);
       e.target.value = Math.min(100, e.target.value);
       updateBoxes(container, e.target.value);
