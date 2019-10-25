@@ -19,7 +19,7 @@
   const ARROW_KEY_CODE = {37: 'left', 38: 'up', 39: 'right', 40: 'down'};
   const TAB_KEY_CODE = 9;
   let mapOfBoundRect = null;
-  let startingPoint = null; // Indicates global variables for spatnav (starting position)
+  let startingPoint = null; // Saves spatial navigation starting point
   let savedSearchOrigin = {element: null, rect: null};  // Saves previous search origin
   let searchOriginRect = null;  // Rect of current search origin
 
@@ -63,7 +63,7 @@
       if (window.getComputedStyle(document.documentElement).getPropertyValue('--spatial-navigation-function') === '') {
         CSS.registerProperty({
           name: '--spatial-navigation-function',
-          syntax: 'normal | euclidean | grid',
+          syntax: 'normal | grid',
           inherits: true,
           initialValue: 'normal'
         });
@@ -74,7 +74,7 @@
      * keydown EventListener :
      * If arrow key pressed, get the next focusing element and send it to focusing controller
      */
-    window.addEventListener('keydown', e => {
+    window.addEventListener('keydown', (e) => {
       const currentKeyMode = (parent && parent.__spatialNavigation__.keyMode) || window.__spatialNavigation__.keyMode;
       const eventTarget = document.activeElement;
       const dir = ARROW_KEY_CODE[e.keyCode];
@@ -112,7 +112,7 @@
      * If the mouse click a point in the page, the point will be the starting point.
      * NOTE: Let UA set the spatial navigation starting point based on click
      */
-    document.addEventListener('mouseup', e => {
+    document.addEventListener('mouseup', (e) => {
       startingPoint = {x: e.clientX, y: e.clientY};
     });
 
@@ -121,10 +121,10 @@
      * When the element get the focus, save it and its DOMRect for resetting the search origin
      * if it disappears.
      */
-    document.addEventListener('focusin', (event) => {
-      if (event.target !== window) {
-        savedSearchOrigin.element = event.target;
-        savedSearchOrigin.rect = event.target.getBoundingClientRect();
+    document.addEventListener('focusin', (e) => {
+      if (e.target !== window) {
+        savedSearchOrigin.element = e.target;
+        savedSearchOrigin.rect = e.target.getBoundingClientRect();
       }
     });
   }
@@ -153,7 +153,7 @@
       // * Starting point is meaningfull when:
       // 1) starting point is inside the spatnav container
       // 2) starting point is inside the non-focusable element
-      if(elementFromPosition === null) {
+      if (elementFromPosition === null) {
         elementFromPosition = document.body;
       }
       if (isFocusable(elementFromPosition) && !isContainer(elementFromPosition)) {
@@ -302,7 +302,7 @@
         } else if (isFocusable(elem)) {
           candidates.push(elem);
 
-          if(!isContainer(elem) && elem.childElementCount) {
+          if (!isContainer(elem) && elem.childElementCount) {
             candidates = candidates.concat(getSpatialNavigationCandidates(elem, {mode: 'all'}));
           }
         } else if (elem.childElementCount) {
@@ -432,7 +432,6 @@
     if (dir === undefined)
       return candidates;
 
-    // to do
     // Offscreen handling when originalContainer is not <HTML>
     if (originalContainer.parentElement && container !== originalContainer && !isVisible(currentElm))
       eventTargetRect = getBoundingClientRect(originalContainer);
@@ -484,9 +483,6 @@
       }
       distanceFunction = getAbsoluteDistance;
       break;
-    case 'euclidean':
-      distanceFunction = getEuclideanDistance;
-      break;
     default:
       distanceFunction = getDistance;
       break;
@@ -527,9 +523,9 @@
       eventTargetRect = window.frameElement.getBoundingClientRect();
       eventTargetRect.x = 0;
       eventTargetRect.y = 0;
-    }
-    else 
+    } else {
       eventTargetRect = searchOriginRect || currentElm.getBoundingClientRect();
+    }
 
     let minDistance = Number.POSITIVE_INFINITY;
     let minDistanceElements = [];
@@ -566,13 +562,13 @@
 
     do {
       if (!container.parentElement) {
-        if (window.location !== window.parent.location)
+        if (window.location !== window.parent.location) {
           container = window.parent.document.documentElement;
-        else
+        } else {
           container = window.document.documentElement;
+        }
         break;
-      }
-      else {
+      } else {
         container = container.parentElement;
       }
     } while (!isContainer(container));
@@ -590,19 +586,20 @@
 
     do {
       if (!scrollContainer.parentElement) {
-        if (window.location !== window.parent.location)
+        if (window.location !== window.parent.location) {
           scrollContainer = window.parent.document.documentElement;
-        else
+        } else {
           scrollContainer = window.document.documentElement;
+        }
         break;
-      }
-      else {
+      } else {
         scrollContainer = scrollContainer.parentElement;
       }
     } while (!isScrollContainer(scrollContainer) || !isVisible(scrollContainer));
 
-    if (scrollContainer === document || scrollContainer === document.documentElement)
+    if (scrollContainer === document || scrollContainer === document.documentElement) {
       scrollContainer = window;
+    }
   
     return scrollContainer;
   }
@@ -630,7 +627,7 @@
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    */
   function createSpatNavEvents(eventType, containerElement, currentElement, direction) {
-    if(['beforefocus', 'notarget'].includes(eventType)) {
+    if (['beforefocus', 'notarget'].includes(eventType)) {
       const data = {
         causedTarget: currentElement,
         dir: direction
@@ -698,9 +695,9 @@
               eventTarget = window.frameElement;
               container = window.parent.document.documentElement;
 
-              if (container.parentElement)
+              if (container.parentElement) {
                 parentContainer = container.getSpatialNavigationContainer();
-              else {
+              } else {
                 parentContainer = null;
                 break;
               }
@@ -963,7 +960,7 @@
       nearestScroller = document.documentElement;
     }
    
-    if(isInside(scrollerRect, elementRect, 'left') && isInside(scrollerRect, elementRect, 'down'))
+    if (isInside(scrollerRect, elementRect, 'left') && isInside(scrollerRect, elementRect, 'down'))
       return true; 
     else
       return false;
