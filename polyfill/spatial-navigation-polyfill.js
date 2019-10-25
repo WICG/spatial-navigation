@@ -211,11 +211,21 @@
       parentContainer = window.parent.document.documentElement;
     }
 
+    //TODO: Fix the implementation depending on the spec discussion
+    /*
     if (getCSSSpatNavAction(eventTarget) === 'scroll') {
       if (scrollingController(container, dir)) return;
     } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
       navigateChain(eventTarget, container, parentContainer, dir, 'all');
     } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
+      navigateChain(eventTarget, container, parentContainer, dir, 'visible');
+    }*/
+
+    if (getCSSSpatNavAction(container) === 'scroll') {
+      if (scrollingController(container, dir)) return;
+    } else if (getCSSSpatNavAction(container) === 'focus') {
+      navigateChain(eventTarget, container, parentContainer, dir, 'all');
+    } else if (getCSSSpatNavAction(container) === 'auto') {
       navigateChain(eventTarget, container, parentContainer, dir, 'visible');
     }
   }

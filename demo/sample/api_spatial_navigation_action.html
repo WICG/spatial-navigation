@@ -76,11 +76,6 @@
     });
     behaviorOption.addEventListener('change', function (e) {
       container.style.setProperty("--spatial-navigation-action", behaviorOption.value);
-
-      let boxes = document.getElementsByClassName('item');
-      for (let i = 0; i < boxes.length; i++) {
-        boxes[i].style.setProperty("--spatial-navigation-action", behaviorOption.value);
-      }
     });
   </script>
 </html>
