@@ -763,7 +763,7 @@
     
     if (!isVisibleInScroller(searchOrigin)) {
       const scroller = getScrollContainer(searchOrigin);
-      if (scroller && getCSSSpatNavAction(scroller) === 'auto')
+      if (scroller && ((scroller === window) || (getCSSSpatNavAction(scroller) === 'auto')))
         return scroller;
     }
     return searchOrigin;
@@ -961,8 +961,7 @@
       scrollerRect = getBoundingClientRect(nearestScroller);
     }
     else {
-      scrollerRect = getBoundingClientRect(document.documentElement);
-      nearestScroller = document.documentElement;
+      scrollerRect = new DOMRect(0, 0, window.innerWidth, window.innerHeight);
     }
    
     if (isInside(scrollerRect, elementRect, 'left') && isInside(scrollerRect, elementRect, 'down'))
