@@ -203,7 +203,7 @@
 
     // 6
     // Let container be the nearest ancestor of eventTarget
-    container = container || eventTarget.getSpatialNavigationContainer();
+    container = eventTarget.getSpatialNavigationContainer();
     let parentContainer = (container.parentElement) ? container.getSpatialNavigationContainer() : null;
 
     // When the container is the viewport of a browsing context
@@ -276,7 +276,7 @@
 
     // If the spatnav container is document and it can be scrolled, scroll the document
     if (!container.parentElement && !isHTMLScrollBoundary(container, dir)) {
-      moveScroll(document.documentElement, dir);
+      moveScroll(container.ownerDocument.documentElement, dir);
       return true;
     }
     return false;
