@@ -79,8 +79,9 @@
       const eventTarget = document.activeElement;
       const dir = ARROW_KEY_CODE[e.keyCode];
 
-      if (e.keyCode === TAB_KEY_CODE)
+      if (e.keyCode === TAB_KEY_CODE) {
         startingPoint = null;
+      }
 
       if (!currentKeyMode ||
           (currentKeyMode === 'NONE') ||
@@ -92,8 +93,9 @@
         let focusNavigableArrowKey = {left: true, up: true, right: true, down: true};
 
         // Edge case (text input, area) : Don't move focus, just navigate cursor in text area
-        if ((eventTarget.nodeName === 'INPUT') || eventTarget.nodeName === 'TEXTAREA')
+        if ((eventTarget.nodeName === 'INPUT') || eventTarget.nodeName === 'TEXTAREA') {
           focusNavigableArrowKey = handlingEditableElement(e);
+        }
 
         if (focusNavigableArrowKey[dir]) {
           e.preventDefault();
@@ -246,7 +248,7 @@
       /*
        * [event] navbeforefocus : Fired before spatial or sequential navigation changes the focus.
        */
-      if (!createSpatNavEvents('beforefocus', bestCandidate, null, dir))
+      if (!createSpatNavEvents('beforefocus', bestCandidate, null, dir)) 
         return true;
 
       bestCandidate.focus();
@@ -437,9 +439,11 @@
       return candidates;
 
     // Offscreen handling when originalContainer is not <HTML>
-    if (originalContainer.parentElement && container !== originalContainer && !isVisible(currentElm))
+    if (originalContainer.parentElement && container !== originalContainer && !isVisible(currentElm)) {
       eventTargetRect = getBoundingClientRect(originalContainer);
-    else eventTargetRect = searchOriginRect || getBoundingClientRect(currentElm);
+    } else {
+      eventTargetRect = searchOriginRect || getBoundingClientRect(currentElm);
+    }
 
     /*
      * Else, let candidates be the subset of the elements in visibles
@@ -728,8 +732,9 @@
 
     if (!createSpatNavEvents('notarget', currentOption.container, eventTarget, dir)) return;
 
-    if ((getCSSSpatNavAction(container) === 'auto') && (option === 'visible'))
+    if ((getCSSSpatNavAction(container) === 'auto') && (option === 'visible')) {
       if (scrollingController(container, dir)) return;
+    }
   }
 
   /**
@@ -958,8 +963,7 @@
     let scrollerRect = null;
     if (nearestScroller !== window) {
       scrollerRect = getBoundingClientRect(nearestScroller);
-    }
-    else {
+    } else {
       scrollerRect = new DOMRect(0, 0, window.innerWidth, window.innerHeight);
     }
    
@@ -1570,8 +1574,9 @@
     const overlappedCandidates = [];
 
     candidates.forEach(element => {
-      if ((targetElement !== element) && isEntirelyVisible(element, targetElement))
-      overlappedCandidates.push(element);
+      if ((targetElement !== element) && isEntirelyVisible(element, targetElement)) {
+        overlappedCandidates.push(element);
+      }
     });
 
     return overlappedCandidates;
@@ -1646,7 +1651,6 @@
 
           // The page is in an iframe
           if ( window.location !== window.parent.location ) {
-
             // eventTarget needs to be reset because the position of the element in the IFRAME
             // is unuseful when the focus moves out of the iframe
             eventTarget = window.frameElement;
