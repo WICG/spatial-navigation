@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Spatnav sanity check</title>
+    <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+
+    <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
+    <link rel="stylesheet" href="test.css">
+    <script src="test.js"></script>
+  </head>
+  <body style="display: flex; flex-direction: column;">
+    <iframe src="iframe_sub2.html" tabindex="0" class="container c2" style="width: 500px; height: 700px;"></iframe>
+    <iframe src="iframe_sub2.html" tabindex="0" class="container c2" style="margin-top: 200px; width: 500px; height: 700px;"></iframe>
+  </body>
+  <script>
+    var onload = () => {
+      const iframeElements = document.querySelectorAll('.container');
+      const boxesInFirstFrame = iframeElements[0].contentDocument.querySelectorAll('.box');
+      const boxesInSecondFrame = iframeElements[1].contentDocument.querySelectorAll('.box');
+      testInit();
+  
+      testRun(function() {
+        document.documentElement.scrollBy(0, 120);
+        var e = new KeyboardEvent("keydown", {bubbles : true, cancelable : true, keyCode : 40});
+        iframeElements[1].contentDocument.dispatchEvent(e);
+        assert_equals(document.activeElement, iframeElements[1]);
+        assert_equals(iframeElements[1].contentDocument.activeElement, boxesInSecondFrame[0]);
+      }, "iframe TC1. The second iframe is focused -> navigate('down') -> next Target should be the first box in the second iframe");
+  
+      testRun(function() {
+        document.documentElement.scrollTop = 100;
+        boxesInFirstFrame[boxesInFirstFrame.length -1].focus();
+        var e = new KeyboardEvent("keyup", {bubbles : true, cancelable : true, keyCode : 40});
+        iframeElements[0].contentDocument.dispatchEvent(e);
+        assert_equals(document.activeElement, iframeElements[0]);
+        assert_equals(iframeElements[0].contentDocument.activeElement, boxesInFirstFrame[boxesInFirstFrame.length -1]);
+      }, "iframe TC2. The first iframe is focused -> navigate('up') -> next Target should be the last box in the first iframe");
+    }
+    </script>
+</html>
