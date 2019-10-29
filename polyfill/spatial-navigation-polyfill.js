@@ -176,16 +176,15 @@
     // find the best candidate within startingPoint
     let container = null;
     if ((isContainer(eventTarget) || eventTarget.nodeName === 'BODY') && !(eventTarget.nodeName === 'INPUT')) {
-      container = eventTarget;
-
-      if (eventTarget.nodeName === 'IFRAME')
+      if (eventTarget.nodeName === 'IFRAME') {
         eventTarget = eventTarget.contentDocument.documentElement;
-
+      }
+      container = eventTarget;
       let bestInsideCandidate = null;
 
       // 5-2
       if ((document.activeElement === searchOrigin) || 
-          (document.activeElement === document.body) && (searchOrigin === document)) {
+          (document.activeElement === document.body) && (searchOrigin === document.documentElement)) {
         if (getCSSSpatNavAction(eventTarget) === 'scroll') {
           if (scrollingController(eventTarget, dir)) return;
         } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
@@ -905,13 +904,13 @@
     let result = false;
     switch (dir) {
     case 'left':
-      result = window.scrollX === 0;
+      result = element.scrollLeft === 0;
       break;
     case 'right':
       result = (element.scrollWidth - element.scrollLeft - element.clientWidth) === 0;
       break;
     case 'up':
-      result = window.scrollY === 0;
+      result = element.scrollTop === 0;
       break;
     case 'down':
       result = (element.scrollHeight - element.scrollTop - element.clientHeight) === 0;
