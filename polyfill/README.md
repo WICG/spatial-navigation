@@ -85,6 +85,9 @@ See the specification for more details.
 | [getSpatialNavigationContainer()](https://drafts.csswg.org/css-nav-1/#dom-element-getspatialnavigationcontainer) | Gets the spatial navigation container of an element |
 | [focusableAreas()](https://drafts.csswg.org/css-nav-1/#dom-element-focusableareas) | Finds focusable elements within the spatial navigation container |
 | [Navigation Events](https://drafts.csswg.org/css-nav-1/#events-navigationevent) | Occurs depending on the specific contextual behavior associated with spatial navigation
+| [--spatial-navigation-contain](https://drafts.csswg.org/css-nav-1/#container) | Creates customized spatial navigation containers
+| [--spatial-navigation-action](https://drafts.csswg.org/css-nav-1/#css-property-spatialnavigationaction) | Controls the interaction for the scrollable element
+| [--spatial-navigation-function](https://drafts.csswg.org/css-nav-1/#css-property-spatialnavigationfunction) | Selects the navigation algorithm
 
 #### Experimental APIs
 NOTE: The APIs below are non-standard and experimental features of the spatial navigation.
@@ -142,7 +145,15 @@ NOTE: The APIs below are non-standard and experimental features of the spatial n
 ## Current Status
 
 ### Browser Support
-With the polyfill, the Spatial Navigation has been tested and known to work in the following browsers:
+With the polyfill, the Spatial Navigation works in **Chrome 78+** by default.
+
+Its dependency is relying on `registerProperty()` function which can be called from JavaScript to register custom CSS properties.
+([See the browser support of this feature](https://chromestatus.com/features/5640265926705152))
+
+If you enable “Experimental Web Platform features” – chrome://flags/#enable-experimental-web-platform-features,
+the polyfill works in **Chrome 49+**.
+
+The Spatial Navigation feature excepts for '--spatial-navigation-* ' properties has been tested and known to work in the following browsers:
 
 <table>
   <tr>
