@@ -1123,7 +1123,9 @@
     };
 
     for(const point in hitTestPoint) {
-      const elemFromPoint = document.elementFromPoint(...hitTestPoint[point]);
+      const elemFromPoint = (element.nodeName === 'IFRAME') ? 
+        element.ownerDocument.elementFromPoint(...hitTestPoint[point]) : document.elementFromPoint(...hitTestPoint[point]);
+
       if (element === elemFromPoint || element.contains(elemFromPoint)) {
         return true;
       }
