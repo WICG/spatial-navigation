@@ -242,8 +242,6 @@
     // 10 & 11
     // When bestCandidate is found
     if (bestCandidate) {
-      const container = bestCandidate.getSpatialNavigationContainer();
-
       // When bestCandidate is a focusable element and not a container : move focus
       /*
        * [event] navbeforefocus : Fired before spatial or sequential navigation changes the focus.
