@@ -12,7 +12,7 @@
 (function () {
 
   // The polyfill must not be executed, if it's already enabled via browser engine or browser extensions.
-  if (window.navigate !== undefined) {
+  if ('navigate' in window) {
     return;
   }
 
