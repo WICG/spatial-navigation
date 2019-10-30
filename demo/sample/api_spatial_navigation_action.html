@@ -27,8 +27,6 @@
         </div>
       </fieldset>
     </form>
-    <div >
-    </div>
     <div class="wrapper">
 
       <!-- Feed Section starts -->
@@ -43,9 +41,9 @@
     </div>
   </body>
   <script type="text/javascript">
-    let itemNum = document.getElementById('itemNum');
-    let behaviorOption = document.getElementById('behavior');
-    let container = document.getElementById('feed');
+    const itemNum = document.getElementById('itemNum');
+    const behaviorOption = document.getElementById('behavior');
+    const container = document.getElementById('feed');
 
     document.body.onload = initBoxes(container, itemNum.value);
 
