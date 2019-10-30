@@ -699,25 +699,18 @@
             if ( window.location !== window.parent.location ) {
               // The page is in an iframe. eventTarget needs to be reset because the position of the element in the iframe
               eventTarget = window.frameElement;
-              container = window.parent.document.documentElement;
-
-              if (container.parentElement) {
-                parentContainer = container.getSpatialNavigationContainer();
-              } else {
-                parentContainer = null;
-                break;
-              }
+              container = eventTarget.ownerDocument.documentElement;              
             }
           } else {
             container = parentContainer;
-            currentOption = {candidates: getSpatialNavigationCandidates(container, {mode: option}), container};
+          }
+          currentOption = {candidates: getSpatialNavigationCandidates(container, {mode: option}), container};
+          let nextContainer = container.getSpatialNavigationContainer();
 
-            if (container.parentElement)
-              parentContainer = container.getSpatialNavigationContainer();
-            else {
-              parentContainer = null;
-              break;
-            }
+          if (nextContainer !== container) {
+            parentContainer = nextContainer;
+          } else {
+            parentContainer = null;
           }
         }
       }
@@ -1106,7 +1099,7 @@
   function hitTest(element) {
     const elementRect = getBoundingClientRect(element);
     if (element.nodeName !== 'IFRAME' && (elementRect.top < 0 || elementRect.left < 0 ||
-      elementRect.top > window.innerHeight || elementRect.left > window.innerWidth))
+      elementRect.top > element.ownerDocument.documentElement.clientHeight || elementRect.left >element.ownerDocument.documentElement.clientWidth))
       return false;
 
     let offsetX = parseInt(element.offsetWidth) / 10;
@@ -1116,18 +1109,14 @@
     offsetY = isNaN(offsetY) ? 1 : offsetY;
 
     const hitTestPoint = {
+      // For performance, just using the three point(middle, leftTop, rightBottom) of the element for hit testing
       middle: [(elementRect.left + elementRect.right) / 2, (elementRect.top + elementRect.bottom) / 2],
       leftTop: [elementRect.left + offsetX, elementRect.top + offsetY],
-      // For performance
-    //  leftBoottom: [elementRect.left + offsetX, elementRect.bottom - offsetY],
-    //  rightTop: [elementRect.right - offsetX, elementRect.top + offsetY],
       rightBottom: [elementRect.right - offsetX, elementRect.bottom - offsetY]
     };
 
     for(const point in hitTestPoint) {
-      const elemFromPoint = (element.nodeName === 'IFRAME') ? 
-        element.ownerDocument.elementFromPoint(...hitTestPoint[point]) : document.elementFromPoint(...hitTestPoint[point]);
-
+      const elemFromPoint = element.ownerDocument.elementFromPoint(...hitTestPoint[point]);
       if (element === elemFromPoint || element.contains(elemFromPoint)) {
         return true;
       }
