@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="application-name" content="`spatial-navigation-function` CSS Property">
+    <meta name="author" content="Jihye Hong">
+    <meta name="description" content="<code>spatial-navigation-function</code> CSS Property indicates the navigation algorithm for spatial navigation behavior.">
+    <link rel="stylesheet" href="spatnav-style.css">
+    <script src="spatnav-utils.js"></script>
+    <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+  </head>
+  <style>    
+    #block-container {
+      width: 300px;
+      height: 300px;
+      margin: auto auto;
+      border: 1px solid black;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    }
+
+    .block {
+      background: purple;
+      border: 1px solid gray;
+      border-radius: 5px;
+    }
+
+    #item1 {
+      grid-column-start: 1;
+      grid-column-end: 1;
+      grid-row-start: 2;
+      grid-row-end: 2;      
+    }
+
+    #item2 {
+      grid-column-start: 1;
+      grid-column-end: 1;
+      grid-row-start: 5;
+      grid-row-end: 5;
+    }
+
+    #item3 {
+      grid-column-start: 2;
+      grid-column-end: 2;
+      grid-row-start: 4;
+      grid-row-end: 4;
+    }
+
+    #item4 {
+      grid-column-start: 5;
+      grid-column-end: 5;
+      grid-row-start: 5;
+      grid-row-end: 5;
+    }
+
+    #item5 {
+      grid-column-start: 4;
+      grid-column-end: 4;
+      grid-row-start: 4;
+      grid-row-end: 4;
+    }
+
+    #item6 {
+      grid-column-start: 3;
+      grid-column-end: 3;
+      grid-row-start: 3;
+      grid-row-end: 3;
+    }
+
+    #item7 {
+      grid-column-start: 5;
+      grid-column-end: 5;
+      grid-row-start: 2;
+      grid-row-end: 2;
+    }
+
+    #item8 {
+      grid-column-start: 3;
+      grid-column-end: 3;
+      grid-row-start: 2;
+      grid-row-end: 2;
+    }
+  </style>
+  <body>
+    <form style="width: 750px; margin: 20px auto;">
+      <fieldset>
+        <legend>Option</legend>
+        <div>
+          <span style="margin-left: 10px;">
+            spatial-navigation-function :
+            <select id="function" style="margin:0px 20px;">
+              <option value="normal" selected>normal</option>
+              <option value="grid">grid</option>
+            </select>
+          </span>
+        </div>
+      </fieldset>
+    </form>
+    <div class="wrapper">
+      <div id="block-container" style="--spatial-navigation-function: normal;">
+        <div tabindex="1" class="block" id="item1"></div>
+        <div tabindex="1" class="block" id="item2"></div>
+        <div tabindex="1" class="block" id="item3"></div>
+        <div tabindex="1" class="block" id="item4"></div>
+        <div tabindex="1" class="block" id="item5"></div>
+        <div tabindex="1" class="block" id="item6"></div>
+        <div tabindex="1" class="block" id="item7"></div>
+        <div tabindex="1" class="block" id="item8"></div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript">
+    const functionOption = document.getElementById('function');
+    const targetElement = document.getElementById("block-container");
+    functionOption.addEventListener('change', function (e) {
+      targetElement.style.setProperty('--spatial-navigation-function', functionOption.value);
+    });
+  </script>
+</html>
