@@ -1,4 +1,4 @@
-## 1.3.0 (2019-10-25)
+## 1.3.0 (2019-10-31)
 
 * Add chrome extension [(#197)](https://github.com/WICG/spatial-navigation/pull/197)
 * Add spatial-navigation-function CSS Property by [commit](https://github.com/WICG/spatial-navigation/commit/14654aa651a6ee06106ab0823046b3a4e59d6156)
