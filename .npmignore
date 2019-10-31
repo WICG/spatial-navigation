@@ -1,6 +1,8 @@
 .DS_Store
 .npmignore
 .gitignore
+.eslintrc.js
+.eslintrc.yml
 implStatus.md
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
