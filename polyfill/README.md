@@ -145,15 +145,7 @@ NOTE: The APIs below are non-standard and experimental features of the spatial n
 ## Current Status
 
 ### Browser Support
-With the polyfill, the Spatial Navigation works in **Chrome 78+** by default.
-
-Its dependency is relying on `registerProperty()` function which can be called from JavaScript to register custom CSS properties.
-([See the browser support of this feature](https://chromestatus.com/features/5640265926705152))
-
-If you enable “Experimental Web Platform features” – chrome://flags/#enable-experimental-web-platform-features,
-the polyfill works in **Chrome 49+**.
-
-The Spatial Navigation feature excepts for '--spatial-navigation-* ' properties has been tested and known to work in the following browsers:
+The Spatial Navigation has been tested and known to work in the following browsers:
 
 <table>
   <tr>
