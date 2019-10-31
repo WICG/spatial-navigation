@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="application-name" content="API :spatialNavigationSearch()">
     <meta name="author" content="Jeonghee Ahn">
-    <meta name="description" content="element.spatialNavigationSearch(SpatialNavigationSearchOptions) returns the best candidate which will gain the focus.
+    <meta name="description" content="element.spatialNavigationSearch(dir, SpatialNavigationSearchOptions) returns the best candidate which will gain the focus.
     If there isn't any candidate, it returns `null`.<br>
     You can check the result of element.spatialNavigationSearch() as <b>'border-color' whenever the container gains the focus.</b>">
     <link rel="stylesheet" href="spatnav-style.css">
@@ -53,7 +53,7 @@
           } else if (selectedOption === 'container') {
             nextTarget = currentElement.spatialNavigationSearch(dir, {candidates: redBoxes, container: redContainer});
           } else if (selectedOption === 'inside') {
-            nextTarget = currentElement.spatialNavigationSearch(dir, { candidates: redBoxes, container: redContainer, inside: false});
+            nextTarget = currentElement.spatialNavigationSearch(dir, {candidates: redBoxes, container: redContainer, inside: false});
           }
 
           if(nextTarget && nextTarget.nodeName === 'BUTTON') {
@@ -79,7 +79,7 @@
           }
 
           let codeElement = document.getElementById('code');
-          codeElement.innerText =`          // Node spatialNavigationSearch(SpatialNavigationSearchOptions arg);
+          codeElement.innerText =`          // Node spatialNavigationSearch(dir, SpatialNavigationSearchOptions arg);
           nextTarget = currentElement.spatialNavigationSearch(${selectedOptionString.left});
           if (nextTarget)
             nextTarget.style.innerHTML = '◀';
@@ -123,10 +123,10 @@
     <div class="code-select">
       Parameter :
       <select id="option" onchange="onChangeSelect()" style="margin:0 20px">
-        <option value="dir" selected>{dir}</option>
-        <option value="candidates">{dir, candidates}</option>
-        <option value="container">{dir, candidates, container}</option>
-        <option value="inside">{dir, candidates, container, inside}</option>
+        <option value="dir" selected>dir</option>
+        <option value="candidates">dir, {candidates}</option>
+        <option value="container">dir, {candidates, container}</option>
+        <option value="inside">dir, {candidates, container, inside}</option>
       </select>
     </div>
     <pre class="code-area">
