@@ -73,9 +73,9 @@
   /**
    * Add event handlers for the spatial navigation behavior.
    * This function defines which input methods trigger the spatial navigation behavior.
-   * @function navigationHandler
+   * @function spatialNavigationHandler
    */
-  function navigationHandler() {
+  function spatialNavigationHandler() {
     /*
      * keydown EventListener :
      * If arrow key pressed, get the next focusing element and send it to focusing controller
@@ -1736,6 +1736,6 @@
   enableExperimentalAPIs(false);
   
   window.addEventListener('load', () => {
-    navigationHandler();
+    spatialNavigationHandler();
   });
 })();
