@@ -25,7 +25,6 @@
 
   /**
    * Initiate the spatial navigation features of the polyfill.
-   * This function defines which input methods trigger the spatial navigation behavior.
    * @function initiateSpatialNavigation
    */
   function initiateSpatialNavigation() {
@@ -69,7 +68,14 @@
         });
       }
     }
+  }
 
+  /**
+   * Add event handlers for the spatial navigation behavior.
+   * This function defines which input methods trigger the spatial navigation behavior.
+   * @function navigationHandler
+   */
+  function navigationHandler() {
     /*
      * keydown EventListener :
      * If arrow key pressed, get the next focusing element and send it to focusing controller
@@ -1726,8 +1732,10 @@
     };
   }
 
+  initiateSpatialNavigation();
+  enableExperimentalAPIs(false);
+  
   window.addEventListener('load', () => {
-    initiateSpatialNavigation();
-    enableExperimentalAPIs(false);
+    navigationHandler();
   });
 })();
