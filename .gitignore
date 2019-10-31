@@ -2,6 +2,6 @@ blink_impl
 docs
 dist
 node_modules
+.gitignore
 .eslintrc.js
 .eslintrc.yml
-.gitignore
