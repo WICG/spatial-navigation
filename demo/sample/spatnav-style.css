@@ -133,8 +133,10 @@ pre.code-area {
 }
 
 pre.code-area code {
-    border-radius: 0 0 10px 10px;
-    overflow-x: scroll;
+  border-radius: 0 0 10px 10px;
+  overflow-x: scroll;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.8em;
 }
 
 .code-select {
@@ -229,6 +231,8 @@ button {
   height: 150px;
   border: 1px solid gray;
   overflow-y: scroll;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.8em;
 }
 
 .event-log .scroll{
