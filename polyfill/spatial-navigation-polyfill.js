@@ -226,8 +226,8 @@
       navigateChain(eventTarget, container, parentContainer, dir, 'all');
     } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
       navigateChain(eventTarget, container, parentContainer, dir, 'visible');
-    }*/
-
+    }
+    */
     if (getCSSSpatNavAction(container) === 'scroll') {
       if (scrollingController(container, dir)) return;
     } else if (getCSSSpatNavAction(container) === 'focus') {
@@ -255,7 +255,14 @@
       if (!createSpatNavEvents('beforefocus', bestCandidate, null, dir)) 
         return true;
 
-      bestCandidate.focus();
+      const container = bestCandidate.getSpatialNavigationContainer();
+
+      if ((container !== window) && (getCSSSpatNavAction(container) === 'focus')) {
+        bestCandidate.focus();
+      } else {
+        bestCandidate.focus({preventScroll: true});
+      }
+
       startingPoint = null;
       return true;
     }
@@ -1238,7 +1245,7 @@
    * Get the distance between the search origin and a candidate element considering the direction.
    * @see {@link https://drafts.csswg.org/css-nav-1/#calculating-the-distance}
    * @function getDistance
-   * @param searchOrigin {DOMRect || Point} - The search origin
+   * @param searchOrigin {DOMRect | Point} - The search origin
    * @param candidateRect {DOMRect} - A candidate element
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @returns {Number} The distance scoring between two elements
