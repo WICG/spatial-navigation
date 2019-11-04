@@ -56,13 +56,13 @@
       document.querySelector('#b1').focus();
       window.navigate('right');
       assert_equals(document.activeElement, document.querySelector('#c1b1'));
-    }, `navigate() TC${testNum++}. #b1 button -> navigate('right') -> next Target should be #c1b1 button`);;
+    }, `navigate() TC${testNum++}. #b1 button -> navigate('right') -> next Target should be #c1b1 button`);
 
     testRun(function() {
       document.querySelector('#c1b1').focus();
       window.navigate('right');
       assert_equals(document.activeElement, document.querySelector('#c2b1'));
-    }, `navigate() TC${testNum++}. #c1b1 button -> navigate('right') -> next Target should be #c2b1 button`);;
+    }, `navigate() TC${testNum++}. #c1b1 button -> navigate('right') -> next Target should be #c2b1 button`);
 
     testRun(function() {
       document.querySelector('#c2b1').focus();
