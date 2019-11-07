@@ -63,7 +63,7 @@
         CSS.registerProperty({
           name: '--spatial-navigation-function',
           syntax: 'normal | grid',
-          inherits: true,
+          inherits: false,
           initialValue: 'normal'
         });
       }
@@ -479,7 +479,8 @@
    * @returns {Node} The best candidate which will gain the focus
    */
   function selectBestCandidate(currentElm, candidates, dir) {
-    const spatialNavigationFunction = getComputedStyle(currentElm).getPropertyValue('--spatial-navigation-function');
+    const container = currentElm.getSpatialNavigationContainer();
+    const spatialNavigationFunction = getComputedStyle(container).getPropertyValue('--spatial-navigation-function');
     const currentTargetRect = searchOriginRect || getBoundingClientRect(currentElm);
     let distanceFunction;
     let alignedCandidates;
