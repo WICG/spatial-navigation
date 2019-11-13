@@ -68,7 +68,7 @@
           if(nextTarget) {
             let description = document.createElement('div');
             description.className = 'direction-text';
-            description.innerHTML = `Press ${DIRECTION_CHARACTERS[dir]}`;
+            description.innerHTML = `spatialNavigationSearch(${dir})`;
 
             nextTarget.appendChild(description);
             nextTarget.classList.add('will-be-focused');
@@ -104,7 +104,7 @@
   </head>
   <body onload="init()">
     <div style="width:600px; height:350px; padding:20px;">
-      <button class="box" style="top:100px; left:20px;"></button>
+      <button class="box" style="top:120px; left:20px;"></button>
       <div class="container c1" id="redSpatNavContainer" style="position: relative; left:110px; width:500px; height:200px; --spatial-navigation-contain: contain;">
         <p class="containerDesc">redSpatNavContainer (non-focusable)</p>
         <button class="box b2" style="top:78px; left:25px;"></button>
@@ -116,8 +116,8 @@
         <button class="box b2" style="top:-80px; left:300px;"></button>
         <button class="box b2" style="top:-90px; left:420px;"></button>
       </div>
-      <button class="box" style="top:-119px; left:350px;"></button>
-      <button class="box" style="top:-120px; left:650px;"></button>
+      <button class="box" style="top:-110px; left:350px;"></button>
+      <button class="box" style="top:-150px; left:650px;"></button>
     </div>
 
     <div class="code-select">

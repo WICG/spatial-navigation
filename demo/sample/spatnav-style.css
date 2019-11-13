@@ -175,7 +175,7 @@ iframe:focus {
   top: 100%;
   left: 50%;
   margin-left: -80px;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .direction-text::after {
