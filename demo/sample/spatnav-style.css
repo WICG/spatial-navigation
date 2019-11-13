@@ -12,14 +12,7 @@ body {
   height: 100%;
 }
 
-:focus {
-  outline: 4px #3582ff solid;
-}
-
-iframe:focus {
-  outline: 4px #3582ff solid;
-}
-
+/* Information panel style */
 #folder_btn {
   cursor: pointer;
   position: fixed;
@@ -66,6 +59,7 @@ iframe:focus {
   font-size: 0.6em;
 }
 
+/* Item style */
 .label {
   display: inline-block;
   width: 120px;
@@ -94,6 +88,31 @@ iframe:focus {
   border: 3px #00b176b0 solid;
   width: 200px;
   height: 200px;
+}
+
+p.c1, p.c2, p.c3 {
+  width: 320px;
+  height: 25px;
+}
+
+.c1 > .containerDesc {
+  position: relative;
+  margin: -10px;
+  padding: 0;
+  background-color: #F08080;
+  font-size: 12px;
+  width: 210px;
+  text-align: center;
+}
+
+.c2 > .containerDesc {
+  position: relative;
+  margin: -10px;
+  padding: 0;
+  background-color: #88c;
+  font-size: 12px;
+  width: 210px;
+  text-align: center;
 }
 
 .box {
@@ -127,6 +146,50 @@ iframe:focus {
   border: 1px solid black;
 }
 
+/* Focus style */
+:focus {
+  outline: 4px #3582ff solid;
+}
+
+iframe:focus {
+  outline: 4px #3582ff solid;
+}
+
+.will-be-focused {
+  position: relative;
+  outline: 5px #faeb1a solid;
+  background: rgba(255, 253, 119, 0.5);
+}
+
+.direction-text {
+  width: 80px;
+  height: 20px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -40px;
+  margin-bottom: 20px;
+}
+
+.direction-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+/* Code area style */
 pre.code-area {
   margin: 0 20px;
   width: 750px;
