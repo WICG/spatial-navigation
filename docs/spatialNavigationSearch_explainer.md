@@ -96,8 +96,6 @@ document.addEventListener('keydown', (e) => {
 The example code works as the followings: (gif image)
 ![spatial navigation on any websites](https://raw.githubusercontent.com/lgewst/images/master/spatialNavigationSearch.gif)
 
-## Use cases
-
 ## Frequently Asked Questions
 
 ### Isn’t it enough just using the relevant web frameworks?
