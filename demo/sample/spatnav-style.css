@@ -157,36 +157,36 @@ iframe:focus {
 
 .will-be-focused {
   position: relative;
-  outline: 5px #faeb1a solid;
+  outline: 3px #fced1cce solid;
   background: rgba(255, 253, 119, 0.5);
 }
 
 .direction-text {
-  width: 80px;
-  height: 20px;
+  width: 160px;
+  height: 15px;
   background-color: black;
   color: #fff;
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   border-radius: 6px;
   padding: 5px 0;
   position: absolute;
   z-index: 1;
-  bottom: 100%;
+  top: 100%;
   left: 50%;
-  margin-left: -40px;
-  margin-bottom: 20px;
+  margin-left: -80px;
+  margin-top: 10px;
 }
 
 .direction-text::after {
   content: "";
   position: absolute;
-  top: 100%;
+  bottom: 100%;
   left: 50%;
   margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: black transparent transparent transparent;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid black;
 }
 
 /* Code area style */
