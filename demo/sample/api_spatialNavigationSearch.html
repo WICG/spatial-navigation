@@ -7,7 +7,7 @@
     <meta name="author" content="Jeonghee Ahn">
     <meta name="description" content="element.spatialNavigationSearch(dir, SpatialNavigationSearchOptions) returns the best candidate which will gain the focus.
     If there isn't any candidate, it returns `null`.<br>
-    You can check the result of element.spatialNavigationSearch() as <b>'border-color' whenever the container gains the focus.</b>">
+    You can check the result of element.spatialNavigationSearch() as element with yellow borders and yellow background.</b>">
     <link rel="stylesheet" href="spatnav-style.css">
     <script src="spatnav-utils.js"></script>
     <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
@@ -19,7 +19,11 @@
       const DIRECTION = ['left', 'right', 'up', 'down'];
       const DIRECTION_CHARACTERS = {left:'&#x25C0;', right:'&#x25B6;', up:'&#x25B2;', down:'&#x25BC;',};
       let redBoxes;
-      let redContainer;
+      let redSpatNavContainer;
+      let purpleBoxes;
+      let purpleSpatNavContainer;
+      let SpatialNavigationSearchOptions = null;
+      
       const init = function(e) {
         const focusables = document.body.focusableAreas({mode: 'all'});
 
@@ -27,7 +31,9 @@
           focusable.addEventListener('focus', callSpatialNavigationSearch);
         }
         redBoxes = [...document.getElementsByClassName('b2')];
-        redContainer = document.getElementsByClassName('container c1')[0];
+        redSpatNavContainer = document.getElementsByClassName('container c1')[0];
+        purpleBoxes = [...document.getElementsByClassName('b3')];
+        purpleSpatNavContainer = document.getElementsByClassName('container c2')[0];
         onChangeSelect();
       };
 
@@ -36,97 +42,91 @@
         const currentElement = e.target;
         if(previousTarget) {
           for(let dir of DIRECTION) {
-            if(previousTarget[dir]) {
-              previousTarget[dir].innerHTML = '';
+            if(previousTarget[dir]) {              
+              let textElem = previousTarget[dir].querySelector('.direction-text');
+              for (var child of previousTarget[dir].childNodes) {
+                if (child === textElem) previousTarget[dir].removeChild(textElem);
+              }
+              previousTarget[dir].classList.remove('will-be-focused');
             }
           }
         }
 
-        let SpatialNavigationSearchOptions;
+        if (selectedOption === 'dir') {
+          SpatialNavigationSearchOptions = null;
+        } else if (selectedOption === 'candidates') {
+          SpatialNavigationSearchOptions = {candidates: purpleBoxes};
+        } else if (selectedOption === 'container') {
+          SpatialNavigationSearchOptions = {container: redSpatNavContainer};
+        } else if (selectedOption === 'combination') {
+          SpatialNavigationSearchOptions = {candidates: purpleBoxes, container: redSpatNavContainer};
+        }
 
-        for(let dir of DIRECTION) {
-          let nextTarget;
-          if (selectedOption === 'dir') {
-            nextTarget = currentElement.spatialNavigationSearch(dir);
-          } else if (selectedOption === 'candidates') {
-            nextTarget = currentElement.spatialNavigationSearch(dir, {candidates: redBoxes});
-          } else if (selectedOption === 'container') {
-            nextTarget = currentElement.spatialNavigationSearch(dir, {candidates: redBoxes, container: redContainer});
-          } else if (selectedOption === 'inside') {
-            nextTarget = currentElement.spatialNavigationSearch(dir, {candidates: redBoxes, container: redContainer, inside: false});
-          }
+        DIRECTION.map((dir) => {
+          let nextTarget = currentElement.spatialNavigationSearch(dir, SpatialNavigationSearchOptions);
 
-          if(nextTarget && nextTarget.nodeName === 'BUTTON') {
-            nextTarget.innerHTML = DIRECTION_CHARACTERS[dir];
+          if(nextTarget) {
+            let description = document.createElement('div');
+            description.className = 'direction-text';
+            description.innerHTML = `Press ${DIRECTION_CHARACTERS[dir]}`;
+
+            nextTarget.appendChild(description);
+            nextTarget.classList.add('will-be-focused');
+
             previousTarget[dir] = nextTarget;
           }
-        }
+        });
       }
 
       function onChangeSelect() {
           const selectedOption = document.getElementById('option').value;
-          let selectedOptionString = {};
-            for(dir of DIRECTION) {
-              if (selectedOption === 'dir') {
-                selectedOptionString[dir] = `'${dir}'`;
-              } else if (selectedOption === 'candidates') {
-                selectedOptionString[dir] = `'${dir}', {candidates: [redBoxs]}`;
-              } else if (selectedOption === 'container') {
-                selectedOptionString[dir] = `'${dir}', {candidates: [redBoxs], container: redContainer}`;
-              } else if (selectedOption === 'inside') {
-                selectedOptionString[dir] = `'${dir}', {candidates: [redBoxs], container: redContainer, inside: false}`;
-              }
+          let optionText = null;
+          if (selectedOption === 'dir') {
+            optionText = null;
+          } else if (selectedOption === 'candidates') {
+            optionText = '{candidates: purpleBoxes}';
+          } else if (selectedOption === 'container') {
+            optionText = '{container: redSpatNavContainer}';
+          } else if (selectedOption === 'combination') {
+            optionText = '{candidates: purpleBoxes, container: redSpatNavContainer}';
           }
 
           let codeElement = document.getElementById('code');
-          codeElement.innerText =`          // Node spatialNavigationSearch(dir, SpatialNavigationSearchOptions arg);
-          nextTarget = currentElement.spatialNavigationSearch(${selectedOptionString.left});
-          if (nextTarget)
-            nextTarget.style.innerHTML = '◀';
-          nextTarget = currentElement.spatialNavigationSearch(${selectedOptionString.right});
-          if (nextTarget.right)
-            nextTarget.style.innerHTML = '▶';
-          nextTarget = currentElement.spatialNavigationSearch(${selectedOptionString.up});
-          if (nextTarget.up)
-            nextTarget.style.innerHTML = '▲';
-          nextTarget = currentElement.spatialNavigationSearch(${selectedOptionString.down});
-          if (nextTarget.down)
-            nextTarget.style.innerHTML = '▼';`
-
+          codeElement.innerText =`   // Node spatialNavigationSearch(dir, SpatialNavigationSearchOptions arg);
+  ['left', 'right', 'up', 'down'].map((dir) => {
+    let nextTargetElements = 
+        currentElement.spatialNavigationSearch(dir, ${optionText});
+  });`;
           hljs.highlightBlock(codeElement);
       }
 
     </script>
   </head>
   <body onload="init()">
-    <div style="width:600px; height:300px; padding:20px;">
-      <h4>
-        <span>spatnav container 1(Document)</span> >
-        <span class="c1">spatnav container 2</span> >
-        <span class="c2">spatnav container 3</span>
-      </h4>
+    <div style="width:600px; height:450px; padding:20px;">
       <button class="box" style="top:100px; left:20px;"></button>
-      <button class="box" style="top:98px; left:180px;"></button>
-      <div class="container c1" style="position: relative; left:110px; width:500px; height:200px; --spatial-navigation-contain: contain;">
+      <div class="container c1" id="redSpatNavContainer" style="position: relative; left:110px; width:500px; height:200px; --spatial-navigation-contain: contain;">
+        <p class="containerDesc">redSpatNavContainer (non-focusable)</p>
         <button class="box b2" style="top:78px; left:25px;"></button>
-          <div class="container c2" tabindex=1 style="position: relative; left:110px; width:250px; height:100px; --spatial-navigation-contain: contain;">
+          <div class="container c2" id="purpleSpatNavContainer" tabindex=1 style="position: relative; left:60px; width:300px; height:100px; --spatial-navigation-contain: contain;">
+            <p class="containerDesc">purpleSpatNavContainer (focusable)</p>
             <button class="box b3" style="top:40px; left:60px;"></button>
-            <button class="box b3" style="top:30px; left:200px;"></button>
+            <button class="box b3" style="top:35px; left:250px;"></button>
           </div>
         <button class="box b2" style="top:-80px; left:300px;"></button>
         <button class="box b2" style="top:-90px; left:420px;"></button>
       </div>
-      <button class="box" style="top:-119px; left:400px;"></button>
+      <button class="box" style="top:-119px; left:350px;"></button>
       <button class="box" style="top:-120px; left:650px;"></button>
     </div>
 
     <div class="code-select">
       Parameter :
-      <select id="option" onchange="onChangeSelect()" style="margin:0 20px">
+      <select id="option" tabindex="-1" onchange="onChangeSelect()" style="margin:0 20px">
         <option value="dir" selected>dir</option>
         <option value="candidates">dir, {candidates}</option>
-        <option value="container">dir, {candidates, container}</option>
-        <option value="inside">dir, {candidates, container, inside}</option>
+        <option value="container">dir, {container}</option>
+        <option value="combination">dir, {candidates, container}</option>
       </select>
     </div>
     <pre class="code-area">
