@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<div id='logContainer' style='width: 330px; border: 2px #AAA solid'>document.activeElement = <span id='logValue'></span></div><br>
+1. General<br>
+<div id='generalContainer'><button id='btn1'>button1</button><button id='btn2'>button2</button><button id='btn3'>button3</button></div>
+<br>2. ShadowDOM<br>
+<div id='shadowDOMContainer'></div>
+<br>3. General<br>
+<div id='generalContainer'><button id='btn7'>button7</button><button id='btn8'>button8</button><button id='btn9'>button9</button></div>
+<br>4. Iframe<br>
+<div id='iframePageContainer'><iframe id='iframe' src='shadowDOM+SpatNav+iframe.html' style='width: 220px; height: 40px;'></iframe></div>
+<br>5. General<br>
+<div id='generalContainer'><button id='btnD'>buttonD</button><button id='btnE'>buttonE</button><button id='btnF'>buttonF</button></div>
+</body>
+<script>
+let shadowHost = document.querySelector('#shadowDOMContainer');
+let shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+let btn4 = document.createElement('button');
+btn4.id = 'btn4';
+btn4.textContent = 'button4';
+shadowRoot.appendChild(btn4);
+let btn5 = document.createElement('button');
+btn5.id = 'btn5';
+btn5.textContent = 'button5';
+shadowRoot.appendChild(btn5);
+let btn6 = document.createElement('button');
+btn6.id = 'btn6';
+btn6.textContent = 'button6';
+shadowRoot.appendChild(btn6);
+window.addEventListener("focusin", (e) => {
+    logValue.innerText = document.activeElement.tagName + '#' + document.activeElement.id;
+});
+</script>
+</html>
