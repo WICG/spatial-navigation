@@ -1,0 +1,75 @@
+<style>
+div {
+  font-family: Calibri;
+  margin: 10px;
+}
+button:focus {
+  outline: 1px #5bd solid;
+}
+#container {
+  width: 460px;
+  height: 20px;
+  padding: 20px;
+  border: 1px red solid;
+}
+#btn3 {
+  margin-left: 200px;
+}
+#logViewer {
+  width: 500px;
+  height: 200px;
+  overflow-y: scroll;
+  border: 1px #555 solid;
+  margin-top: 20px;
+}
+</style>
+
+<button id="btnClear">logClear</button><br>
+<div class="note">Instruction: Click the button 1 and press the tab key or the right arrow key.</div>
+<div class="note">button1 and 2 are the children of the following red container, but button3 is not.</div>
+<div id="container">
+  <button id="btn1">button1</button>
+  <button id="btn2">button2</button>
+</div>
+  <button id="btn3">button3</button>
+<div id="logViewer" tabindex="-1"></div>
+<div class="note">If you want to test it via SpatNav, you need to enable a runtime flag (chrome.exe --enable-spatial-navigation).</div>
+
+<script>
+let container = document.querySelector('#container');
+let btnClear = document.querySelector('#btnClear');
+let btn1 = document.querySelector('#btn1');
+let btn2 = document.querySelector('#btn2');
+let btn3 = document.querySelector('#btn3');
+let logViewer = document.querySelector('#logViewer');
+
+function focusHandlers(e) {
+  logViewer.innerHTML += e.type + " on " + e.target.id + "<br>";
+  if (e.type == "focusout") {
+    logViewer.innerHTML += "> [focusout on " + e.target.id + "] relatedTarget: '" + e.relatedTarget.id + "' as a next focus target<br>";
+  }
+  logViewer.scrollTo(0,10000);
+}
+
+['keyup', 'focus', 'focusin', 'blur', 'focusout'].map((eventType) => {
+  btn1.addEventListener(eventType, focusHandlers);
+  btn2.addEventListener(eventType, focusHandlers);
+  btn3.addEventListener(eventType, focusHandlers);
+});
+
+container.addEventListener("focusout", (e) => {
+  logViewer.innerHTML += "> [focusout on red container] 'btn3.focus()' has been executed." + "<br>";
+  btn3.focus();
+});
+
+document.addEventListener("keydown", (e) => {
+  logViewer.innerHTML += "===<br>";
+  logViewer.innerHTML += e.type + " on " + e.target.id;
+  logViewer.innerHTML += " (" + e.key + " key was pressed. (keycode: " + e.keyCode + ")" + "<br>"
+  logViewer.scrollTo(0,10000);
+});
+
+btnClear.addEventListener("click", () => {
+  logViewer.innerHTML = "";
+});
+</script>
