@@ -1,6 +1,6 @@
 # spatialNavigationSearch API Explained
 
-**Written**: 2019-11-13, **Updated**: 2019-11-13
+**Written**: 2019-11-13, **Updated**: 2019-11-25
 
 **spatialNavigationSearch()** is a proposed API to get a next target element to be focused via directional inputs. It returns a focusable element as a best candidate element in a given direction. It's only enabled behind a runtime flag (--enable-spatial-navigation) so that it can be used in specific user agents such as smart TV with remote control and touchless smartphone. There seems no performance and security issue as it's just get method.
 
