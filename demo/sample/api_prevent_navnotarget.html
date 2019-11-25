@@ -6,7 +6,7 @@
     <meta name="application-name" content="Prevent 'navnotarget' Navigation Event">
     <meta name="author" content="Jihye Hong">
     <meta name="description" content="The 'navnotarget' event is fired when the focus reaches to the end of the scrollable element(container),
-     and the focus will move out of the container. If the event is prevented, the focus will remain in the container. 
+     and the focus will move out of the container. If the event is prevented, the focus will remain in the container.
      The sample shows the <b>focus looping</b> in the scrollable spatial navigation container.">
     <link rel="stylesheet" href="spatnav-style.css">
     <script src="spatnav-utils.js"></script>
@@ -30,25 +30,25 @@
   <script type="text/javascript">
     const container = document.getElementById('scroller');
     const logDiv = document.querySelector('.event-log');
+    const dirArray = ['left', 'right'];
     let nextTarget = null;
 
     container.addEventListener('navnotarget', function(e) {
       appendLog('navnotarget', `*currentTarget: ${getElementInfoString(e.currentTarget)}, *target: ${getElementInfoString(e.target)}`);
-
-      // Prevent default only when navigation direction is on x-axis
-      if (e.detail.dir === 'left' || e.detail.dir === 'right') {
-        e.preventDefault();
-        appendLog('navnotarget', `is cancelled when the navigation direction is <i>${e.detail.dir}</i>`);
-      }
-
       const candidates = e.target.focusableAreas({'mode': 'all'});
 
-      if (e.detail.dir === 'right') {
-        nextTarget = candidates[0];
-      } else if (e.detail.dir === 'left') {
-        nextTarget = candidates[candidates.length-1];
+      // Prevent default only when navigation direction is on x-axis
+      if (dirArray.includes(e.detail.dir) && (candidates.length > 0)) {
+        e.preventDefault();
+        appendLog('navnotarget', `is cancelled when the navigation direction is <i>${e.detail.dir}</i>`);
+
+        if (e.detail.dir === 'right') {
+          nextTarget = candidates[0];
+        } else if (e.detail.dir === 'left') {
+          nextTarget = candidates[candidates.length-1];
+        }
+        nextTarget.focus();
       }
-      nextTarget.focus();
     });
 
     function getElementInfoString (element) {
