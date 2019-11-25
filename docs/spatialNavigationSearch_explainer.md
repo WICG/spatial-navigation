@@ -61,7 +61,7 @@ spatialNavigationSearch API provides three parameters, though two of those are i
 
 * **dir**: It has a trivial role as a mandatory parameter. It could be mapped to each arrow key.
 * **container**: It's an optional parameter. If `container` is specified, the scope of candidate elements to be focused is limited within the `container`. If `container` is not specified, the container sets to the nearest spatial naivation container element as a default.
-* **candidates**: It's an optional parameter. If `candidates` is specified, the scope of candidate elements to be focused is limited among the `candidates`. If `candidates` is not specified, the candidates sets to all the descendant elements of the container.
+* **candidates**: It's an optional parameter. If `candidates` is specified, the scope of candidate elements to be focused is limited among the `candidates` regardless of its visibility. If `candidates` is not specified, the candidates sets to all the visible descendant elements of the container.
 
 ```
 Note: If the intersection between container and candidates specified in each parameter is null set,
