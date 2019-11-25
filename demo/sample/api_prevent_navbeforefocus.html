@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="application-name" content="Prevent 'navnotarget' Navigation Event">
+    <meta name="author" content="Jihye Hong">
+    <meta name="description" content="The 'navnotarget' event is fired when the focus reaches to the end of the scrollable element(container),
+     and the focus will move out of the container. If the event is prevented, the focus will remain in the container.
+     The sample shows the <b>focus looping</b> in the scrollable spatial navigation container.">
+    <link rel="stylesheet" href="spatnav-style.css">
+    <script src="spatnav-utils.js"></script>
+    <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
+    <link class="codestyle" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="container c1" id="scroller" tabindex="1" style="margin-left: 100px; width:200px; height: 200px; padding: 20px; overflow-x: scroll;">
+      <button class="box b2" style="top: 100px;"></button>
+      <button class="box b2" style="top: 100px; left: calc(100px * 1);"></button>
+      <button class="box b2" style="top: 100px; left: calc(100px * 2);"></button>
+      <button class="box b2" style="top: 100px; left: calc(100px * 3);"></button>
+      <button class="box b2" style="top: 100px; left: calc(100px * 4);"></button>
+    </div>
+    <button class="box b1" style="top: -120px; left: 50px;"></button>
+    <button class="box b1" style="top: 20px; left: 200px;"></button>
+    <button class="box b1" style="top: -130px; left: 350px;"></button>
+    <div class="event-log"></div>
+  </body>
+  <script type="text/javascript">
+    window.__spatialNavigation__.enableExperimentalAPIs(true);
+
+    const container = document.getElementById('scroller');
+    const logDiv = document.querySelector('.event-log');
+    let nextTarget = null;
+
+    container.addEventListener('navbeforefocus', function(e) {
+      appendLog('navbeforefocus', `*currentTarget: ${getElementInfoString(e.currentTarget)}, *target: ${getElementInfoString(e.target)}`);
+
+      e.preventDefault();
+
+      let target = e.target;
+      if (window.__spatialNavigation__.isContainer(target)) {
+          const areas = target.focusableAreas({mode: 'visible'});
+
+          if (areas.length > 0) {
+  		        target = areas[0];
+              //TODO: Fix the polyfill for spatialNavigationSearch without 'inside' option
+              //target = target.spatialNavigationSearch(e.dir, {candidate: areas});
+          }
+      }
+      target.focus();
+
+    });
+
+    function getElementInfoString (element) {
+      return element.tagName + " " + element.className;
+    }
+
+    function appendLog (eventType, description) {
+      const newEventDiv = document.createElement('div');
+      newEventDiv.className = eventType;
+      newEventDiv.innerHTML = '<b>' + eventType + ' event! </b>' + description;
+      logDiv.appendChild(newEventDiv);
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+  </script>
+</html>
