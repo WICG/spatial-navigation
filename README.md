@@ -1,12 +1,179 @@
 # Spatial Navigation
+[![npm stat](https://img.shields.io/npm/dm/spatial-navigation-polyfill.svg?style=flat-square)](https://npm-stat.com/charts.html?package=spatial-navigation-polyfill)
+[![npm version](https://img.shields.io/npm/v/spatial-navigation-polyfill.svg?style=flat-square)](https://www.npmjs.com/package/spatial-navigation-polyfill)
 
-**Written**: 2017-10-17, **Updated**: 2018-12-12
+**Written**: 2017-10-17, **Updated**: 2019-11-27
 
-**Spatial Navigation** provides a processing model and standards APIs for directional(top/left/bottom/right) focus navigation using arrow keys, jog shuttle, and gesture on several devices. (e.g. TV, feature phone, game console, IVI system)
-
-This repository is for supportive tools such as polyfill, demo, and relevant documents. The spatial navigation [spec](https://drafts.csswg.org/css-nav-1/) has been migrated from WICG to CSS WG as an official draft according to the [decision](https://www.w3.org/2018/10/23-css-minutes.html#item01) at the CSS WG meeting in TPAC 2018.
+This repository is for supportive tools of **Spatial Navigation** such as polyfill, demo, and relevant documents. The spatial navigation [spec](https://drafts.csswg.org/css-nav-1/) has been migrated from WICG to CSS WG as an official draft according to the [decision](https://www.w3.org/2018/10/23-css-minutes.html#item01) at the CSS WG meeting in TPAC 2018.
 
 You can raise a spec issue in [CSS WG](https://github.com/w3c/csswg-drafts/labels/css-nav-1), but also raise others(polyfill, demo, ideas) in [WICG](https://github.com/WICG/spatial-navigation/issues) here.
+
+## Overview
+**Spatial navigation** is the ability to navigate between focusable elements based on their position within a structured document. Spatial navigation is often called 'directional navigation' which enables four(top/left/bottom/right) directional navigation. Users are usually familiar with the 2-way navigation using both 'tab key' for the forward direction and 'shift+tab key' for the backward direction, but not familiar with the 4-way navigation using arrow keys.
+
+Regarding TV remote control, game console pad, IVI jog dial with 4-way keys, and Web accessibility, the spatial navigation has been a rising important input mechanism in several industries.
+
+## Why Use the Polyfill
+
+Eventually, we expect spatial navigation to be natively supported by browsers.
+However, this is not yet the case.
+
+Until then, authors who wish to experiment with providing this feature to their users
+can include this polyfill in their page.
+
+It can also be used for people interested in reviewing the specification
+in order to test the behavior it defines in various situations.
+
+## How to Use
+
+### Installation
+```
+npm i spatial-navigation-polyfill
+```
+
+We recommend only using versions of the polyfill that have been published to npm, rather than cloning the repo and using the source directly. This helps ensure the version you're using is stable and thoroughly tested.
+See the [changes](https://wicg.github.io/spatial-navigation/polyfill/changelog.html) in the polyfill so far.
+
+If you do want to build from source, make sure you clone the latest tag!
+
+### Including the Polyfill in a page
+
+Include the following code in your web page,
+and the polyfill will be included,
+enabling spatial navigation.
+
+```html
+...
+    <script src="/node_modules/spatial-navigation-polyfill/polyfill/spatial-navigation-polyfill.js"></script>
+  </body>
+</html>
+```
+
+Users can now user the keyboard's arrow keys to navigate the page.
+
+### Handling Browser Events
+In the polyfill, <a href="https://www.w3.org/TR/DOM-Level-3-Events/#event-type-keydown"><code>keydown</code> event</a> and <a href="https://www.w3.org/TR/DOM-Level-3-Events/#event-type-mouseup"><code>mouseup</code> event</a> are used for the spatial navigation.
+The event handlers of those are attached to the window object.
+
+We recommend to use it with the polyfill as below:
+
+* If you want to use those event handlers for other usages besides the spatial navigation,
+   * attach the event handler on the children of window object
+   or
+   * call the event handler during the capturing phase of the event.
+* If you don't want those events to work with the spatial navigation, call <code>preventDefault()</code>.
+
+### Using the APIs
+
+The spatial navigation specification defines several JavaScript [events](https://wicg.github.io/spatial-navigation/#events-navigationevent) and [APIs](https://wicg.github.io/spatial-navigation/#js-api).
+Using these is not necessary to use the polyfill,
+and users can start using the arrow keys as soon as the polyfill is included,
+but they can be convenient for authors who wish to override the default behavior in some cases.
+See the specification for more details.
+
+#### Standard APIs
+| Standard APIs | Feature |
+|-|-|
+| [navigate()](https://drafts.csswg.org/css-nav-1/#dom-window-navigate) | Enables the author to trigger spatial navigation programmatically |
+| [spatialNavigationSearch()](https://drafts.csswg.org/css-nav-1/#dom-element-spatialnavigationsearch) | Finds the element which will gain the focus within the spatial navigation container from the currently focused element |
+| [getSpatialNavigationContainer()](https://drafts.csswg.org/css-nav-1/#dom-element-getspatialnavigationcontainer) | Gets the spatial navigation container of an element |
+| [focusableAreas()](https://drafts.csswg.org/css-nav-1/#dom-element-focusableareas) | Finds focusable elements within the spatial navigation container |
+| [Navigation Events](https://drafts.csswg.org/css-nav-1/#events-navigationevent) | Occurs depending on the specific contextual behavior associated with spatial navigation
+| [--spatial-navigation-contain](https://drafts.csswg.org/css-nav-1/#container) | Creates customized spatial navigation containers
+| [--spatial-navigation-action](https://drafts.csswg.org/css-nav-1/#css-property-spatialnavigationaction) | Controls the interaction for the scrollable element
+| [--spatial-navigation-function](https://drafts.csswg.org/css-nav-1/#css-property-spatialnavigationfunction) | Selects the navigation algorithm
+
+#### Experimental APIs
+NOTE: The APIs below are non-standard and experimental features of the spatial navigation.
+
+* <code>isContainer (element)</code> :
+  * Determines whether the element is a spatial Navigation container.
+  * Returns <code>true</code> if the element is the spatial Navigation container, and <code>false</code> if not.
+  * Parameter
+    * element : Required. 
+      - Any element.
+* <code>findCandidates (element, dir, option)</code> :
+  * Searchs all valid candidates for a certain direction.
+  * Returns a list of elements.
+  * Parameter
+    * element : Required. 
+      - The currently focused element to search for candidates.
+    * dir : Required. 
+       - The direction to find candidates.
+       - It should be one of <code>['up', 'down', 'left', 'right']</code>.
+    * option : Optional.
+      - Default value is <code>{'mode': 'visible'}</code>.
+      - The FocusableAreasOptions to find candidates.
+      - It should be <code>{'mode': 'visible'}</code> or <code>{ mode: 'all' }</code>.
+* <code>findNextTarget (element, dir, option)</code> :
+  * Indicates what is the best element to move the focus for a certain direction.
+  * Returns the next target element. 
+      - If there is no target for the direction, it returns <code>null</code>. 
+      - If scrolling occurs, it returns the element itself.
+  * Parameter
+    * element : Required. 
+      - The currently focused element to search for candidates.
+    * dir : Required. 
+       - The direction to find candidates.
+       - It should be one of <code>['up', 'down', 'left', 'right']</code>.
+    * option : Optional.
+      - Default value is <code>{'mode': 'visible'}</code>.
+      - The FocusableAreasOptions to find candidates.
+      - It should be <code>{'mode': 'visible'}</code> or <code>{ mode: 'all' }</code>.
+* <code>getDistanceFromTarget (element, candidateElement, dir)</code> :
+  * Calculates the distance between the currently focused element and a certain candidate element.
+  * Parameter
+    * element : Required. 
+      - The currently focused element to search for candidates.
+    * candidateElement : Required.
+      - The candidate element which may gain the focus.
+    * dir : Required. 
+       - The direction to find candidates.
+       - It should be one of <code>['up', 'down', 'left', 'right']</code>.
+* <code>keyMode</code> :
+  * Variable for getting or setting which key type to use for the spatial navigation.
+  * value
+      - It should be one of <code>['ARROW', 'SHIFTARROW', 'NONE']</code>.
+      - In the case of using <code>'NONE'</code> value, the spatial navigation feature will be turned off.
+
+## Current Status
+
+### Browser Support
+The Spatial Navigation has been tested and known to work in the following browsers:
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/chrome/chrome_48x48.png" alt="Chrome"><br>
+      49+
+    </td>
+    <td align="center">
+      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/firefox/firefox_48x48.png" alt="Firefox"><br>
+      61+
+    </td>
+    <td align="center">
+      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/safari/safari_48x48.png" alt="Safari"><br>
+      11.1+
+    </td>
+    <td align="center">
+      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/edge/edge_48x48.png" alt="Edge"><br>
+      17+
+    </td>
+    <td align="center">
+      <img src="https://raw.github.com/alrra/browser-logos/39.2.2/src/opera/opera_48x48.png" alt="Opera"><br>
+      36+
+    </td>
+  </tr>  
+</table>
+
+### Remaining Issues
+
+The polyfill is not yet complete.
+It roughly matches the specification
+but does not yet follow it closely,
+and has several  known issues.
+
+See [the list of open bugs](https://github.com/wicg/spatial-navigation/issues?q=is%3Aissue+is%3Aopen+label%3Atopic%3Apolyfill) in github.
 
 ## Details
 * Read the [Spec](https://drafts.csswg.org/css-nav-1/)
@@ -16,22 +183,10 @@ You can raise a spec issue in [CSS WG](https://github.com/w3c/csswg-drafts/label
 * See the [Implementation status](implStatus.md)
 * Give feedback on [issues for spec](https://github.com/w3c/csswg-drafts/labels/css-nav-1) in CSS WG or [issues for others](https://github.com/WICG/spatial-navigation/issues) in WICG
 
-## Overview
-**Spatial navigation** is the ability to navigate between focusable elements based on their position within a structured document. Spatial navigation is often called 'directional navigation' which enables four(top/left/bottom/right) directional navigation. Users are usually familiar with the 2-way navigation using both 'tab key' for the forward direction and 'shift+tab key' for the backward direction, but not familiar with the 4-way navigation using arrow keys.
-
-Regarding TV remote control, game console pad, IVI jog dial with 4-way keys, and Web accessibility, the spatial navigation has been a rising important input mechanism in several industries. If the web can embrace the spatial navigation and efficiently support the functionalities in web engines and W3C standard APIs, it will be more promising technology for existing products as mentioned above and various upcoming smart devices.
-
-## Requirement
-Prior to the requirement explanation, we need to first understand how the arrow keys currently work on the web. If you're watching this page in a normal HD monitor and desktop, not mobile, please push a down-arrow key on your keyboard. What happens? Basically, scrolling downward would be triggered. That's the default behavior of arrow keys in the web, only when the page is scrollable in the direction.
-
-In spatial navigation mode, the default behavior of arrow keys is changed from scrolling behavior to focus moving so that users can use the arrow keys to navigate between focusable elements based on their position. To support the functionalities of the spatial navigation, we should consider the following three steps:
-1. A heuristic algorithm to be supported in web engines by default (e.g. how to judge a next best focusable element)
-2. Overriding methods on top of the heuristic algorithm (DOM method/attribute/event as standard APIs)
-3. Some relevant APIs for efficiently supporting the spatial navigation (e.g. setting an element as a container)
-
-See the [explainer](https://drafts.csswg.org/css-nav-1/explainer) for the details of W3C standardization for #1, #2 and #3 above.
-
-See the [implStatus](implStatus.md) for the details of the implementation in web engines for #1 above.
+## FYI
+### Types of branches
+* `master`: Sync with the current spec of Spatial Navigation
+* `develop`: Container the features which have been considered in standard
 
 ## FAQ
 **Q. I’m not sure how the spatial navigation works.**
