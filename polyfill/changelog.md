@@ -1,8 +1,15 @@
+## 1.3.1 (2019-11-28)
+
+* Align the polyfill features with the [new Working Draft of CSS Spatial Navigation Level 1](https://www.w3.org/TR/2019/WD-css-nav-1-20191126/)
+* Fix a bug for spatial-navigation-action: auto by [commit](https://github.com/WICG/spatial-navigation/commit/bceff39b5ca059303193c0ec85c066aa9254d252)
+* Modify the spatial-navigation-function implementation by [commit](https://github.com/WICG/spatial-navigation/commit/408ff1607abd8c07085a8de1bbe8bd448e188b58)
+* Add and modify the sample demos
+
 ## 1.3.0 (2019-10-31)
 
 * Add chrome extension [(#197)](https://github.com/WICG/spatial-navigation/pull/197)
 * Add spatial-navigation-function CSS Property by [commit](https://github.com/WICG/spatial-navigation/commit/14654aa651a6ee06106ab0823046b3a4e59d6156)
-* Make spatialNavigationSearch API takes inside option by [commit](https://github.com/WICG/spatial-navigation/commit/a5603e51f2417f37e38e1fcab37706486fa46ae3) depending the [spec](https://github.com/w3c/csswg-drafts/issues/3743)
+* Make `spatialNavigationSearch` API takes inside option by [commit](https://github.com/WICG/spatial-navigation/commit/a5603e51f2417f37e38e1fcab37706486fa46ae3) depending the [spec](https://github.com/w3c/csswg-drafts/issues/3743)
 * Modify the condition of scroll container [(#200)](https://github.com/WICG/spatial-navigation/pull/200)
 * Fix the focus movement properly inside iframe element
 * Add the behavior of moving focus to inside overlapped elements by [commit](https://github.com/WICG/spatial-navigation/commit/9131a38349e6c9109b02e33500f0fa63bf6a4233)
