@@ -1,4 +1,4 @@
-# Spatial Navigation Polyfill
+# Spatial Navigation
 [![npm stat](https://img.shields.io/npm/dm/spatial-navigation-polyfill.svg?style=flat-square)](https://npm-stat.com/charts.html?package=spatial-navigation-polyfill)
 [![npm version](https://img.shields.io/npm/v/spatial-navigation-polyfill.svg?style=flat-square)](https://www.npmjs.com/package/spatial-navigation-polyfill)
 
