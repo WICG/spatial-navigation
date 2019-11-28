@@ -196,10 +196,10 @@
         if (getCSSSpatNavAction(eventTarget) === 'scroll') {
           if (scrollingController(eventTarget, dir)) return;
         } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
-          bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, candidates: getSpatialNavigationCandidates(eventTarget, {mode: 'all'}), inside: true});
+          bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, candidates: getSpatialNavigationCandidates(eventTarget, {mode: 'all'})});
           if (focusingController(bestInsideCandidate, dir)) return;
         } else if (getCSSSpatNavAction(eventTarget) === 'auto') {
-          bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget, inside: true});
+          bestInsideCandidate = eventTarget.spatialNavigationSearch(dir, {container: eventTarget});
           if (focusingController(bestInsideCandidate, dir) || scrollingController(eventTarget, dir)) return;
         }
       } else {
@@ -350,7 +350,6 @@
    * @param dir {SpatialNavigationDirection} - The directional information for the spatial navigation (e.g. LRUD)
    * @param candidates {sequence<Node>} - The candidates for spatial navigation
    * @param container {Node} - The spatial navigation container
-   * @param inside {boolean} - Whether candidates should be elements outside of the target element or not.
    * @returns {Node} The best candidate which will gain the focus
    */
   function spatialNavigationSearch (dir, args) {
@@ -363,10 +362,16 @@
     // Set default parameter value
     if (!args)
       args = {};
-    const container = args.container || targetElement.getSpatialNavigationContainer();
-    const candidates = (args.candidates && args.candidates.length > 0) ?
-      args.candidates.filter((candidate) => container.contains(candidate)) : getSpatialNavigationCandidates(container);
-    const inside = args.inside || false;
+
+    const defaultContainer = targetElement.getSpatialNavigationContainer();
+    let defaultCandidates = getSpatialNavigationCandidates(defaultContainer);
+    const container = args.container || defaultContainer;
+    if (args.container && (defaultContainer.contains(args.container))) {
+      defaultCandidates = defaultCandidates.concat(getSpatialNavigationCandidates(container));
+    }
+    const candidates = (args.candidates && args.candidates.length > 0) ? 
+                          args.candidates.filter((candidate) => container.contains(candidate)) : 
+                          defaultCandidates.filter((candidate) => container.contains(candidate) && (container !== candidate));
 
     // Find the best candidate
     // 5
@@ -376,28 +381,31 @@
 
       // Divide internal or external candidates
       candidates.forEach(candidate => {
-        (targetElement.contains(candidate) && targetElement !== candidate ? internalCandidates : externalCandidates).push(candidate);
+        if (candidate !== targetElement) {
+          (targetElement.contains(candidate) && targetElement !== candidate ? internalCandidates : externalCandidates).push(candidate);
+        }
       });
-      if (!(args.candidates && args.candidates.length > 0) && (internalCandidates.length === 0)) {
-        // If targetElement is focusable container or delegable container,
-        // getFilteredSpatialNavigationCandidates not return internal candidate.
-        internalCandidates = getSpatialNavigationCandidates(targetElement);
-      }
+
+      // include overlapped element to the internalCandidates
+      let fullyOverlapped = insideOverlappedCandidates.filter(candidate => !internalCandidates.includes(candidate));
+      let overlappedContainer = candidates.filter(candidate => (isContainer(candidate) && isEntirelyVisible(targetElement, candidate)));
+      let overlappedByParent = overlappedContainer.map((elm) => elm.focusableAreas()).flat().filter(candidate => candidate !== targetElement);
+      
+      internalCandidates = internalCandidates.concat(fullyOverlapped).filter((candidate) => container.contains(candidate));
+      externalCandidates = externalCandidates.concat(overlappedByParent).filter((candidate) => container.contains(candidate));
+
       // Filter external Candidates
       if (externalCandidates.length > 0) {
         externalCandidates = getFilteredSpatialNavigationCandidates(targetElement, dir, externalCandidates, container);
       }
-
+      
       // If there isn't search origin element but search orgin rect exist  (search origin isn't in the layout case)
       if (searchOriginRect) {
         bestTarget = selectBestCandidate(targetElement, getFilteredSpatialNavigationCandidates(targetElement, dir, internalCandidates, container), dir);
       }
 
-      // Inside First
-      if (inside && (isContainer(targetElement) || targetElement.nodeName === 'BODY') && !(targetElement.nodeName === 'INPUT')) {
+      if ((internalCandidates && internalCandidates.length > 0) && !(targetElement.nodeName === 'INPUT')) {
         bestTarget = selectBestCandidateFromEdge(targetElement, internalCandidates, dir);
-      } else if (!isContainer(targetElement) && insideOverlappedCandidates && insideOverlappedCandidates.length > 0) {
-        bestTarget = selectBestCandidateFromEdge(targetElement, insideOverlappedCandidates, dir);
       }
 
       bestTarget = bestTarget || selectBestCandidate(targetElement, externalCandidates, dir);
