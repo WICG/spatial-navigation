@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="application-name" content="Prevent 'navnotarget' Navigation Event">
     <meta name="author" content="Jihye Hong">
-    <meta name="description" content="The 'navnotarget' event is fired when the focus reaches to the end of the scrollable element(container),
-     and the focus will move out of the container. If the event is prevented, the focus will remain in the container.
-     The sample shows the <b>focus looping</b> in the scrollable spatial navigation container.">
+    <meta name="description" content="The 'navbeforefocus' event is fired when the next focus target is found.
+     If the event is prevented, the focus will not move to the found target.
+     The sample shows the <b>focus delegation</b> if the target is the scrollable spatial navigation container.
+     In that case, the focus will delegate to an element inside the container.">
     <link rel="stylesheet" href="spatnav-style.css">
     <script src="spatnav-utils.js"></script>
     <script src="../../polyfill/spatial-navigation-polyfill.js"></script>
@@ -34,23 +35,20 @@
     const logDiv = document.querySelector('.event-log');
     let nextTarget = null;
 
-    container.addEventListener('navbeforefocus', function(e) {
+    container.addEventListener('navbeforefocus', (e) => {
       appendLog('navbeforefocus', `*currentTarget: ${getElementInfoString(e.currentTarget)}, *target: ${getElementInfoString(e.target)}`);
-
-      e.preventDefault();
-
       let target = e.target;
+      // If the next focus target is the scrollable container, the focus delegates to an element inside it.
       if (window.__spatialNavigation__.isContainer(target)) {
-          const areas = target.focusableAreas({mode: 'visible'});
+        e.preventDefault();
 
-          if (areas.length > 0) {
-  		        target = areas[0];
-              //TODO: Fix the polyfill for spatialNavigationSearch without 'inside' option
-              //target = target.spatialNavigationSearch(e.dir, {candidate: areas});
-          }
+        const areas = target.focusableAreas({mode: 'visible'});
+        if (areas.length > 0) {
+          target = target.spatialNavigationSearch(e.detail.dir);
+        }
+        appendLog('navbeforefocus', `*Focus delegates from: ${getElementInfoString(e.target)} to: ${getElementInfoString(target)}`);
+        target.focus();
       }
-      target.focus();
-
     });
 
     function getElementInfoString (element) {
