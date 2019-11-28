@@ -6,13 +6,6 @@
 <link rel="stylesheet" href="../../demo/sample/spatnav-style.css">
 <link rel="stylesheet" href="test.css">
 <script src="test.js"></script>
-<style>
-#d {
-width: 100px;
-height: 100px;
-overflow: scroll;
-}
-</style>
 <body onload="onload()">
     <div style="padding: 20px;">
         <button id="b1" class="box" style="top:100px; left:20px;"></button>
@@ -20,7 +13,10 @@ overflow: scroll;
         <button id="c1b1" class="box b2" style="top:58px; left:25px;"></button>
             <div id="c2" class="container c2" tabindex="1" style="position: relative; left:110px; width:250px; height:100px; --spatial-navigation-contain: contain;">
                 <button id="c2b1" class="box b3" style="top:20px; left:60px;"></button>
-                <div id="c3" class="container c3" tabindex="1" style="position: relative; left: 100px; top: -15px; width:80px; height:50px; --spatial-navigation-contain: contain;"></div>
+                <div id="c3" class="container c3" tabindex="1" style="position: relative; left: 100px; top: -25px; width:85px; height:60px; overflow-x: scroll;">
+                  <button class="box b4" style="top: 5px; left: calc(100px * 1);"></button>
+                  <button class="box b4" style="top: 5px; left: calc(100px * 2);"></button>
+                </div>
             </div>
         <button id="c1b2" class="box b2" style="top:-90px; left:420px;"></button>
         </div>
