@@ -14,8 +14,8 @@
             <div id="c2" class="container c2" tabindex="1" style="position: relative; left:110px; width:250px; height:100px; --spatial-navigation-contain: contain;">
                 <button id="c2b1" class="box b3" style="top:20px; left:60px;"></button>
                 <div id="c3" class="container c3" tabindex="1" style="position: relative; left: 100px; top: -25px; width:85px; height:60px; overflow-x: scroll;">
-                  <button class="box b4" style="top: 5px; left: calc(100px * 1);"></button>
-                  <button class="box b4" style="top: 5px; left: calc(100px * 2);"></button>
+                  <button id="c3b1" class="box b4" style="top: 5px; left: calc(100px * 1);"></button>
+                  <button id="c3b1" class="box b4" style="top: 5px; left: calc(100px * 2);"></button>
                 </div>
             </div>
         <button id="c1b2" class="box b2" style="top:-90px; left:420px;"></button>
@@ -28,7 +28,7 @@
         <div id="s2-c1" class="container c1" tabindex="-1" style="position: relative; left:110px; width:500px; height:200px; --spatial-navigation-contain: contain;">
           <button id="s2-c1b1" class="box b2" style="top:78px; left:25px;"></button>
             <div id="s2-c2" class="container c2" style="position: relative; left:110px; width:250px; height:100px; --spatial-navigation-contain: contain;">
-              <button id="s2-c2b1" class="box b3" style="top:40px; left:60px;"></button>
+              <button id="s2-c2b1" class="box b3" style="top:30px; left:60px;"></button>
               <button id="s2-c2b2" class="box b3" style="top:30px; left:200px;"></button>
             </div>
           <button id="s2-c1b2" class="box b2" style="top:-80px; left:300px;"></button>
@@ -47,6 +47,7 @@ var onload = () => {
     const containers = document.querySelectorAll('.container');
 
     // Scene 1
+
     testRun(function() {
         const nextTarget = document.getElementById('b1').spatialNavigationSearch('right');
         assert_equals(nextTarget, document.getElementById('c1b1'));
@@ -77,15 +78,27 @@ var onload = () => {
 
     testRun(function() {
         const nextTarget = document.getElementById('c1b1').spatialNavigationSearch('left', {container: document.body});
-        assert_equals(nextTarget, document.getElementById('b1'));
-        assert_not_equals(nextTarget, null);
-    }, `spatialNavigationSearch() TC${testNum++}. #c1b1 button -> spatialNavigationSearch('left', {container: document.body}) -> Return #b1 button`);
+        assert_equals(nextTarget, null);
+        assert_not_equals(nextTarget, document.getElementById('b1'));
+    }, `spatialNavigationSearch() TC${testNum++}. #c1b1 button -> spatialNavigationSearch('left', {container: document.body}) -> Return null`);
 
     testRun(function() {
         const nextTarget = document.getElementById('c1b2').spatialNavigationSearch('right', {container: document.body});
+        assert_equals(nextTarget, null);
+        assert_not_equals(nextTarget, document.getElementById('s2-c1b3'));
+    }, `spatialNavigationSearch() TC${testNum++}. #c1b2 button -> spatialNavigationSearch('right', {container: document.body}) -> Return null`);
+
+    testRun(function() {
+        const nextTarget = document.getElementById('c1b1').spatialNavigationSearch('left', {container: document.body, candidates: document.body.focusableAreas()});
+        assert_equals(nextTarget, document.getElementById('b1'));
+        assert_not_equals(nextTarget, null);
+    }, `spatialNavigationSearch() TC${testNum++}. #c1b1 button -> spatialNavigationSearch('left', {container: document.body, candidates: document.body.focusableAreas()}) -> Return #b1 button`);
+
+    testRun(function() {
+        const nextTarget = document.getElementById('c1b2').spatialNavigationSearch('right', {container: document.body, candidates: document.body.focusableAreas()});
         assert_equals(nextTarget, document.getElementById('s2-c1b3'));
         assert_not_equals(nextTarget, document.getElementById('c1b2'));
-    }, `spatialNavigationSearch() TC${testNum++}. #c1b2 button -> spatialNavigationSearch('right', {container: document.body}) -> Return #s2-c1b3 button`);
+    }, `spatialNavigationSearch() TC${testNum++}. #c1b2 button -> spatialNavigationSearch('right', {container: document.body, candidates: document.body.focusableAreas()}) -> Return #s2-c1b3 button`);
 
     testRun(function() {
         const nextTarget = containers[1].spatialNavigationSearch('left');
@@ -114,14 +127,14 @@ var onload = () => {
     }, `spatialNavigationSearch() TC${testNum++}. #c3 container -> spatialNavigationSearch('right', {container: #c1}) -> Return null`);
 
     testRun(function() {
-        const nextTarget = document.getElementById('c2b1').spatialNavigationSearch('left', {container: containers[0], candidate: containers[0].focusableAreas()});
+        const nextTarget = document.getElementById('c2b1').spatialNavigationSearch('left', {container: containers[0], candidates: containers[0].focusableAreas()});
         assert_equals(nextTarget, document.getElementById('c1b1'));
         assert_not_equals(nextTarget, document.getElementById('b1'));
         assert_not_equals(nextTarget, containers[2]);
     }, `spatialNavigationSearch() TC${testNum++}. #c2b1 button -> spatialNavigationSearch('left', {container: #c1, candidate: #c1.focusableAreas()}) -> Return #c1b1 button`);
 
     testRun(function() {
-        const nextTarget = containers[2].spatialNavigationSearch('right', {container: containers[0], candidate: containers[0].focusableAreas()});
+        const nextTarget = containers[2].spatialNavigationSearch('right', {container: containers[0], candidates: containers[0].focusableAreas()});
         assert_equals(nextTarget, document.getElementById('c1b2'));
         assert_not_equals(nextTarget, null);
     }, `spatialNavigationSearch() TC${testNum++}. #c3 container -> spatialNavigationSearch('right', {container: #c1, candidate: #c1.focusableAreas()}) -> Return #c1b2 button`);
@@ -129,6 +142,7 @@ var onload = () => {
     testRun(function() {
         const nextTarget = containers[2].spatialNavigationSearch('left');
         assert_equals(nextTarget, document.getElementById('c2b1'));
+        assert_not_equals(nextTarget, null);
     }, `spatialNavigationSearch() TC${testNum++}. #c3 container -> spatialNavigationSearch('left') -> Return #c2b1 button`);
 
     testRun(function() {
@@ -136,6 +150,18 @@ var onload = () => {
         assert_equals(nextTarget, null);
         assert_not_equals(nextTarget, document.getElementById('c1b2'));
     }, `spatialNavigationSearch() TC${testNum++}. #c3 container -> spatialNavigationSearch('right') -> No next target`);
+
+    const allCandidatesInC3 = containers[2].focusableAreas({mode: 'all'});
+    testRun(function() {
+        const nextTarget = containers[2].spatialNavigationSearch('right', {candidates: allCandidatesInC3});
+        assert_equals(nextTarget, document.getElementById('c3b1'));
+        assert_not_equals(nextTarget, null);
+    }, `spatialNavigationSearch() TC${testNum++}. #c3 container -> spatialNavigationSearch('right', {candidates: containers[2].focusableAreas({mode: 'all'})}) -> Return #c3b1 button`);
+
+    testRun(function() {
+        const nextTarget = containers[2].spatialNavigationSearch('left', {candidates: allCandidatesInC3});
+        assert_equals(nextTarget, null);
+    }, `spatialNavigationSearch() TC${testNum++}. #c3 container -> spatialNavigationSearch('left', {candidates: containers[2].focusableAreas({mode: 'all'})}) -> Return null`);
 
     // Scene 2
     const c1Container = document.querySelector('#s2-c1');
@@ -167,13 +193,13 @@ var onload = () => {
 
     testRun(function() {
       let result = c1Container.spatialNavigationSearch('right', {candidates: c2Candidates});
-      assert_equals(result, document.querySelector('#s2-c2b1'));
-    }, `spatialNavigationSearch() TC${testNum++}. c1Container.spatialNavigationSearch('right', {candidates: c2Candidates}); -> Return #s2-c2b1 button`);
+      assert_equals(result, document.querySelector('#s2-c1b1'));
+    }, `spatialNavigationSearch() TC${testNum++}. c1Container.spatialNavigationSearch('right', {candidates: c2Candidates}); -> Return #s2-c1b1 button`);
 
     testRun(function() {
       let result = c1Container.spatialNavigationSearch('left', {candidates: c2Candidates});
-      assert_equals(result, document.querySelector('#s2-c2b2'));
-    }, `spatialNavigationSearch() TC${testNum++}. c1Container.spatialNavigationSearch('left', {candidates: c2Candidates}); -> Return #s2-c2b2 button`);
+      assert_equals(result, document.querySelector('#s2-c1b3'));
+    }, `spatialNavigationSearch() TC${testNum++}. c1Container.spatialNavigationSearch('left', {candidates: c2Candidates}); -> Return #s2-c1b3 button`);
 
     testRun(function() {
       let result = c1Container.spatialNavigationSearch('right', {candidates: c1Candidates, container: c2Container});
