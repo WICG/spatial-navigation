@@ -439,6 +439,7 @@
    * @param container {Node} - The spatial navigation container
    * @returns {sequence<Node>} The filtered candidates which are not the search origin and not in the given spatial navigation direction from the search origin
    */
+  // TODO: Need to fix filtering the candidates with more clean code
   function filteredCandidates(currentElm, candidates, dir, container) {
     const originalContainer = currentElm.getSpatialNavigationContainer();
     let eventTargetRect;
@@ -472,7 +473,8 @@
         const candidateBody = (candidate.nodeName === 'IFRAME') ? candidate.contentDocument.body : null;
         return container.contains(candidate) &&
           candidate !== currentElm && candidateBody !== currentElm &&
-          isOutside(candidateRect, eventTargetRect, dir);
+          isOutside(candidateRect, eventTargetRect, dir) &&
+          !isInside(eventTargetRect, candidateRect);
       });
     }
   }
