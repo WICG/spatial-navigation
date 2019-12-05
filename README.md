@@ -13,6 +13,14 @@ You can raise a spec issue in [CSS WG](https://github.com/w3c/csswg-drafts/label
 
 Regarding TV remote control, game console pad, IVI jog dial with 4-way keys, and Web accessibility, the spatial navigation has been a rising important input mechanism in several industries.
 
+## Details
+* Read the [Spec](https://drafts.csswg.org/css-nav-1/)
+* Read the [Explainer](https://drafts.csswg.org/css-nav-1/explainer)
+* Play with the [Polyfill](polyfill/README.md)
+* Try the [Demo](https://wicg.github.io/spatial-navigation/demo/) and [Extension tool](https://github.com/WICG/spatial-navigation/tree/master/tools/chrome-extension)
+* See the [Implementation status](implStatus.md)
+* Give feedback on [issues for spec](https://github.com/w3c/csswg-drafts/labels/css-nav-1) in CSS WG or [issues for others](https://github.com/WICG/spatial-navigation/issues) in WICG
+
 ## Why Use the Polyfill
 
 Eventually, we expect spatial navigation to be natively supported by browsers.
@@ -168,25 +176,9 @@ The Spatial Navigation has been tested and known to work in the following browse
 
 ### Remaining Issues
 
-The polyfill is not yet complete.
-It roughly matches the specification
-but does not yet follow it closely,
-and has several  known issues.
+The polyfill is not yet complete. It roughly matches the specification but does not yet follow it closely, and has several  known issues.
 
 See [the list of open bugs](https://github.com/wicg/spatial-navigation/issues?q=is%3Aissue+is%3Aopen+label%3Atopic%3Apolyfill) in github.
-
-## Details
-* Read the [Spec](https://drafts.csswg.org/css-nav-1/)
-* Read the [Explainer](https://drafts.csswg.org/css-nav-1/explainer)
-* Play with the [Polyfill](polyfill/README.md)
-* Try the [Demo](https://wicg.github.io/spatial-navigation/demo/) and [Extension tool](https://github.com/WICG/spatial-navigation/tree/master/tools/chrome-extension)
-* See the [Implementation status](implStatus.md)
-* Give feedback on [issues for spec](https://github.com/w3c/csswg-drafts/labels/css-nav-1) in CSS WG or [issues for others](https://github.com/WICG/spatial-navigation/issues) in WICG
-
-## FYI
-### Types of branches
-* `master`: Sync with the current spec of Spatial Navigation
-* `develop`: Container the features which have been considered in standard
 
 ## FAQ
 **Q. I’m not sure how the spatial navigation works.**
