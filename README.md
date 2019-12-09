@@ -146,6 +146,9 @@ NOTE: The APIs below are non-standard and experimental features of the spatial n
 
 ## Current Status
 
+### Browser Support for Spec
+The spec hasn't been implemented in any browser yet. If any update, we will add it to here.
+
 ### Browser Support for Polyfill
 The Spatial Navigation Polyfill has been tested and known to work in the following browsers:
 
