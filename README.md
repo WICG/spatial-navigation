@@ -146,8 +146,8 @@ NOTE: The APIs below are non-standard and experimental features of the spatial n
 
 ## Current Status
 
-### Browser Support
-The Spatial Navigation has been tested and known to work in the following browsers:
+### Browser Support for Polyfill
+The Spatial Navigation Polyfill has been tested and known to work in the following browsers:
 
 <table>
   <tr>
