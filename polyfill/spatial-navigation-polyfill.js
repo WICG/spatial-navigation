@@ -1146,10 +1146,10 @@
    * @returns {boolean}
    */
   function isInside(containerRect, childRect) {
-    const rightEdgeCheck = (containerRect.left <= childRect.right && containerRect.right >= childRect.right);
-    const leftEdgeCheck = (containerRect.left <= childRect.left && containerRect.right >= childRect.left);
-    const topEdgeCheck = (containerRect.top <= childRect.top && containerRect.bottom >= childRect.top);
-    const bottomEdgeCheck = (containerRect.top <= childRect.bottom && containerRect.bottom >= childRect.bottom);
+    const rightEdgeCheck = (containerRect.left < childRect.right && containerRect.right >= childRect.right);
+    const leftEdgeCheck = (containerRect.left <= childRect.left && containerRect.right > childRect.left);
+    const topEdgeCheck = (containerRect.top <= childRect.top && containerRect.bottom > childRect.top);
+    const bottomEdgeCheck = (containerRect.top < childRect.bottom && containerRect.bottom >= childRect.bottom);
     return (rightEdgeCheck || leftEdgeCheck) && (topEdgeCheck || bottomEdgeCheck);
   }
 
