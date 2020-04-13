@@ -92,7 +92,10 @@
       if (!currentKeyMode ||
           (currentKeyMode === 'NONE') ||
           ((currentKeyMode === 'SHIFTARROW') && !e.shiftKey) ||
-          ((currentKeyMode === 'ARROW') && e.shiftKey))
+          ((currentKeyMode === 'ARROW') && e.shiftKey) ||
+          e.ctrlKey ||
+          e.metaKey ||
+          e.altKey)
         return;
 
       if (!e.defaultPrevented) {
