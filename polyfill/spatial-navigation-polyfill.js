@@ -1571,7 +1571,7 @@
     const textSelection = eventTarget.hasAttribute('contenteditable') ? getTextSelection(eventTarget) : eventTarget;
     const startPosition = textSelection.selectionStart;
     const endPosition = textSelection.selectionEnd;
-    const textLength  = textSelection.textLength;
+    const textLength  = eventTarget.hasAttribute('contenteditable') ? textSelection.textLength : eventTarget.value.length;
     const focusNavigableArrowKey = {left: false, up: false, right: false, down: false};
 
     const dir = ARROW_KEY_CODE[e.keyCode];
