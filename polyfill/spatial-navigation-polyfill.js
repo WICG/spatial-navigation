@@ -100,7 +100,9 @@
         let focusNavigableArrowKey = {left: true, up: true, right: true, down: true};
 
         // Edge case (text input, area) : Don't move focus, just navigate cursor in text area
-        if ((eventTarget.nodeName === 'INPUT') || eventTarget.nodeName === 'TEXTAREA') {
+        if ((eventTarget.nodeName === 'INPUT') ||
+            eventTarget.nodeName === 'TEXTAREA' ||
+            eventTarget.hasAttribute('contenteditable')) {
           focusNavigableArrowKey = handlingEditableElement(e);
         }
 
@@ -1500,6 +1502,61 @@
     return intersection_rect;
   }
 
+
+  /**
+   * Find selectionStart/selectionEnd/textLength for contenteditable element
+   * @function getTextSelection
+   * @param contenteditable {Element} - The contenteditable element
+   * @returns {TextSelection}
+   *
+   * @typeof {Object} TextSelection
+   * @property {Number} TextSelection.selectionStart - 0 if at start, 1 if at end, NaN if between start and end
+   * @property {Number} TextSelection.selectionEnd - 0 if at start, 1 if at end, NaN if between start and end
+   * @property {Number} TextSelection.textLength - 0 if empty, 1 if not empty
+   */
+  function getTextSelection(contenteditable) {
+    // The method is based on the Selection#modify
+    const selection = window.getSelection();
+    const compareCaretPositons = function (node1, offset1, node2, offset2) {
+      const tmpRange1 = document.createRange();
+      tmpRange1.setStart(node1, offset1);
+      const tmpRange2 = document.createRange();
+      tmpRange2.setStart(node2, offset2);
+      return tmpRange1.compareBoundaryPoints(Range.START_TO_START, tmpRange2);
+    };
+    const anchorNode = selection.anchorNode;
+    const anchorOffset = selection.anchorOffset;
+    const focusNode = selection.focusNode;
+    const focusOffset = selection.focusOffset;
+    const forward = compareCaretPositons(anchorNode, anchorOffset, focusNode, focusOffset) < 0;
+    const canMove = function (node, offset, direction) {
+      selection.setBaseAndExtent(node, offset, node, offset);
+      selection.modify('move', direction, 'character');
+      return selection.anchorNode !== node ||
+             selection.anchorOffset !== offset ||
+             selection.focusNode !== node ||
+             selection.focusOffset !== offset;
+    };
+    const atStart = !canMove(forward ? anchorNode : focusNode, forward ? anchorOffset : focusOffset, 'backward');
+    const atEnd = !canMove(forward ? focusNode : anchorNode, forward ? focusOffset : anchorOffset, 'forward');
+    const collapsed = anchorNode === focusNode && anchorOffset === focusOffset;
+    selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+    const textLength = atStart && atEnd && collapsed ? 0 : 1;
+    if (textLength === 0) {
+      return {
+        selectionStart: 0,
+        selectionEnd: 0,
+        textLength: 0
+      };
+    }
+    return {
+      selectionStart: (atStart ? 0 : (atEnd && collapsed ? 1 : 0/0)),
+      selectionEnd: (atEnd ? 1 : (atStart && collapsed ? 0 : 0/0)),
+      textLength: 1
+    };
+  }
+
+
   /**
    * Handle the spatial navigation behavior for HTMLInputElement, HTMLTextAreaElement
    * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input|HTMLInputElement (MDN)}
@@ -1511,8 +1568,10 @@
     const SPINNABLE_INPUT_TYPES = ['email', 'date', 'month', 'number', 'time', 'week'],
       TEXT_INPUT_TYPES = ['password', 'text', 'search', 'tel', 'url', null];
     const eventTarget = document.activeElement;
-    const startPosition = eventTarget.selectionStart;
-    const endPosition = eventTarget.selectionEnd;
+    const textSelection = eventTarget.hasAttribute('contenteditable') ? getTextSelection(eventTarget) : eventTarget;
+    const startPosition = textSelection.selectionStart;
+    const endPosition = textSelection.selectionEnd;
+    const textLength  = textSelection.textLength;
     const focusNavigableArrowKey = {left: false, up: false, right: false, down: false};
 
     const dir = ARROW_KEY_CODE[e.keyCode];
@@ -1523,13 +1582,15 @@
     if (SPINNABLE_INPUT_TYPES.includes(eventTarget.getAttribute('type')) &&
       (dir === 'up' || dir === 'down')) {
       focusNavigableArrowKey[dir] = true;
-    } else if (TEXT_INPUT_TYPES.includes(eventTarget.getAttribute('type')) || eventTarget.nodeName === 'TEXTAREA') {
+    } else if ((eventTarget.nodeName === 'INPUT' && TEXT_INPUT_TYPES.includes(eventTarget.getAttribute('type'))) ||
+               eventTarget.nodeName === 'TEXTAREA' ||
+               eventTarget.hasAttribute('contenteditable')) {
       if (startPosition === endPosition) { // if there isn't any selected text
         if (startPosition === 0) {
           focusNavigableArrowKey.left = true;
           focusNavigableArrowKey.up = true;
         }
-        if (endPosition === eventTarget.value.length) {
+        if (endPosition === textLength) {
           focusNavigableArrowKey.right = true;
           focusNavigableArrowKey.down = true;
         }
