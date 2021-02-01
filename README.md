@@ -57,7 +57,7 @@ enabling spatial navigation.
 </html>
 ```
 
-Users can now user the keyboard's arrow keys to navigate the page.
+Users can now use the keyboard's arrow keys to navigate the page.
 
 ### Handling Browser Events
 In the polyfill, <a href="https://www.w3.org/TR/DOM-Level-3-Events/#event-type-keydown"><code>keydown</code> event</a> and <a href="https://www.w3.org/TR/DOM-Level-3-Events/#event-type-mouseup"><code>mouseup</code> event</a> are used for the spatial navigation.
