@@ -1,12 +1,14 @@
-# Spatial Navigation
+# Spatial Navigation (Archived)
 [![npm stat](https://img.shields.io/npm/dm/spatial-navigation-polyfill.svg?style=flat-square)](https://npm-stat.com/charts.html?package=spatial-navigation-polyfill)
 [![npm version](https://img.shields.io/npm/v/spatial-navigation-polyfill.svg?style=flat-square)](https://www.npmjs.com/package/spatial-navigation-polyfill)
 
-**Written**: 2017-10-17, **Updated**: 2019-11-27
+**Written**: 2017-10-17, **Updated**: 2025-06-01
 
 This repository is for supportive tools of **Spatial Navigation** such as polyfill, demo, and relevant documents. The spatial navigation [spec](https://drafts.csswg.org/css-nav-1/) has been migrated from WICG to CSS WG as an official draft according to the [decision](https://www.w3.org/2018/10/23-css-minutes.html#item01) at the CSS WG meeting in TPAC 2018.
 
-You can raise a spec issue in [CSS WG](https://github.com/w3c/csswg-drafts/labels/css-nav-1), but also raise others(polyfill, demo, ideas) in [WICG](https://github.com/WICG/spatial-navigation/issues) here.
+🚫 **This project is no longer maintained.**
+
+You can raise issues in [CSS WG](https://github.com/w3c/csswg-drafts/labels/css-nav-1).
 
 ## Overview
 **Spatial navigation** is the ability to navigate between focusable elements based on their position within a structured document. Spatial navigation is often called 'directional navigation' which enables four(top/left/bottom/right) directional navigation. Users are usually familiar with the 2-way navigation using both 'tab key' for the forward direction and 'shift+tab key' for the backward direction, but not familiar with the 4-way navigation using arrow keys.
