@@ -82,7 +82,7 @@
      */
     window.addEventListener('keydown', (e) => {
       const currentKeyMode = (parent && parent.__spatialNavigation__.keyMode) || window.__spatialNavigation__.keyMode;
-      const eventTarget = document.activeElement;
+      const eventTarget = getActiveElement();
       const dir = ARROW_KEY_CODE[e.keyCode];
 
       if (e.keyCode === TAB_KEY_CODE) {
@@ -139,6 +139,111 @@
   }
 
   /**
+   * Gets the parent element for a node. If the node is a shadow dom element then the host is returned.
+   * @function getParent
+   * @param element {Node} - The element to get the parent for
+   * @returns {Node} The parent element
+   */
+  function getParentElement(element) {
+    return element.parentElement || element.host || (element.parentNode && element.parentNode.host);
+  }
+
+  /**
+   * Gets the children for a node. If the node is a shadow dom element then the shadowRoot's children are returned.
+   * @function getChildren
+   * @param element {Node} - The element to get the children for
+   * @returns {Node} The parent element
+   */
+  function getChildren(element) {
+    if (element.shadowRoot) {
+      return element.shadowRoot.children;
+    }
+    return element.children;
+  }
+
+  /**
+   * Gets the child element count for a node. If the node is shadow dom element then the shadowRoot's child count is returned.
+   * @function getChildElementCount
+   * @param element {Node} - The element to get the children for
+   * @returns {Node} The parent element
+   */
+  function getChildElementCount(element) {
+    if (element.shadowRoot) {
+      return element.shadowRoot.childElementCount;
+    }
+    return element.childElementCount;
+  }
+
+  /**
+   * Checks if an element contains another element. If the element is a shadow dom element, the shadow root is checked.
+   * @function elementContains
+   * @param element {Node} - The element to search through
+   * @param n {Node} - The element search for
+   * @returns {Boolean}
+   */
+  function elementContains(element, n) {
+    if (n === null) {
+      return false;
+    }
+    let el = element;
+    if (element.shadowRoot) {
+      if (element.shadowRoot.mode !== 'open') {
+        return false;
+      }
+      el = element.shadowRoot;
+    }
+    let ok = el.contains(n);
+    if (ok) {
+      return ok;
+    }
+    while (true) {
+      n = n.getRootNode({
+        composed: false
+      });
+      ok = el.contains(n);
+      if (ok || !n.host) {
+        return ok;
+      }
+      if (el.contains(n.host)) {
+        return true;
+      }
+      n = n.host;
+    }
+  }
+
+  /**
+   * Gets the active element. It will search recusively through shadow doms
+   * @function getActiveElement
+   * @returns {Node} The active element
+   */
+  function getActiveElement() {
+    let ac = document.activeElement;
+    while (ac && ac.shadowRoot && ac.shadowRoot.activeElement){
+      ac = ac.shadowRoot.activeElement
+    }
+    return ac;
+  }
+
+
+  /**
+   * Gets element from point within another element. It will search recusively through shadow doms
+   * @param element {Node} - The containing element to search through
+   * @param x {Number} - The x coordinate
+   * @param y {Number} - The y coordinate
+   * @returns {Node} The active element
+   */
+  function getElementFromPoint(element, x, y) {
+    let el = element.elementFromPoint(x, y);
+    if (el && el.shadowRoot && element !== el.shadowRoot) {
+      return getElementFromPoint(el.shadowRoot, x, y);
+    }
+    if (el && el.host) {
+      return getElementFromPoint(el.host, x, y);
+    }
+    return el;
+  }
+
+  /**
    * Enable the author to trigger spatial navigation programmatically, as if the user had done so manually.
    * @see {@link https://drafts.csswg.org/css-nav-1/#dom-window-navigate}
    * @function navigate
@@ -156,7 +261,7 @@
     // 2 Optional step, UA defined starting point
     if (startingPoint) {
       // if there is a starting point, set eventTarget as the element from position for getting the spatnav container
-      elementFromPosition = document.elementFromPoint(startingPoint.x, startingPoint.y);
+      elementFromPosition = getElementFromPoint(document, startingPoint.x, startingPoint.y);
 
       // Use starting point if the starting point isn't inside the focusable element (but not container)
       // * Starting point is meaningfull when:
@@ -192,8 +297,9 @@
       let bestInsideCandidate = null;
 
       // 5-2
-      if ((document.activeElement === searchOrigin) || 
-          (document.activeElement === document.body) && (searchOrigin === document.documentElement)) {
+      let activeElement = getActiveElement();
+      if ((activeElement === searchOrigin) || 
+          (activeElement === document.body) && (searchOrigin === document.documentElement)) {
         if (getCSSSpatNavAction(eventTarget) === 'scroll') {
           if (scrollingController(eventTarget, dir)) return;
         } else if (getCSSSpatNavAction(eventTarget) === 'focus') {
@@ -212,7 +318,7 @@
     // 6
     // Let container be the nearest ancestor of eventTarget
     container = eventTarget.getSpatialNavigationContainer();
-    let parentContainer = (container.parentElement) ? container.getSpatialNavigationContainer() : null;
+    let parentContainer = (getParentElement(container)) ? container.getSpatialNavigationContainer() : null;
 
     // When the container is the viewport of a browsing context
     if (!parentContainer && ( window.location !== window.parent.location)) {
@@ -278,7 +384,7 @@
     }
 
     // If the spatnav container is document and it can be scrolled, scroll the document
-    if (!container.parentElement && !isHTMLScrollBoundary(container, dir)) {
+    if (!getParentElement(container) && !isHTMLScrollBoundary(container, dir)) {
       moveScroll(container.ownerDocument.documentElement, dir);
       return true;
     }
@@ -299,21 +405,21 @@
   function getSpatialNavigationCandidates (container, option = {mode: 'visible'}) {
     let candidates = [];
 
-    if (container.childElementCount > 0) {
-      if (!container.parentElement) {
+    if (getChildElementCount(container) > 0) {
+      if (!getParentElement(container)) {
         container = container.getElementsByTagName('body')[0] || document.body;
       }
-      const children = container.children;
+      const children = getChildren(container);
       for (const elem of children) {
         if (isDelegableContainer(elem)) {
           candidates.push(elem);
         } else if (isFocusable(elem)) {
           candidates.push(elem);
 
-          if (!isContainer(elem) && elem.childElementCount) {
+          if (!isContainer(elem) && getChildElementCount(elem)) {
             candidates = candidates.concat(getSpatialNavigationCandidates(elem, {mode: 'all'}));
           }
-        } else if (elem.childElementCount) {
+        } else if (getChildElementCount(elem)) {
           candidates = candidates.concat(getSpatialNavigationCandidates(elem, {mode: 'all'}));
         }
       }
@@ -367,12 +473,12 @@
     const defaultContainer = targetElement.getSpatialNavigationContainer();
     let defaultCandidates = getSpatialNavigationCandidates(defaultContainer);
     const container = args.container || defaultContainer;
-    if (args.container && (defaultContainer.contains(args.container))) {
+    if (args.container && (elementContains(defaultContainer, args.container))) {
       defaultCandidates = defaultCandidates.concat(getSpatialNavigationCandidates(container));
     }
     const candidates = (args.candidates && args.candidates.length > 0) ? 
-                          args.candidates.filter((candidate) => container.contains(candidate)) : 
-                          defaultCandidates.filter((candidate) => container.contains(candidate) && (container !== candidate));
+                          args.candidates.filter((candidate) => elementContains(container, candidate)) : 
+                          defaultCandidates.filter((candidate) => elementContains(container, candidate) && (container !== candidate));
 
     // Find the best candidate
     // 5
@@ -383,7 +489,7 @@
       // Divide internal or external candidates
       candidates.forEach(candidate => {
         if (candidate !== targetElement) {
-          (targetElement.contains(candidate) && targetElement !== candidate ? internalCandidates : externalCandidates).push(candidate);
+          (elementContains(targetElement, candidate) && targetElement !== candidate ? internalCandidates : externalCandidates).push(candidate);
         }
       });
 
@@ -392,8 +498,8 @@
       let overlappedContainer = candidates.filter(candidate => (isContainer(candidate) && isEntirelyVisible(targetElement, candidate)));
       let overlappedByParent = overlappedContainer.map((elm) => elm.focusableAreas()).flat().filter(candidate => candidate !== targetElement);
       
-      internalCandidates = internalCandidates.concat(fullyOverlapped).filter((candidate) => container.contains(candidate));
-      externalCandidates = externalCandidates.concat(overlappedByParent).filter((candidate) => container.contains(candidate));
+      internalCandidates = internalCandidates.concat(fullyOverlapped).filter((candidate) => elementContains(container, candidate));
+      externalCandidates = externalCandidates.concat(overlappedByParent).filter((candidate) => elementContains(container, candidate));
 
       // Filter external Candidates
       if (externalCandidates.length > 0) {
@@ -450,7 +556,7 @@
       return candidates;
 
     // Offscreen handling when originalContainer is not <HTML>
-    if (originalContainer.parentElement && container !== originalContainer && !isVisible(currentElm)) {
+    if (getParentElement(originalContainer) && container !== originalContainer && !isVisible(currentElm)) {
       eventTargetRect = getBoundingClientRect(originalContainer);
     } else {
       eventTargetRect = searchOriginRect || getBoundingClientRect(currentElm);
@@ -464,15 +570,15 @@
     if ((isContainer(currentElm) || currentElm.nodeName === 'BODY') && !(currentElm.nodeName === 'INPUT')) {
       return candidates.filter(candidate => {
         const candidateRect = getBoundingClientRect(candidate);
-        return container.contains(candidate) &&
-          ((currentElm.contains(candidate) && isInside(eventTargetRect, candidateRect) && candidate !== currentElm) ||
+        return elementContains(container, candidate) &&
+          ((elementContains(currentElm, candidate) && isInside(eventTargetRect, candidateRect) && candidate !== currentElm) ||
           isOutside(candidateRect, eventTargetRect, dir));
       });
     } else {
       return candidates.filter(candidate => {
         const candidateRect = getBoundingClientRect(candidate);
         const candidateBody = (candidate.nodeName === 'IFRAME') ? candidate.contentDocument.body : null;
-        return container.contains(candidate) &&
+        return elementContains(container, candidate) &&
           candidate !== currentElm && candidateBody !== currentElm &&
           isOutside(candidateRect, eventTargetRect, dir) &&
           !isInside(eventTargetRect, candidateRect);
@@ -582,7 +688,7 @@
     let container = this;
 
     do {
-      if (!container.parentElement) {
+      if (!getParentElement(container)) {
         if (window.location !== window.parent.location) {
           container = window.parent.document.documentElement;
         } else {
@@ -590,7 +696,7 @@
         }
         break;
       } else {
-        container = container.parentElement;
+        container = getParentElement(container);
       }
     } while (!isContainer(container));
     return container;
@@ -606,7 +712,7 @@
     let scrollContainer = element;
 
     do {
-      if (!scrollContainer.parentElement) {
+      if (!getParentElement(scrollContainer)) {
         if (window.location !== window.parent.location) {
           scrollContainer = window.parent.document.documentElement;
         } else {
@@ -614,7 +720,7 @@
         }
         break;
       } else {
-        scrollContainer = scrollContainer.parentElement;
+        scrollContainer = getParentElement(scrollContainer);
       }
     } while (!isScrollContainer(scrollContainer) || !isVisible(scrollContainer));
 
@@ -634,7 +740,7 @@
    * @returns {sequence<Node>} All focusable elements or only visible focusable elements within the container
    */
   function focusableAreas(option = {mode: 'visible'}) {
-    const container = this.parentElement ? this : document.body;
+    const container = getParentElement(this) ? this : document.body;
     const focusables = Array.prototype.filter.call(container.getElementsByTagName('*'), isFocusable);
     return (option.mode === 'all') ? focusables : focusables.filter(isVisible);
   }
@@ -750,7 +856,7 @@
    * @returns {Node} The search origin for the spatial navigation
    */
   function findSearchOrigin() {
-    let searchOrigin = document.activeElement;
+    let searchOrigin = getActiveElement();
 
     if (!searchOrigin || (searchOrigin === document.body && !document.querySelector(':focus'))) {
       // When the previous search origin lost its focus by blur: (1) disable attribute (2) visibility: hidden
@@ -806,7 +912,7 @@
    * @returns {boolean}
    */
   function isContainer(element) {
-    return (!element.parentElement) ||
+    return (!getParentElement(element)) ||
             (element.nodeName === 'IFRAME') ||
             (isScrollContainer(element)) ||
             (isCSSSpatNavContain(element));
@@ -997,7 +1103,7 @@
   function isFocusable(element) {
     if ((element.tabIndex < 0) || isAtagWithoutHref(element) || isActuallyDisabled(element) || isExpresslyInert(element) || !isBeingRendered(element))
       return false;
-    else if ((!element.parentElement) || (isScrollable(element) && isOverflow(element)) || (element.tabIndex >= 0))
+    else if ((!getParentElement(element)) || (isScrollable(element) && isOverflow(element)) || (element.tabIndex >= 0))
       return true;
   }
 
@@ -1052,7 +1158,7 @@
    * @returns {boolean}
    */
   function isBeingRendered(element) {
-    if (!isVisibleStyleProperty(element.parentElement))
+    if (!isVisibleStyleProperty(getParentElement(element)))
       return false;
     if (!isVisibleStyleProperty(element) || (element.style.opacity === '0') ||
         (window.getComputedStyle(element).height === '0px' || window.getComputedStyle(element).width === '0px'))
@@ -1067,7 +1173,7 @@
    * @returns {boolean}
    */
   function isVisible(element) {
-    return (!element.parentElement) || (isVisibleStyleProperty(element) && hitTest(element));
+    return (!getParentElement(element)) || (isVisibleStyleProperty(element) && hitTest(element));
   }
 
   /**
@@ -1131,8 +1237,8 @@
     };
 
     for(const point in hitTestPoint) {
-      const elemFromPoint = element.ownerDocument.elementFromPoint(...hitTestPoint[point]);
-      if (element === elemFromPoint || element.contains(elemFromPoint)) {
+      const elemFromPoint = getElementFromPoint(element.ownerDocument, ...hitTestPoint[point]);
+      if (element === elemFromPoint || elementContains(element, elemFromPoint)) {
         return true;
       }
     }
@@ -1510,7 +1616,7 @@
   function handlingEditableElement(e) {
     const SPINNABLE_INPUT_TYPES = ['email', 'date', 'month', 'number', 'time', 'week'],
       TEXT_INPUT_TYPES = ['password', 'text', 'search', 'tel', 'url', null];
-    const eventTarget = document.activeElement;
+    const eventTarget = getActiveElement();
     const startPosition = eventTarget.selectionStart;
     const endPosition = eventTarget.selectionEnd;
     const focusNavigableArrowKey = {left: false, up: false, right: false, down: false};
@@ -1591,7 +1697,7 @@
   function getExperimentalAPI() {
     function canScroll(container, dir) {
       return (isScrollable(container, dir) && !isScrollBoundary(container, dir)) ||
-             (!container.parentElement && !isHTMLScrollBoundary(container, dir));
+             (!getParentElement(container) && !isHTMLScrollBoundary(container, dir));
     }
 
     function findTarget(findCandidate, element, dir, option) {
@@ -1625,7 +1731,7 @@
       // 6
       // Let container be the nearest ancestor of eventTarget
       let container = eventTarget.getSpatialNavigationContainer();
-      let parentContainer = (container.parentElement) ? container.getSpatialNavigationContainer() : null;
+      let parentContainer = (getParentElement(container)) ? container.getSpatialNavigationContainer() : null;
 
       // When the container is the viewport of a browsing context
       if (!parentContainer && ( window.location !== window.parent.location)) {
@@ -1657,7 +1763,7 @@
             // is unuseful when the focus moves out of the iframe
             eventTarget = window.frameElement;
             container = window.parent.document.documentElement;
-            if (container.parentElement)
+            if (getParentElement(container))
               parentContainer = container.getSpatialNavigationContainer();
             else {
               parentContainer = null;
@@ -1671,7 +1777,7 @@
           }
 
           container = parentContainer;
-          if (container.parentElement)
+          if (getParentElement(container))
             parentContainer = container.getSpatialNavigationContainer();
           else {
             parentContainer = null;
