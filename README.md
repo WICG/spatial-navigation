@@ -2,6 +2,8 @@
 [![npm stat](https://img.shields.io/npm/dm/spatial-navigation-polyfill.svg?style=flat-square)](https://npm-stat.com/charts.html?package=spatial-navigation-polyfill)
 [![npm version](https://img.shields.io/npm/v/spatial-navigation-polyfill.svg?style=flat-square)](https://www.npmjs.com/package/spatial-navigation-polyfill)
 
+⚠️⚠️ **Status**: Transitioned to https://github.com/w3c/csswg-drafts/tree/main/css-nav-1 ⚠️⚠️
+
 **Written**: 2017-10-17, **Updated**: 2019-11-27
 
 This repository is for supportive tools of **Spatial Navigation** such as polyfill, demo, and relevant documents. The spatial navigation [spec](https://drafts.csswg.org/css-nav-1/) has been migrated from WICG to CSS WG as an official draft according to the [decision](https://www.w3.org/2018/10/23-css-minutes.html#item01) at the CSS WG meeting in TPAC 2018.
